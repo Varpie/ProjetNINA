@@ -1,0 +1,6 @@
+# Définition de la langue du bot
+lang=fr_FR
+# Définition du layout du bot
+layout=fr
+# Définition du navigateur du bot
+browser=firefox
