@@ -4,3 +4,6 @@ lang=fr_FR
 layout=fr
 # Définition du navigateur du bot
 browser=firefox
+# Visibilité du navigateur
+visible=true
+

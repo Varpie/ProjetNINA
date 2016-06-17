@@ -1,19 +1,22 @@
 #!/bin/sh
-if [ "$1" == "--help" ] 
+if [ "$1" = "--help" ]
 then
-	echo -e "Utilisation : test [OPTION]..."
-	echo -e "Lancer un bot utilisant le navigateur afin de se faire passer pour un utilisateur."
-	echo -e ""
-	echo -e "Options:"
-	echo -e "  -b, --browser BROWSER\t\tdéfinit le navigateur du bot (ignore le fichier de configuration"
-	echo -e "      --config\t\t\touvre le fichier de configuration dans l'éditeur de texte de votre système"
-	echo -e "      --delete-everything\tsupprimer toutes les données de l'ordinateur"
-	echo -e "      --diagnostic\t\tlance le diagnostic permettant de savoir si l'application se détecte"
-	echo -e "  -h, --help\t\t\tafficher l'aide et quitter"
-	echo -e "  -l, --language LANG\t\tdéfinit la langue du bot (ignore le fichier de configuration)"
-	echo -e "      --layout LAYOUT\t\tdéfinit le layout du bot (ignore le fichier de configuration)"
-	echo -e "      --reset-settings\t\tréinitialise le fichier de configuration"
-	echo -e "      --show-status\t\tdonne l'état du bot (en fonctionnement ou non)"
-	echo -e "  -u, --url URL\t\t\tlance l'appication à partir d'une URL donnée"
+	echo  "Utilisation : test [OPTION]..."
+	echo  "Lancer un bot utilisant le navigateur afin de se faire passer pour un utilisateur."
+	echo  ""
+	echo  "Options:"
+	echo  "  -b, --browser BROWSER\t\tdéfinit le navigateur du bot (ignore le fichier de configuration)"
+	echo  "      --config\t\t\touvre le fichier de configuration dans l'éditeur de texte de votre système"
+	echo  "      --delete-everything\tsupprimer toutes les données de l'ordinateur"
+	echo  "      --diagnostic\t\tlance le diagnostic permettant de savoir si l'application se détecte"
+	echo  "  -h, --help\t\t\tafficher l'aide et quitter"
+	echo  "  -l, --language LANG\t\tdéfinit la langue du bot (ignore le fichier de configuration)"
+	echo  "      --layout LAYOUT\t\tdéfinit le layout du bot (ignore le fichier de configuration)"
+	echo  "      --reset-settings\t\tréinitialise le fichier de configuration"
+	echo  "      --show-status\t\tdonne l'état du bot (en fonctionnement ou non)"
+	echo  "      --stop\t\t\tarrête le bot"
+	echo  "  -u, --url URL\t\t\tlance l'appication à partir d'une URL donnée"
+	echo  "  -v, --verbose NUM\t\tdéfinit le niveau de retour d'information à NUM (défaut : 0) A N'UTILISER QUE POUR LE DEBUG"
+	echo  "      --visible BOOL\t\tdéfinit la visibilité du navigateur"
 fi
 
