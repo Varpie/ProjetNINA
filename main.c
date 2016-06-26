@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <getopt.h>
 
 char *lang = "en";
 char *layout = "en";
@@ -9,7 +10,7 @@ char *browser = "firefox";
 bool visible = true;
 
 void printHelp() {
-	printf("Yet to be done");
+	printf("Yet to be done\n");
 }
 
 void getConfig() {
@@ -41,17 +42,51 @@ void getConfig() {
 	fclose(configFile);
 }
 
-int main(int argc, char *argv[])  {
-	if(argc > 1) {
-		if(strcmp(argv[1], "--config") == 0) {
-			system("vim config.conf");
-		} else if(strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0) {
-			printHelp();
+int main(int argc, char **argv)  {
+	int c;
+	
+	while(1) {
+		int this_option_optind = optind ? optind : 1;
+		int option_index = 0;
+		/* Listing options */
+		static struct option longOptions[] = {
+			/* name, has_arg, flag, val */
+			{"help", no_argument, 0, 'h'},
+			{"config", no_argument, 0, 0},
+			/* That last line is necessary, but useless. */
+			{0,0,0,0}
+		};
+
+		c = getopt_long(argc, argv, "h", longOptions, &option_index);
+		if(c == -1)
+			break;
+		switch (c) {
+			case 0:
+				if(strcmp(longOptions[option_index].name, "config") == 0)
+					system("vim config.conf");
+				break;
+			case 'h':
+				printHelp();
+				break;
+			case '?':
+				/* character not in the optstring. 
+				   (3rd arg of getopt_long, where we put short options) */
+				break;
+			default:
+				printf("Uhh-uhh.");
 		}
-	} else {
-		getConfig();
+
+	}
+
+
+	if(optind < argc) {
+		printf("non-option ARGV-elements: ");
+		while (optind < argc)
+			printf("%s", argv[optind++]);
+		printf("\n");
 	}
 	// char *lang = getenv("LANG");
-	// printf("lang : %s, layout : %s, browser : %s", lang, layout, browser);
+	getConfig();
+	printf("lang : %s, layout : %s, browser : %s", lang, layout, browser);
 	return 0;
 }
