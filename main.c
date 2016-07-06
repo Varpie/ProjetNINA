@@ -1,12 +1,8 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdbool.h>
-#include <getopt.h>
+#include "main.h"
 
-char *lang = "en";
-char *layout = "en";
-char *browser = "firefox";
+char *lang = "en\0";
+char *layout = "en\0";
+char *browser = "firefox\0";
 bool visible = true;
 
 void printHelp() {
@@ -17,22 +13,23 @@ void getConfig() {
 	FILE *configFile = fopen("config.conf", "r");
 	
 	char *line = NULL;
-	size_t len = 0;
+	size_t len = 100;
 	ssize_t read;
 
 	while((read = getline(&line, &len, configFile)) != -1) {
 		if(line[0] != '#' && line[0] != '\n') {
 			char *var = strtok(line, "=");
+			
 			if(strcmp(var,"lang") == 0) {
-				lang = strtok(NULL, "=");
+				lang = strdup(strtok(NULL, "="));
 			} else if(strcmp(var,"layout") == 0) {
-				layout = strtok(NULL, "=");
+				layout = strdup(strtok(NULL, "="));
 			} else if(strcmp(var,"browser") == 0) {
-				browser = strtok(NULL, "=");
+				browser = strdup(strtok(NULL, "="));
 			} else if(strcmp(var,"visible") == 0) {
-				if(strcmp(strtok(NULL, "="),"true") == 0)
-					visible = true;
-				else visible = false;
+	//			if(strcmp(strtok(NULL, "="),"true") == 0)
+	//				visible = true;
+	//			else visible = false;
 			} else {	
 				printf("Mistake on this line : %s\n", line);
 			}
@@ -43,6 +40,9 @@ void getConfig() {
 }
 
 int main(int argc, char **argv)  {
+	getConfig();
+
+	printf("lang : %s\nlayout : %s\nbrowser : %s", lang, layout, browser);
 	int c;
 	
 	while(1) {
@@ -53,6 +53,7 @@ int main(int argc, char **argv)  {
 			/* name, has_arg, flag, val */
 			{"help", no_argument, 0, 'h'},
 			{"config", no_argument, 0, 0},
+			{"language", required_argument, 0, 0},
 			/* That last line is necessary, but useless. */
 			{0,0,0,0}
 		};
@@ -64,6 +65,8 @@ int main(int argc, char **argv)  {
 			case 0:
 				if(strcmp(longOptions[option_index].name, "config") == 0)
 					system("vim config.conf");
+				else if(strcmp(longOptions[option_index].name, "language") == 0)
+					lang = optarg;				
 				break;
 			case 'h':
 				printHelp();
@@ -75,7 +78,6 @@ int main(int argc, char **argv)  {
 			default:
 				printf("Uhh-uhh.");
 		}
-
 	}
 
 
@@ -86,7 +88,5 @@ int main(int argc, char **argv)  {
 		printf("\n");
 	}
 	// char *lang = getenv("LANG");
-	getConfig();
-	printf("lang : %s, layout : %s, browser : %s", lang, layout, browser);
 	return 0;
 }
