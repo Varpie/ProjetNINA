@@ -52,7 +52,7 @@ int main(int argc, char **argv)  {
 	parse_config();
 
 	printf("lang : %s\nlayout : %s\nbrowser : %s", lang, layout, browser);
-	int c;
+	int character;
 	
 	while(1) {
 		int this_option_optind = optind ? optind : 1;
@@ -67,10 +67,10 @@ int main(int argc, char **argv)  {
 			{0,0,0,0}
 		};
 
-		c = getopt_long(argc, argv, "h", long_options, &option_index);
-		if(c == -1)
+		character = getopt_long(argc, argv, "h", long_options, &option_index);
+		if(character == -1)
 			break;
-		switch (c) {
+		switch (character) {
 			case 0:
 				if(strcmp(long_options[option_index].name, "config") == 0)
 					system("vim config.conf");
