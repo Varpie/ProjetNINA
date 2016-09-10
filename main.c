@@ -51,7 +51,6 @@ void parse_config() {
 int main(int argc, char **argv)  {
 	parse_config();
 
-	printf("lang : %s\nlayout : %s\nbrowser : %s", lang, layout, browser);
 	int character;
 	
 	while(1) {
@@ -96,6 +95,13 @@ int main(int argc, char **argv)  {
 			printf("%s", argv[optind++]);
 		printf("\n");
 	}
+
+	printf("lang : %s\nlayout : %s\nbrowser : %s", lang, layout, browser);
+
+	while(1) {
+			sleep(1);
+	}
+
 	// char *lang = getenv("LANG");
 	return 0;
 }

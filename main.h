@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <getopt.h>
+#include <unistd.h>
 
 void print_help();
 void parse_config();
