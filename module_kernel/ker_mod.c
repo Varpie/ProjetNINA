@@ -132,6 +132,7 @@ static void procfs_clean(void) {
 		}
 }
 
+/* Init function, called when the module is loaded */
 static int __init rootkit_init(void) {
 		if(!procfs_init()) {
 				procfs_clean();
@@ -141,7 +142,9 @@ static int __init rootkit_init(void) {
 		return 0;
 }
 
+/* Exit function, called when the module is unloaded */
 static void __exit rootkit_exit(void) {
+		module_show();
 		procfs_clean();
 		printk(KERN_INFO "Closing rootkit\n");
 }
