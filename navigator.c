@@ -5,7 +5,8 @@
 int main()
 {
 
-	// pid_t pid;
+	//version fork
+ // pid_t pid;
  //  	char *parmList[] = {"firefox", "google.com", NULL};
  //  	int a;
 
@@ -14,18 +15,19 @@ int main()
 
  // 	 if (pid == 0) {
  // 	   a = execvp("/usr/bin/firefox", parmList);
- // 	   printf("%d",getpid());
  // 	 }
  // 	 else {
  // 	   waitpid(pid, 0, 0);
  // 	 }
 
-	int a;
+	//Version spawn
 
-	char *parmList[] = {"firefox", "google.com", NULL};
-	a = execvp("/usr/bin/firefox", parmList);
-	printf("%d\n", getpid());
+
+
+
+
  	return 0;
 }
 
 //http://stackoverflow.com/questions/985051/what-is-the-purpose-of-fork
+//http://www.yolinux.com/TUTORIALS/ForkExecProcesses.html
