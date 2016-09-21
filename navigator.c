@@ -2,26 +2,21 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+//Run browser as a child process and store it's pid in var child_pid
 int main()
 {
+  pid_t pid;
+  //parameters for execvp
+  char *parmList[] = {"firefox", "google.com", NULL};
 
-	//version fork
- pid_t pid;
-  	char *parmList[] = {"firefox", "google.com", NULL};
-  	int a,b;
+  int a,child_pid;
 
-  	if ((pid = fork()) == -1)
-  	  perror("fork failed");
- 	 if (fork() == 0) {
- 	   a = execvp("/usr/bin/firefox", parmList);
-
- 	 }
- 	 else {
-     //printf("pid : %d",pid);
- 	 }
-
- 	return 0;
+  if ((pid = fork()) == -1)
+    perror("fork failed");
+  if (pid == 0) {
+    a = execvp("/usr/bin/firefox", parmList);
+  } else {
+    child_pid = pid;
+  }
+  return 0;
 }
-
-//http://stackoverflow.com/questions/985051/what-is-the-purpose-of-fork
-//http://www.yolinux.com/TUTORIALS/ForkExecProcesses.html
