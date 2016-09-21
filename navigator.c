@@ -8,6 +8,7 @@ int main()
   pid_t pid;
   //parameters for execvp
   char *parmList[] = {"firefox", "google.com", NULL};
+  char command[50] = {0};
 
   int a,child_pid;
 
@@ -17,6 +18,10 @@ int main()
     a = execvp("/usr/bin/firefox", parmList);
   } else {
     child_pid = pid;
-  }
+
+    //Create command to kill process and execute it with bash
+    sprintf(command,"kill -9 %d",child_pid);
+    sleep(10);
+    system(command);
   return 0;
 }
