@@ -9,19 +9,19 @@ Coding style :
   // This is not okay
   ```
 
-- Opening curly brackets don't go after if statements, they go under it.
+- Opening curly brackets don't go under if statements, they go after it.
 
   Do this:
 
   ```
-  if (true)
-  {   
+  if (true) {   
   ```
 
   Don't do that:
 
   ```
-  if (true) {
+  if (true)
+  {
   ```
 
 - Functions work the opposite way (curly brackets under the function name)
