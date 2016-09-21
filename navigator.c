@@ -6,25 +6,19 @@ int main()
 {
 
 	//version fork
- // pid_t pid;
- //  	char *parmList[] = {"firefox", "google.com", NULL};
- //  	int a;
+ pid_t pid;
+  	char *parmList[] = {"firefox", "google.com", NULL};
+  	int a,b;
 
- //  	if ((pid = fork()) == -1)
- //  	  perror("fork failed");
+  	if ((pid = fork()) == -1)
+  	  perror("fork failed");
+ 	 if (fork() == 0) {
+ 	   a = execvp("/usr/bin/firefox", parmList);
 
- // 	 if (pid == 0) {
- // 	   a = execvp("/usr/bin/firefox", parmList);
- // 	 }
- // 	 else {
- // 	   waitpid(pid, 0, 0);
- // 	 }
-
-	//Version spawn
-
-
-
-
+ 	 }
+ 	 else {
+     //printf("pid : %d",pid);
+ 	 }
 
  	return 0;
 }
