@@ -24,3 +24,25 @@ MODULE_LICENSE("GPL");
 #define HIDE_PID_CMD "hpid"
 #define SHOW_PID_CMD "spid"
 
+/* Re-writing proc_dir_entry, removed from Linux kernel since 3.10 */
+struct proc_dir_entry {
+		unsigned int low_ino;
+		umode_t mode;
+		nlink_t nlink;
+		kuid_t uid;
+		kgid_t gid;
+		loff_t size;
+		const struct inode_operations *proc_iops;
+		const struct file_operations *proc_fops;
+		struct proc_dir_entry *parent;
+		struct rb_root subdir;
+		struct rb_node subdir_node;
+		void *data;
+		atomic_t count;
+		atomic_t in_use;
+		struct completion *pde_unload_completion;
+		struct list_head pde_openers;
+		spinlock_t pde_unload_lock;
+		u8 namelen;
+		char name[];
+};
