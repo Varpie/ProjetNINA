@@ -1,2 +1,14 @@
 lib python  : scrapy pour récupérer du code HTML après process js
 Autres options : Ruby, PhantomJS
+
+
+installer python.
+sudo apt-get install python-dev
+installer pip/setuptools
+sudo apt-get install python-pip
+
+
+
+-> compiler du c avec python.h include : gcc -I/usr/include/python2.7 <file>.c -lpython2.7
+
+tuto embed python : http://sametmax.com/embeder-python-dans-du-c-ou-c/
