@@ -104,7 +104,7 @@ void send_a_button()
 	memset(&event, 0, sizeof(event));
 	gettimeofday(&event.time, NULL);
 	event.type = EV_KEY;
-	event.code = KEY_A;
+	event.code = KEY_Q;
 	event.value = 1;
 	write(uinp_fd, &event, sizeof(event));
 	event.type = EV_SYN;
@@ -115,7 +115,7 @@ void send_a_button()
 	memset(&event, 0, sizeof(event));
 	gettimeofday(&event.time, NULL);
 	event.type = EV_KEY;
-	event.code = KEY_A;
+	event.code = KEY_Q;
 	event.value = 0;
 	write(uinp_fd, &event, sizeof(event));
 	event.type = EV_SYN;
@@ -135,13 +135,16 @@ int main()
 		printf("Unable to find uinput device\n");
 		return -1;
 	}
+// char i = 'z';
 int i;
-i = getchar();
-send_a_button(); // Send a "A" key
-i = getchar();
-printf(i);
+getchar();
+for(i = 0;i<3;i++){
+	send_a_button(); // Send a "Q" key
+}
+getchar();
+//printf("%c",i);
 
-send_click_events(); // Send mouse event
+//send_click_events(); // Send mouse event
 /* Destroy the input device */
 ioctl(uinp_fd, UI_DEV_DESTROY);
 /* Close the UINPUT device */
