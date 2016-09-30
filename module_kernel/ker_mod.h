@@ -1,6 +1,7 @@
 #include <linux/module.h>
 #include <linux/proc_fs.h>
 #include <asm/uaccess.h>
+#include <sys/syscall.h>
 /* WTF, it compiles without these */
 //#include <linux/kernel.h>
 //#include <linux/init.h>

