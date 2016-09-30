@@ -9,9 +9,10 @@ int main()
 	pid_t pid;
 	//parameters for execvp
 	char *parmList[] = {"firefox", "google.com", NULL};
-	char command[20] = {0};
 
 	int a,child_pid;
+
+
 
 	if ((pid = fork()) == -1)
 		perror("fork failed");
@@ -20,8 +21,10 @@ int main()
 	} else {
 		child_pid = pid;
 		//Create command to kill process and execute it with bash
+		//char command[20] = {0};
 		//sprintf(command,"kill -9 %d",child_pid);
-		sleep(10);
+
+		//sleep(10);
 		//system(command);
 
 
@@ -37,21 +40,22 @@ int main()
 		PySys_SetPath("."); // Le dossier en cours n'est pas dans le PYTHON PATH
 		module = PyImport_ImportModule("get_html");
 		// Récupération de la fonction
-		fonction = PyObject_GetAttrString(module, "get_html");
+		fonction = PyObject_GetAttrString(module, "parse_page");
 
 		// Création d'un PyObject de type string.
 		// https://docs.python.org/2/c-api/arg.html#c.Py_BuildValue
-		arguments = Py_BuildValue("(s)", "google.com"); 
+		arguments = Py_BuildValue("(s)", "www.google.com"); 
 
 		// Appel de la fonction.
 		retour = PyEval_CallObject(fonction, arguments);
+
 
 		// Conversion du PyObject obtenu en string C
 		PyArg_Parse(retour, "s", &resultat);
 		printf("Resultat: %s\n", resultat);
 
 		//Important : on ferme l'interpréteur.
-		Py_Finalize(); 
+		Py_Finalize();
 	}
 return 0;
 }
