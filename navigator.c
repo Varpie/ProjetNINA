@@ -21,14 +21,14 @@ int main()
 	} else {
 		child_pid = pid;
 		//Create command to kill process and execute it with bash
-		//char command[20] = {0};
-		//sprintf(command,"kill -9 %d",child_pid);
+		char command[20] = {0};
+		sprintf(command,"kill -9 %d",child_pid);
 
-		//sleep(10);
-		//system(command);
+		sleep(10);
+		system(command);
 
 
-		// PyObject est un wrapper Python autour des objets qu'on
+		/*// PyObject est un wrapper Python autour des objets qu'on
 		// va échanger enter le C et Python.
 		PyObject *retour, *module, *fonction, *arguments;
 		char *resultat;
@@ -55,7 +55,7 @@ int main()
 		printf("Resultat: %s\n", resultat);
 
 		//Important : on ferme l'interpréteur.
-		Py_Finalize();
+		Py_Finalize();*/
 	}
 return 0;
 }
