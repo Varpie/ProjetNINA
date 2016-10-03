@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
-import scrapy
-class GethtmlSpider(scrapy.Spider):
-   name = "getHtml"
+from scrapy.spider import BaseSpider
+import lxml.etree
+import lxml.html
 
-	def parse_page(self, response):
-    	return scrapy.Request("ttp://www.google.com",
-                          callback=self.parse)
-    
-  #  def make_requests_from_url(url):
-#    	yield scrapy.Request(url=url, callback=self.parse)
-    def parse(self, response):
-     	return response.body
+class GetHtmlSpider(BaseSpider):
+	name = "getHtml"
+	start_urls = ["https://www.google.fr/webhp?ie=utf-8&oe=utf-8&gws_rd=cr&ei=b_7xV5GtOIHiU63whPgI#q=coucou"]
+
+	def parse(self,response):
+		root = lxml.html.fromstring(response.body)
+		print lxml.html.tostring(root)
