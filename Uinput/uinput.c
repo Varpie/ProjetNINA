@@ -98,35 +98,92 @@ void send_click_events( )
 	event.value = 0;
 	write(uinp_fd, &event, sizeof(event));
 }
-void send_a_button()
-{
-// Report BUTTON CLICK - PRESS event
-	memset(&event, 0, sizeof(event));
-	gettimeofday(&event.time, NULL);
-	event.type = EV_KEY;
-	event.code = KEY_A;
-	event.value = 1;
-	write(uinp_fd, &event, sizeof(event));
-	event.type = EV_SYN;
-	event.code = SYN_REPORT;
-	event.value = 0;
-	write(uinp_fd, &event, sizeof(event));
-// Report BUTTON CLICK - RELEASE event
-	memset(&event, 0, sizeof(event));
-	gettimeofday(&event.time, NULL);
-	event.type = EV_KEY;
-	event.code = KEY_A;
-	event.value = 0;
-	write(uinp_fd, &event, sizeof(event));
-	event.type = EV_SYN;
-	event.code = SYN_REPORT;
-	event.value = 0;
-	write(uinp_fd, &event, sizeof(event));
+
+void press_a_button(int key){
+	// Report BUTTON CLICK - PRESS event
+		memset(&event, 0, sizeof(event));
+		gettimeofday(&event.time, NULL);
+		event.type = EV_KEY;
+		event.code = key;
+		event.value = 1;
+		write(uinp_fd, &event, sizeof(event));
+		event.type = EV_SYN;
+		event.code = SYN_REPORT;
+		event.value = 0;
+		write(uinp_fd, &event, sizeof(event));
 }
 
+void release_a_button(int key){
+	// Report BUTTON CLICK - RELEASE event
+		memset(&event, 0, sizeof(event));
+		gettimeofday(&event.time, NULL);
+		event.type = EV_KEY;
+		event.code = key;
+		event.value = 0;
+		write(uinp_fd, &event, sizeof(event));
+		event.type = EV_SYN;
+		event.code = SYN_REPORT;
+		event.value = 0;
+		write(uinp_fd, &event, sizeof(event));
+}
+void send_a_button(int key, int modifier)
+{
+	if(modifier = 0)
+	{
+	press_a_button(key);
+	release_a_button(key);
+}else{
+	press_a_button(modifier);
+	press_a_button(key);
+	release_a_button(key);
+	release_a_button(modifier);
+}
+
+}
+
+
+int cvrtChar(int c){
+	switch (c) {
+		case 97: return 16;
+		case 98: return 48;
+		case 99: return 46;
+		case 100: return 32;
+		case 101: return 18;
+		case 102: return 33;
+		case 103: return 34;
+		case 104: return 35;
+		case 105: return 23;
+		case 106: return 36;
+		case 107: return 37;
+		case 108: return 38;
+		case 109: return 39;
+		case 110: return 49;
+		case 111: return 24;
+		case 112: return 25;
+		case 113: return 31;
+		case 114: return 19;
+		case 115: return 31;
+		case 116: return 20;
+		case 117: return 22;
+		case 118: return 47;
+		case 119: return 44;
+		case 120: return 45;
+		case 121: return 21;
+		case 122: return 17;
+		default: return 57;
+	}
+}
+
+void writeArray(char array[], int size){
+
+	int i;
+	for(i =0; i<size-1; i++){
+			send_a_button(cvrtChar(array[i]),0);
+	}
+
+}
 /* This function will open the uInput device. Please make
 sure that you have inserted the uinput.ko into kernel. */
-
 int main()
 {
 // Return an error if device not found.
@@ -135,13 +192,16 @@ int main()
 		printf("Unable to find uinput device\n");
 		return -1;
 	}
-int i;
-i = getchar();
-send_a_button(); // Send a "A" key
-i = getchar();
-printf(i);
 
-send_click_events(); // Send mouse event
+char mot[] = "minuscule";
+int size = sizeof(mot)/sizeof(mot[0]);
+
+int i;
+getchar();
+send_a_button(16,42);
+getchar();
+
+
 /* Destroy the input device */
 ioctl(uinp_fd, UI_DEV_DESTROY);
 /* Close the UINPUT device */
