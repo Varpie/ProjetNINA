@@ -11,6 +11,8 @@ sudo apt-get install python-pip
 installer la lib scrapy
 pip install Scrapy
 
+installer lxml
+sudo apt-get install python-lxml
 
 -> compiler du c avec python.h include : gcc -I/usr/include/python2.7 <file>.c -lpython2.7
 
