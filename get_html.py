@@ -5,7 +5,7 @@ import lxml.html
 
 class GetHtmlSpider(BaseSpider):
 	name = "getHtml"
-	start_urls = ["https://www.google.fr/webhp?ie=utf-8&oe=utf-8&gws_rd=cr&ei=b_7xV5GtOIHiU63whPgI#q=coucou"]
+	start_urls = ["https://www.wikipedia.org"]
 
 	def parse(self,response):
 		root = lxml.html.fromstring(response.body)
