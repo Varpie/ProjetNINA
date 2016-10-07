@@ -28,23 +28,23 @@ int main()
 		system(command);
 
 
-		/*// PyObject est un wrapper Python autour des objets qu'on
+		// PyObject est un wrapper Python autour des objets qu'on
 		// va échanger enter le C et Python.
 		PyObject *retour, *module, *fonction, *arguments;
 		char *resultat;
 
 		// Initialisation de l'interpréteur(1 à la fois)
-		Py_Initialize();   
+		Py_Initialize();
 
-		// Import du script. 
+		// Import du script.
 		PySys_SetPath("."); // Le dossier en cours n'est pas dans le PYTHON PATH
 		module = PyImport_ImportModule("get_html");
 		// Récupération de la fonction
-		fonction = PyObject_GetAttrString(module, "parse_page");
+		fonction = PyObject_GetAttrString(module, "make_requests_from_url");
 
 		// Création d'un PyObject de type string.
 		// https://docs.python.org/2/c-api/arg.html#c.Py_BuildValue
-		arguments = Py_BuildValue("(s)", "www.google.com"); 
+		arguments = Py_BuildValue("(s)", "www.google.com");
 
 		// Appel de la fonction.
 		retour = PyEval_CallObject(fonction, arguments);
@@ -55,7 +55,7 @@ int main()
 		printf("Resultat: %s\n", resultat);
 
 		//Important : on ferme l'interpréteur.
-		Py_Finalize();*/
+		Py_Finalize();
 	}
 return 0;
 }
