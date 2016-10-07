@@ -8,6 +8,7 @@
 #include <linux/unistd.h>
 #include <linux/fs.h>
 #include <linux/slab.h>     /* kmalloc */
+#include <linux/syscalls.h>
 
 /* WTF, it compiles without these */
 //#include <linux/string.h>
