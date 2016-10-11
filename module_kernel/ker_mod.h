@@ -33,6 +33,9 @@ MODULE_LICENSE("GPL");
 #define BOOT_PATH "/boot/System.map-"
 #define MAX_VERSION_LEN   256
 
+#define GPF_DISABLE() write_cr0(read_cr0() & (~0x10000))
+#define GPF_ENABLE() write_cr0(read_cr0() | 0x10000)
+
 /* Re-writing proc_dir_entry, removed from Linux kernel since 3.10 */
 struct proc_dir_entry {
 		unsigned int low_ino;

