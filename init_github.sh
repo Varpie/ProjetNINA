@@ -9,19 +9,19 @@ fi
 case "$log" in
     pierre)
         name="Pierre V"
-        email="pierre.varlez@gmail.com"
+        email="pierre.varlez@gmail.com";;
     louis)
         name="Louis Klein"
-        email="louis.klein7@gmail.com"
+        email="louis.klein7@gmail.com";;
     alix)
         name="Alix Vuagnoux"
-        email="alix.vuagnoux@gmail.com"
+        email="alix.vuagnoux@gmail.com";;
     etienne)
         name="Etienne Jodry"
-        email="Etienne.JODRY@hotmail.fr"
+        email="Etienne.JODRY@hotmail.fr";;
     *)
         echo "Erreur de login"
-        exit 0
+        exit 0;;
 esac
 
 git config --global user.name $name
