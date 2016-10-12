@@ -8,3 +8,6 @@ then
 else
   echo "uinput already loaded";
 fi
+
+sudo chmod 666 /dev/uinput;
+echo "uinput chmod set to 666";
