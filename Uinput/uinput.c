@@ -9,6 +9,7 @@
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <time.h>
 /* Globals */
 static int uinp_fd = -1;
 
@@ -34,6 +35,7 @@ int setup_uinput_device()
 	// Setup the uinput device
 	ioctl(uinp_fd, UI_SET_EVBIT, EV_KEY);
 	ioctl(uinp_fd, UI_SET_EVBIT, EV_REL);
+	ioctl(uinp_fd, UI_SET_EVBIT, EV_REP);
 	ioctl(uinp_fd, UI_SET_RELBIT, REL_X);
 	ioctl(uinp_fd, UI_SET_RELBIT, REL_Y);
 	for (i=0; i < 256; i++) {
@@ -131,7 +133,7 @@ void send_a_button(int key, int modifier)
 	if(modifier = 0)
 	{
 	press_a_button(key);
-	release_a_button(key);
+	//release_a_button(key);
 }else{
 	press_a_button(modifier);
 	press_a_button(key);
@@ -178,7 +180,8 @@ void writeArray(char array[], int size){
 
 	int i;
 	for(i =0; i<size-1; i++){
-			send_a_button(cvrtChar(array[i]),0);
+			send_a_button(cvrtChar(array[i]),42);
+			nanosleep((const struct timespec[]){{0, 200000000L}}, NULL);
 	}
 
 }
@@ -193,13 +196,14 @@ int main()
 		return -1;
 	}
 
-char mot[] = "minuscule";
+char mot[] = " minuscule";
 int size = sizeof(mot)/sizeof(mot[0]);
 
-int i;
-getchar();
-send_a_button(16,42);
-getchar();
+int i = 0;
+while(i<5){
+	writeArray(mot, size);
+	i++;
+}
 
 
 /* Destroy the input device */
