@@ -10,8 +10,7 @@ int main() {
 
     Py_Initialize();
     //PySys_SetPath(".");
-    if(PyRun_SimpleString("import sys;sys.path.insert(0, '.')"))
-    {
+    if(PyRun_SimpleString("import sys;sys.path.insert(0, '.')")) {
         printf("path expansion failed\n");
         return(2);
     }

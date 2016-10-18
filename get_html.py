@@ -3,8 +3,11 @@ import scrapy
 from scrapy.crawler import CrawlerProcess
 import lxml.etree
 import lxml.html
+from scrapy.item import Item, Field
 
-retour = None
+class parsedItem(Item):
+    parsed_html = Field()
+    
 class GetHtmlSpider(scrapy.Spider):
     name = "getHtml"
     def __init__(self, var_url=None, *args, **kwargs):
@@ -12,20 +15,13 @@ class GetHtmlSpider(scrapy.Spider):
         self.start_urls = [var_url]
     def parse(self,response):
         root = lxml.html.fromstring(response.body)
-        print lxml.html.tostring(root)
+        item['parsed_html'] = lxml.html.tostring(root)
 
+item = parsedItem()
 def runspider_with_url(var_url):
     process = CrawlerProcess({
         'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
     })
     process.crawl(GetHtmlSpider,var_url=var_url)
     process.start()
-#foo = runspider_with_url("http://www.google.com/")
-#print foo;
-#exec : scrapy runspider get_html.py -a var_url = url
-#url de la forme http(s)://www.domain.def
-#runspider_with_url("http://www.google.com")
-#exec : python get_html.py
-#"https://wikipedia.org/"
-
-#exec : python -c 'import get_html; get_html.runspider_with_url("https://www.wikipedia.org")'
+    return item['parsed_html']
