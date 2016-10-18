@@ -5,7 +5,8 @@
 int main() {
     PyObject *retour, *module, *fonction, *arguments;
     char *resultat;
-
+    char *url;
+    url = "https://www.wikipedia.org";
     printf("starting\n");
 
     Py_Initialize();
@@ -28,7 +29,7 @@ int main() {
         return(2);
     }
 
-    arguments = Py_BuildValue("(s)", "https://www.wikipedia.org");
+    arguments = Py_BuildValue("(s)", url);
     if(arguments == NULL) {
         printf("arg parsing failed\n");
         return(2);

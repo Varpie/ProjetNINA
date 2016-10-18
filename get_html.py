@@ -3,6 +3,7 @@ import scrapy
 from scrapy.crawler import CrawlerProcess
 import lxml.etree
 import lxml.html
+import lxml.html.clean
 from scrapy.item import Item, Field
 
 class parsedItem(Item):
@@ -16,6 +17,11 @@ class GetHtmlSpider(scrapy.Spider):
     def parse(self,response):
         root = lxml.html.fromstring(response.body)
         root = root.body
+        print "bien"
+        cleaner = lxml.html.clean.Cleaner()
+        cleaner.javascript = True
+        cleaner.style = True
+        root = cleaner.clean_html(root)
         item['parsed_html'] = lxml.html.tostring(root)
 
 item = parsedItem()
