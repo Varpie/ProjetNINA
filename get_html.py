@@ -15,6 +15,7 @@ class GetHtmlSpider(scrapy.Spider):
         self.start_urls = [var_url]
     def parse(self,response):
         root = lxml.html.fromstring(response.body)
+        root = root.body
         item['parsed_html'] = lxml.html.tostring(root)
 
 item = parsedItem()
