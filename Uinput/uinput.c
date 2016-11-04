@@ -150,7 +150,7 @@ void send_a_button_default(int key){
 
 
 void cvrtChar(int *a, int c){
-	if(sizeof(a) > 2){
+	if(sizeof(a)/sizeof(a[0]) > 2){
 		printf("erreur, tableau de taille sup à 2");
 		return;
 	}else{
@@ -159,32 +159,210 @@ void cvrtChar(int *a, int c){
 			a[0] = 16;
 			a[1] = 0;
 			break;
-			// case 98: return 48;
-			// case 99: return 46;
-			// case 100: return 32;
-			// case 101: return 18;
-			// case 102: return 33;
-			// case 103: return 34;
-			// case 104: return 35;
-			// case 105: return 23;
-			// case 106: return 36;
-			// case 107: return 37;
-			// case 108: return 38;
-			// case 109: return 39;
-			// case 110: return 49;
-			// case 111: return 24;
-			// case 112: return 25;
-			// case 113: return 31;
-			// case 114: return 19;
-			// case 115: return 31;
-			// case 116: return 20;
-			// case 117: return 22;
-			// case 118: return 47;
-			// case 119: return 44;
-			// case 120: return 45;
-			// case 121: return 21;
-			// case 122: return 17;
-
+			case 98:
+			a[0] = 48;
+			a[1] = 0;
+			break;
+			case 99:
+			a[0] = 46;
+			a[1] = 0;
+			break;
+			case 100:
+			a[0] = 32;
+			a[1] = 0;
+			break;
+			case 101:
+			a[0] = 18;
+			a[1] = 0;
+			break;
+			case 102:
+			a[0] = 33;
+			a[1] = 0;
+			break;
+			case 103:
+			a[0] = 34;
+			a[1] = 0;
+			break;
+			case 104:
+			a[0] = 35;
+			a[1] = 0;
+			break;
+			case 105:
+			a[0] = 23;
+			a[1] = 0;
+			break;
+			case 106:
+			a[0] = 36;
+			a[1] = 0;
+			break;
+			case 107:
+			a[0] = 37;
+			a[1] = 0;
+			break;
+			case 108:
+			a[0] = 38;
+			a[1] = 0;
+			break;
+			case 109:
+			a[0] = 39;
+			a[1] = 0;
+			break;
+			case 110:
+			a[0] = 49;
+			a[1] = 0;
+			break;
+			case 111:
+			a[0] = 24;
+			a[1] = 0;
+			break;
+			case 112:
+			a[0] = 25;
+			a[1] = 0;
+			break;
+			case 113:
+			a[0] = 31;
+			a[1] = 0;
+			break;
+			case 114:
+			a[0] = 19;
+			a[1] = 0;
+			break;
+			case 115:
+			a[0] = 31;
+			a[1] = 0;
+			break;
+			case 116:
+			a[0] = 20;
+			a[1] = 0;
+			break;
+			case 117:
+			a[0] = 22;
+			a[1] = 0;
+			break;
+			case 118:
+			a[0] = 47;
+			a[1] = 0;
+			break;
+			case 119:
+			a[0] = 44;
+			a[1] = 0;
+			break;
+			case 120:
+			a[0] = 45;
+			a[1] = 0;
+			break;
+			case 121:
+			a[0] = 21;
+			a[1] = 0;
+			break;
+			case 122:
+			a[0] = 17;
+			a[1] = 0;
+			break;
+			case 65:
+			a[0] = 16;
+			a[1] = 42;
+			break;
+			case 66:
+			a[0] = 48;
+			a[1] = 42;
+			break;
+			case 67:
+			a[0] = 46;
+			a[1] = 42;
+			break;
+			case 68:
+			a[0] = 32;
+			a[1] = 42;
+			break;
+			case 69:
+			a[0] = 18;
+			a[1] = 42;
+			break;
+			case 70:
+			a[0] = 33;
+			a[1] = 42;
+			break;
+			case 71:
+			a[0] = 34;
+			a[1] = 42;
+			break;
+			case 72:
+			a[0] = 35;
+			a[1] = 42;
+			break;
+			case 73:
+			a[0] = 23;
+			a[1] = 42;
+			break;
+			case 74:
+			a[0] = 36;
+			a[1] = 42;
+			break;
+			case 75:
+			a[0] = 37;
+			a[1] = 42;
+			break;
+			case 76:
+			a[0] = 38;
+			a[1] = 42;
+			break;
+			case 77:
+			a[0] = 39;
+			a[1] = 42;
+			break;
+			case 78:
+			a[0] = 49;
+			a[1] = 42;
+			break;
+			case 79:
+			a[0] = 24;
+			a[1] = 42;
+			break;
+			case 80:
+			a[0] = 25;
+			a[1] = 42;
+			break;
+			case 81:
+			a[0] = 31;
+			a[1] = 42;
+			break;
+			case 82:
+			a[0] = 19;
+			a[1] = 42;
+			break;
+			case 83:
+			a[0] = 31;
+			a[1] = 42;
+			break;
+			case 84:
+			a[0] = 20;
+			a[1] = 42;
+			break;
+			case 85:
+			a[0] = 22;
+			a[1] = 42;
+			break;
+			case 86:
+			a[0] = 47;
+			a[1] = 42;
+			break;
+			case 87:
+			a[0] = 44;
+			a[1] = 42;
+			break;
+			case 88:
+			a[0] = 45;
+			a[1] = 42;
+			break;
+			case 89:
+			a[0] = 21;
+			a[1] = 42;
+			break;
+			case 90:
+			a[0] = 17;
+			a[1] = 42;
+			break;
 			default:
 				a[0] = 57;
 				a[1] =0;
@@ -220,10 +398,12 @@ int main()
 	}
 
 char mot[] = " minuscule";
+char mo[] = "MAJUSCULE";
 int size = sizeof(mot)/sizeof(mot[0]);
-
+int sizemo = sizeof(mo)/sizeof(mo[0]);
 int i = 0;
 writeArray(mot, size);
+writeArray(mo, sizemo);
 
 
 /* Destroy the input device */
