@@ -130,10 +130,10 @@ void release_a_button(int key){
 }
 void send_a_button(int key, int modifier)
 {
-	if(modifier = 0)
+	if(modifier == 0)
 	{
 	press_a_button(key);
-	//release_a_button(key);
+	release_a_button(key);
 }else{
 	press_a_button(modifier);
 	press_a_button(key);
@@ -142,45 +142,68 @@ void send_a_button(int key, int modifier)
 }
 
 }
+void send_a_button_default(int key){
+	send_a_button(key,0);
+}
 
 
-int cvrtChar(int c){
-	switch (c) {
-		case 97: return 16;
-		case 98: return 48;
-		case 99: return 46;
-		case 100: return 32;
-		case 101: return 18;
-		case 102: return 33;
-		case 103: return 34;
-		case 104: return 35;
-		case 105: return 23;
-		case 106: return 36;
-		case 107: return 37;
-		case 108: return 38;
-		case 109: return 39;
-		case 110: return 49;
-		case 111: return 24;
-		case 112: return 25;
-		case 113: return 31;
-		case 114: return 19;
-		case 115: return 31;
-		case 116: return 20;
-		case 117: return 22;
-		case 118: return 47;
-		case 119: return 44;
-		case 120: return 45;
-		case 121: return 21;
-		case 122: return 17;
-		default: return 57;
+
+
+void cvrtChar(int *a, int c){
+	if(sizeof(a) > 2){
+		printf("erreur, tableau de taille sup à 2");
+		return;
+	}else{
+		switch (c) {
+			case 97:
+			a[0] = 16;
+			a[1] = 0;
+			break;
+			// case 98: return 48;
+			// case 99: return 46;
+			// case 100: return 32;
+			// case 101: return 18;
+			// case 102: return 33;
+			// case 103: return 34;
+			// case 104: return 35;
+			// case 105: return 23;
+			// case 106: return 36;
+			// case 107: return 37;
+			// case 108: return 38;
+			// case 109: return 39;
+			// case 110: return 49;
+			// case 111: return 24;
+			// case 112: return 25;
+			// case 113: return 31;
+			// case 114: return 19;
+			// case 115: return 31;
+			// case 116: return 20;
+			// case 117: return 22;
+			// case 118: return 47;
+			// case 119: return 44;
+			// case 120: return 45;
+			// case 121: return 21;
+			// case 122: return 17;
+
+			default:
+				a[0] = 57;
+				a[1] =0;
+		}
 	}
 }
+
+void writeChar(char c){
+	int a[2];
+	cvrtChar(a,c);
+	send_a_button(a[0],a[1]);
+}
+
 
 void writeArray(char array[], int size){
 
 	int i;
 	for(i =0; i<size-1; i++){
-			send_a_button(cvrtChar(array[i]),42);
+			writeChar(array[i]);
 			nanosleep((const struct timespec[]){{0, 200000000L}}, NULL);
 	}
 
@@ -200,10 +223,7 @@ char mot[] = " minuscule";
 int size = sizeof(mot)/sizeof(mot[0]);
 
 int i = 0;
-while(i<5){
-	writeArray(mot, size);
-	i++;
-}
+writeArray(mot, size);
 
 
 /* Destroy the input device */
