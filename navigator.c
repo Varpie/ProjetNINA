@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 #include <Python.h>
+#include "navigator.h"
 
-char * get_bodyhtml_from_url(char *url);
+
 
 //Run browser as a child process and store it's pid in var child_pid
 int main()
@@ -13,7 +15,7 @@ int main()
 	char *parmList[] = {"firefox", "google.com", NULL};
 	char *url,*bodyhtml;
 	int a,child_pid;
-
+	HyperLink *hyperlinks[];
 
 	if ((pid = fork()) == -1)
 		perror("fork failed");
@@ -26,16 +28,19 @@ int main()
 		//sprintf(command,"kill -9 %d",child_pid);
 		//sleep(10);
 		//system(command);
-	    
-		url = "https://www.youtube.com";
-		bodyhtml = get_bodyhtml_from_url(url);
-		printf("%s\n",bodyhtml);
+
+		url = "https://www.wikipedia.org/";//https://www.wikipedia.org/
+		//https://www.youtube.com
+		html = get_bodyhtml_from_url(url);
+		hyperlinks = select_hyperlinks_from_html(html);
+
+		//printf("%s\n",bodyhtml);
 	}
 
 return 0;
 }
 
-char * get_bodyhtml_from_url(char *url) {
+char * get_bodyhtml_from_url(char *url,char *hyperlinks) {
     char *resultat;
     PyObject *retour, *module, *fonction, *arguments;
 
@@ -86,4 +91,18 @@ char * get_bodyhtml_from_url(char *url) {
 
     Py_Finalize();
     return resultat;
+}
+
+HyperLink * select_hyperlinks_from_html(char *html) {
+	HyperLink *resultat;
+	int i,blink,elink;
+	//faire un booléan
+	for (i = 0; i < strlen(html); i++){
+		if(html[i] == '<' && html[i+1] == 'a') {
+			blink = html[i];
+
+		}
+	}
+
+	return resultat;
 }
