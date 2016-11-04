@@ -3,11 +3,12 @@ import scrapy
 from scrapy.crawler import CrawlerProcess
 import lxml.etree
 import lxml.html
+import lxml.html.clean
 from scrapy.item import Item, Field
 
 class parsedItem(Item):
     parsed_html = Field()
-    
+
 class GetHtmlSpider(scrapy.Spider):
     name = "getHtml"
     def __init__(self, var_url=None, *args, **kwargs):
@@ -15,6 +16,11 @@ class GetHtmlSpider(scrapy.Spider):
         self.start_urls = [var_url]
     def parse(self,response):
         root = lxml.html.fromstring(response.body)
+        root = root.body
+        cleaner = lxml.html.clean.Cleaner()
+        cleaner.javascript = True
+        cleaner.style = True
+        root = cleaner.clean_html(root)
         item['parsed_html'] = lxml.html.tostring(root)
 
 item = parsedItem()
