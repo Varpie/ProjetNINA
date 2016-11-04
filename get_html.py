@@ -8,7 +8,7 @@ from scrapy.item import Item, Field
 
 class parsedItem(Item):
     parsed_html = Field()
-    
+
 class GetHtmlSpider(scrapy.Spider):
     name = "getHtml"
     def __init__(self, var_url=None, *args, **kwargs):
@@ -17,7 +17,6 @@ class GetHtmlSpider(scrapy.Spider):
     def parse(self,response):
         root = lxml.html.fromstring(response.body)
         root = root.body
-        print "bien"
         cleaner = lxml.html.clean.Cleaner()
         cleaner.javascript = True
         cleaner.style = True
