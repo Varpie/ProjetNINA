@@ -29,7 +29,7 @@ int setup_uinput_device()
 		return -1;
 	}
 	memset(&uinp,0,sizeof(uinp)); // Intialize the uInput device to NULL
-	strncpy(uinp.name, "PolyVision Touch Screen", UINPUT_MAX_NAME_SIZE);
+	strncpy(uinp.name, "Custom Keyboard", UINPUT_MAX_NAME_SIZE);
 	uinp.id.version = 4;
 	uinp.id.bustype = BUS_USB;
 	// Setup the uinput device
@@ -382,7 +382,7 @@ void writeArray(char array[], int size){
 	int i;
 	for(i =0; i<size-1; i++){
 			writeChar(array[i]);
-			nanosleep((const struct timespec[]){{0, 200000000L}}, NULL);
+			nanosleep((const struct timespec[]){{0, 100000000L}}, NULL);
 	}
 
 }
@@ -401,10 +401,20 @@ char mot[] = " minuscule";
 char mo[] = "MAJUSCULE";
 int size = sizeof(mot)/sizeof(mot[0]);
 int sizemo = sizeof(mo)/sizeof(mo[0]);
-int i = 0;
-writeArray(mot, size);
-writeArray(mo, sizemo);
 
+// writeArray(mot, size);
+// writeArray(mo, sizemo);
+
+
+while(1){
+	sleep(1);
+	// send_a_button(64,0);
+	// writeArray(mot,size);
+	// send_a_button(28,0);
+	// sleep(1);
+}
+//writeArray(mot, size);
+send_a_button(28,0);
 
 /* Destroy the input device */
 ioctl(uinp_fd, UI_DEV_DESTROY);
