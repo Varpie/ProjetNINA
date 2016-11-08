@@ -29,11 +29,9 @@ int main() {
 
   int i;
   srand(time(NULL));
-  for(i=0;i<32;i++) {
+  for(i=0;i<4;i++) {
     int n = rand()%tailleTab;
-    char commande[255] = "cd \"C:\\Program Files (x86)\\Google\\Chrome\\Application\"";
-    system(commande);
-    char commande2[255] = "start chrome ";
+    char commande2[255] = "firefox ";
     strcat(commande2, tab[n]);
     system(commande2);
     fputs(tab[n], file2);
