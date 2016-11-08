@@ -1,18 +1,18 @@
 #include <linux/module.h>
 #include <linux/proc_fs.h>
-#include <asm/paravirt.h>
-#include <asm/uaccess.h>
 #include <linux/kernel.h>
-#include <linux/kobject.h>
 #include <linux/init.h>
-#include <linux/unistd.h>
 #include <linux/fs.h>
 #include <linux/slab.h>     /* kmalloc */
 #include <linux/syscalls.h>
 #include <linux/dirent.h>
 
 /* WTF, it compiles without these */
-//#include <linux/string.h>
+// #include <linux/unistd.h>
+// #include <linux/string.h>
+// #include <asm/uaccess.h>
+// #include <asm/paravirt.h>
+// #include <linux/kobject.h>
 //#include <linux/proc_ns.h>
 //#include <linux/spinlock.h>
 //#include <linux/atomic.h>

