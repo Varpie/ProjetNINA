@@ -15,7 +15,7 @@ int main()
 	char *parmList[] = {"firefox", "google.com", NULL};
 	char *url,*bodyhtml;
 	int a,child_pid;
-	HyperLink *hyperlinks[];
+	HyperLink links[1];
 
 	if ((pid = fork()) == -1)
 		perror("fork failed");
@@ -31,8 +31,8 @@ int main()
 
 		url = "https://www.wikipedia.org/";//https://www.wikipedia.org/
 		//https://www.youtube.com
-		html = get_bodyhtml_from_url(url);
-		hyperlinks = select_hyperlinks_from_html(html);
+		bodyhtml = get_bodyhtml_from_url(url);
+		/*select_hyperlinks_from_html(bodyhtml,links);*/
 
 		//printf("%s\n",bodyhtml);
 	}
@@ -40,7 +40,7 @@ int main()
 return 0;
 }
 
-char * get_bodyhtml_from_url(char *url,char *hyperlinks) {
+char * get_bodyhtml_from_url(char *url) {
     char *resultat;
     PyObject *retour, *module, *fonction, *arguments;
 
@@ -49,7 +49,7 @@ char * get_bodyhtml_from_url(char *url,char *hyperlinks) {
     if(PyRun_SimpleString("import sys;sys.path.insert(0, '.')")) {
     	char *error;
         error = "path expansion failed\n";
-        return ;
+        return error;
     }
 
     module = PyImport_ImportModule("get_html");
@@ -93,16 +93,56 @@ char * get_bodyhtml_from_url(char *url,char *hyperlinks) {
     return resultat;
 }
 
-HyperLink * select_hyperlinks_from_html(char *html) {
-	HyperLink *resultat;
-	int i,blink,elink;
-	//faire un booléan
-	for (i = 0; i < strlen(html); i++){
-		if(html[i] == '<' && html[i+1] == 'a') {
-			blink = html[i];
+void select_hyperlinks_from_html(char *html,HyperLink *links) {
+	char *href_a = NULL,*text_a = NULL;
+	int i,size;
+	char in_tag_a=0,in_href=0,in_text_a=0;
 
+	for (i = 0; i < strlen(html); i++){
+		if(html[i+1] == 'a' && html[i] == '<' ) {
+			in_tag_a = 1;
+		}
+		if(in_tag_a) {
+			HyperLink link;
+			if((html[i-1] == '"' || html[i-1] == '\'') && html[i-2] == '=' && html[i-3]=='f'
+			&& html[i-4] == 'e' && html[i-5] == 'r' && html[i-6] == 'h') {
+					in_href= 1;
+			}
+			if(html[i-1] == '>') {
+				in_text_a=1;
+			}
+			if(in_href) {
+				href_a = malloc(strlen(href_a)+sizeof(char));
+				href_a[strlen(href_a)] = html[i];
+				if((html[i+1] == '"' || html[i+1] == '\'') && html[i] != '\\') {
+					in_href = 0;
+					link.url = href_a;
+					/*free(href_a);*/
+				}
+			}
+			if(in_text_a) {
+				text_a = malloc(strlen(text_a)+sizeof(char));
+				text_a[strlen(text_a)] = html[i];
+				if(html[i+1] == '<') {
+					in_text_a = 0;
+					link.text = text_a;
+					/*free(text_a);*/
+				}
+			}
+		}
+		if(html[i+1] == 'a' && html[i+2] == '>' && html[i] == '/') {
+			HyperLink lktst;
+			char *test=href_a;
+			char *test2=text_a;
+			lktst.text = test;
+			lktst.url = test2;
+			links[1]=lktst;
+			free(href_a);
+			free(text_a);
+			/*links[1]=link;
+			in_tag_a = 0;
+			/*links = malloc(sizeof(links) + sizeof(struct HyperLink));
+			links[sizeof(links)/sizeof(struct HyperLink)] = link;*/
 		}
 	}
-
-	return resultat;
 }

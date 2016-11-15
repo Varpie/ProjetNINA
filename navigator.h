@@ -1,13 +1,12 @@
 #ifndef NAVIGATOR_H_
 #define NAVIGATOR_H_
 
-typedef struct HyperLink HyperLink;
-struct HyperLink {
+typedef struct HyperLink{
     char *text;
     char *url;
-};
+} HyperLink;
 
 char * get_bodyhtml_from_url(char *url);
-HyperLink * select_hyperlinks_from_html(char *html);
+void select_hyperlinks_from_html(char *html,struct HyperLink *links);
 
 #endif
