@@ -15,12 +15,13 @@ int main()
 	char *parmList[] = {"firefox", "google.com", NULL};
 	char *url,*bodyhtml;
 	int a,child_pid;
-	HyperLink links[1];
+	int nbLi;
+	HyperLink links[500];
 
 	if ((pid = fork()) == -1)
 		perror("fork failed");
 	if (pid == 0) {
-		a = execvp("/usr/bin/firefox", parmList);
+		//a = execvp("/usr/bin/firefox", parmList);
 	} else {
 		child_pid = pid;
 		//Create command to kill process and execute it with bash
@@ -32,8 +33,20 @@ int main()
 		url = "https://www.wikipedia.org/";//https://www.wikipedia.org/
 		//https://www.youtube.com
 		bodyhtml = get_bodyhtml_from_url(url);
-		/*select_hyperlinks_from_html(bodyhtml,links);*/
+		nbLi = select_hyperlinks_from_html(bodyhtml, links);
 
+		for(int n=0;n<nbLi;n++) {
+			printf("Url%d : ",n);
+			for(int z=0;z<strlen(links[n].url);z++) {
+				printf("%c",links[n].url[z]);
+			}
+			printf("\n");
+			printf("Txt%d : ",n);
+			for(int z=0;z<strlen(links[n].url);z++) {
+				printf("%c",links[n].url[z]);
+			}
+			printf("\n");
+		}
 		//printf("%s\n",bodyhtml);
 	}
 
@@ -93,56 +106,46 @@ char * get_bodyhtml_from_url(char *url) {
     return resultat;
 }
 
-void select_hyperlinks_from_html(char *html,HyperLink *links) {
-	char *href_a = NULL,*text_a = NULL;
-	int i,size;
-	char in_tag_a=0,in_href=0,in_text_a=0;
+int select_hyperlinks_from_html(char *html,HyperLink *links) {
+	int cpt= 0,ihr=0,itx=0;
+	char in_tag_a=0,in_href=0,in_txt=0;
 
-	for (i = 0; i < strlen(html); i++){
-		if(html[i+1] == 'a' && html[i] == '<' ) {
+	for(int i=0;i<strlen(html);i++) {
+		if(html[i-3] == '<' && html[i-2] == 'a' && html[i-1] == ' ') {
 			in_tag_a = 1;
 		}
+
 		if(in_tag_a) {
-			HyperLink link;
-			if((html[i-1] == '"' || html[i-1] == '\'') && html[i-2] == '=' && html[i-3]=='f'
-			&& html[i-4] == 'e' && html[i-5] == 'r' && html[i-6] == 'h') {
-					in_href= 1;
-			}
-			if(html[i-1] == '>') {
-				in_text_a=1;
+			if(html[i-6]=='h' && html[i-5]=='r' && html[i-4]=='e' && html[i-3]=='f'
+			&& html[i-2]=='=' && html[i-1]=='"') {
+				in_href=1;
 			}
 			if(in_href) {
-				href_a = malloc(strlen(href_a)+sizeof(char));
-				href_a[strlen(href_a)] = html[i];
-				if((html[i+1] == '"' || html[i+1] == '\'') && html[i] != '\\') {
-					in_href = 0;
-					link.url = href_a;
-					/*free(href_a);*/
+				if(html[i+1]=='>') {
+					in_txt = 1;
 				}
-			}
-			if(in_text_a) {
-				text_a = malloc(strlen(text_a)+sizeof(char));
-				text_a[strlen(text_a)] = html[i];
-				if(html[i+1] == '<') {
-					in_text_a = 0;
-					link.text = text_a;
-					/*free(text_a);*/
+				if(in_txt) {
+					if(html[i+1]=='<' && html[i+2]=='/' && html[i+3]=='a'
+					&& html[i+4]=='>') {
+						in_txt=0;
+						links[cpt].text[itx+1]='\0';
+						itx=0;
+					}
+					links[cpt].text[itx]=html[i];
+				}
+				links[cpt].url[ihr]=html[i];
+				ihr++;
+				if(html[i+1]=='"') {
+					in_href = 0;
+					links[cpt].url[ihr+1]='\0';
+					ihr=0;
 				}
 			}
 		}
-		if(html[i+1] == 'a' && html[i+2] == '>' && html[i] == '/') {
-			HyperLink lktst;
-			char *test=href_a;
-			char *test2=text_a;
-			lktst.text = test;
-			lktst.url = test2;
-			links[1]=lktst;
-			free(href_a);
-			free(text_a);
-			/*links[1]=link;
+		if(html[i+1] == '<' && html[i+2] == '/' && html[i+3] == 'a' ) {
+			cpt++;
 			in_tag_a = 0;
-			/*links = malloc(sizeof(links) + sizeof(struct HyperLink));
-			links[sizeof(links)/sizeof(struct HyperLink)] = link;*/
 		}
 	}
+	return cpt;
 }
