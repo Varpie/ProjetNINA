@@ -11,7 +11,7 @@ void print_help() {
 
 void parse_config() {
 	FILE *configFile = fopen("config.conf", "r");
-	
+
 	char *line = NULL;
 	size_t len = 100;
 	ssize_t read;
@@ -22,7 +22,7 @@ void parse_config() {
 		if(line[0] != '#' && line[0] != '\n') {
 			/* Splitting lines at '=' character */
 			char *var = strtok(line, "=");
-			
+
 
 			if(strcmp(var,"lang") == 0) {
 				/* Duplicating string and assigning it to variable*/
@@ -48,11 +48,9 @@ void parse_config() {
 	fclose(configFile);
 }
 
-int main(int argc, char **argv)  {
-	parse_config();
-
+void parse_arguments(int argc, char **argv) {
 	int character;
-	
+
 	while(1) {
 		int this_option_optind = optind ? optind : 1;
 		int option_index = 0;
@@ -68,23 +66,23 @@ int main(int argc, char **argv)  {
 
 		character = getopt_long(argc, argv, "h", long_options, &option_index);
 		if(character == -1)
-			break;
+		break;
 		switch (character) {
 			case 0:
-				if(strcmp(long_options[option_index].name, "config") == 0)
-					system("vim config.conf");
-				else if(strcmp(long_options[option_index].name, "language") == 0)
-					lang = optarg;				
-				break;
+			if(strcmp(long_options[option_index].name, "config") == 0)
+			system("vim config.conf");
+			else if(strcmp(long_options[option_index].name, "language") == 0)
+			lang = optarg;
+			break;
 			case 'h':
-				print_help();
-				break;
+			print_help();
+			break;
 			case '?':
-				/* character not in the optstring. 
-				   (3rd arg of getopt_long, where we put short options) */
-				break;
+			/* character not in the optstring.
+			(3rd arg of getopt_long, where we put short options) */
+			break;
 			default:
-				printf("Uhh-uhh.");
+			printf("Uhh-uhh.");
 		}
 	}
 
@@ -92,15 +90,22 @@ int main(int argc, char **argv)  {
 	if(optind < argc) {
 		printf("non-option ARGV-elements: ");
 		while (optind < argc)
-			printf("%s", argv[optind++]);
+		printf("%s", argv[optind++]);
 		printf("\n");
 	}
+}
 
-	printf("lang : %s\nlayout : %s\nbrowser : %s", lang, layout, browser);
+void exec_pycode() {
+	FILE* python_file = fopen("selenium/main.py", "r");
+	Py_Initialize();
+	PyRun_SimpleFile(python_file, "main.py");
+	Py_Finalize();
+}
 
-	while(1) {
-			sleep(1);
-	}
+int main(int argc, char **argv)  {
+	parse_config();
+	parse_arguments(argc, argv);
+	exec_pycode();
 	// char *lang = getenv("LANG");
 	return 0;
 }
