@@ -42,8 +42,8 @@ int main()
 			}
 			printf("\n");
 			printf("Txt%d : ",n);
-			for(int z=0;z<strlen(links[n].url);z++) {
-				printf("%c",links[n].url[z]);
+			for(int t=0;t<strlen(links[n].text);t++) {
+				printf("%c",links[n].text[t]);
 			}
 			printf("\n");
 		}
@@ -121,24 +121,25 @@ int select_hyperlinks_from_html(char *html,HyperLink *links) {
 				in_href=1;
 			}
 			if(in_href) {
-				if(html[i+1]=='>') {
-					in_txt = 1;
-				}
-				if(in_txt) {
-					if(html[i+1]=='<' && html[i+2]=='/' && html[i+3]=='a'
-					&& html[i+4]=='>') {
-						in_txt=0;
-						links[cpt].text[itx+1]='\0';
-						itx=0;
-					}
-					links[cpt].text[itx]=html[i];
-				}
 				links[cpt].url[ihr]=html[i];
 				ihr++;
 				if(html[i+1]=='"') {
 					in_href = 0;
 					links[cpt].url[ihr+1]='\0';
 					ihr=0;
+				}
+			}
+			if(html[i-1]=='>') {
+				in_txt = 1;
+			}
+			if(in_txt) {
+				links[cpt].text[itx]=html[i];
+				itx++;
+				if(html[i+1]=='<' && html[i+2]=='/' && html[i+3]=='a'
+				&& html[i+4]=='>') {
+					in_txt=0;
+					links[cpt].text[itx+1]='\0';
+					itx=0;
 				}
 			}
 		}
