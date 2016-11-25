@@ -111,6 +111,7 @@ int main(int argc, char **argv)  {
 }
 
 
+/*Prend un url et fait appel a la spider get_html.py*/
 char * get_bodyhtml_from_url(char *url) {
     char *resultat;
     PyObject *retour, *module, *fonction, *arguments;
