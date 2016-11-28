@@ -25,3 +25,15 @@ Coding style :
   ```
 
 - Functions work the opposite way (curly brackets under the function name)
+
+Python :
+
+- Install python:
+    ```
+    sudo apt-get install python-dev
+    ```
+
+- Install pip:
+    ```
+    sudo apt-get install python-pip
+    ```

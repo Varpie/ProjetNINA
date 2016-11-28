@@ -5,11 +5,13 @@ char *layout = "en\0";
 char *browser = "firefox\0";
 bool visible = true;
 
-void print_help() {
+void print_help()
+{
 	printf("Yet to be done\n");
 }
 
-void parse_config() {
+void parse_config()
+{
 	FILE *configFile = fopen("config.conf", "r");
 
 	char *line = NULL;
@@ -48,7 +50,8 @@ void parse_config() {
 	fclose(configFile);
 }
 
-void parse_arguments(int argc, char **argv) {
+void parse_arguments(int argc, char **argv)
+{
 	int character;
 
 	while(1) {
@@ -95,14 +98,21 @@ void parse_arguments(int argc, char **argv) {
 	}
 }
 
-void exec_pycode() {
+void exec_py_function(char *function)
+{
+	PyEval_CallObject(function);
+}
+
+void exec_pycode()
+{
 	FILE* python_file = fopen("selenium/main.py", "r");
 	Py_Initialize();
 	PyRun_SimpleFile(python_file, "main.py");
 	Py_Finalize();
 }
 
-int main(int argc, char **argv)  {
+int main(int argc, char **argv)
+{
 	parse_config();
 	parse_arguments(argc, argv);
 	exec_pycode();
