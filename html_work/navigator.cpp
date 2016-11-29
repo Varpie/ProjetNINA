@@ -6,22 +6,20 @@ int main()
 	//parameters for execvp
 	std::string url, bodyhtml;
 	int nbLi;
-	HyperLink *links;
-	links = malloc(0);
+	std::list<HyperLink> links;
 	url = "https://wikipedia.org";
 	//url = "https://en.wikipedia.org/wiki/Computer";
 	//url = "http://dahunicorn.xyz";
 	bodyhtml = get_bodyhtml_from_url(url);
-
+	//std::cout << bodyhtml << std::endl;
+	std::cout << "1" << std::endl;
 	nbLi = select_hyperlinks_from_html(bodyhtml, links);
-	printf("Nb Links : %d\n",nbLi);
-
-
 	return 0;
 }
 
-std::string get_bodyhtml_from_url(std::string url) {
-    std::string resultat;
+std::string get_bodyhtml_from_url(std::string url) 
+{
+    char *resultat;
     PyObject *retour, *module, *fonction, *arguments;
 
     Py_Initialize();
@@ -47,7 +45,7 @@ std::string get_bodyhtml_from_url(std::string url) {
         return error;
     }
 
-    arguments = Py_BuildValue("(s)", url);
+    arguments = Py_BuildValue("(s)", url.c_str());
     if(arguments == NULL) {
     	std::string error;
         error = "arg parsing failed\n";
@@ -70,17 +68,21 @@ std::string get_bodyhtml_from_url(std::string url) {
     PyArg_Parse(retour, "s", &resultat);
 
     Py_Finalize();
-    return resultat;
+    std::string cpp_str = resultat;
+    return cpp_str;
 }
 
-int select_hyperlinks_from_html(std::string html,HyperLink *links) {
+int select_hyperlinks_from_html(std::string html,std::list<HyperLink> links)
+{
 	int cpt= 0,ihr=0,itx=0;
 	bool in_tag_a=false, in_href=false;
 	bool in_txt=false, rubbish_tag=false;
 	std::string buff_txt, buff_href;
-
-	for(unsigned int i=0;i<html.length();i++) {
+	std::cout << "2" << std::endl;
+	for(int i=0;i<html.length();i++) {
+		std::cout << "3" << std::endl;
 		if(html[i-3] == '<' && html[i-2] == 'a' && html[i-1] == ' ') {
+			std::cout << "4" << std::endl;
 			in_tag_a = true;
 		}
 
@@ -96,7 +98,7 @@ int select_hyperlinks_from_html(std::string html,HyperLink *links) {
 				if(html[i+1]=='"') {
 					in_href = true;
 					//links[cpt].url[ihr+1]='\0';
-					buff_href[ihr]='\0';
+					//buff_href[ihr]='\0';
 					ihr=0;
 				}
 			}
@@ -120,32 +122,17 @@ int select_hyperlinks_from_html(std::string html,HyperLink *links) {
 					&& html[i+4]=='>') {
 						in_txt=false;
 						//links[cpt].text[itx+1]='\0';
-						buff_txt[itx] = '\0';
+						//buff_txt[itx] = '\0';
 						itx=0;
 					}
 				}
 			}
 		}
 		if(html[i+1] == '<' && html[i+2] == '/' && html[i+3] == 'a' ) {
+			std::cout << "4" << std::endl;
 			HyperLink link;
-			// printf("%d\n",(strlen(buff_href)+1)*sizeof(char));
-			link.url = buff_href;
-			link.text = buff_txt;
-			//printf("Add : %d\n",(cpt+1)*sizeof(link));
-			links = (HyperLink*)calloc(cpt+1,sizeof(link));
-			links[cpt].url = link.url;
-			links[cpt].text = link.text;
-			// printf("Url%d : ",cpt);
-			// for(unsigned int z=0;z<strlen(link.url);z++) {
-			// 	printf("%c",link.url[z]);
-			// }
-			// printf("\n");
-			// printf("Txt%d : ",cpt);
-			// for(unsigned int t=0;t<strlen(link.text);t++) {
-			// 	printf("%c",link.text[t]);
-			// }
-			// printf("\n");
-			// printf("\n");
+			link.setUrl(buff_href);
+			link.setText(buff_txt);
 			cpt++;
 			in_tag_a = 0;
 		}
