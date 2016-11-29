@@ -7,9 +7,9 @@ int main()
 	std::string url, bodyhtml;
 	int nbLi;
 	HyperLink *links;
-	url = "https://wikipedia.org";
+	//url = "https://wikipedia.org";
 	//url = "https://en.wikipedia.org/wiki/Computer";
-	//url = "http://dahunicorn.xyz";
+	url = "http://dahunicorn.xyz";
 	bodyhtml = get_bodyhtml_from_url(url);
 
 	nbLi = select_hyperlinks_from_html(bodyhtml, links);
