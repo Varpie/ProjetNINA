@@ -1,12 +1,18 @@
 #ifndef NAVIGATOR_H_
 #define NAVIGATOR_H_
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string>
+#include <python2.7/Python.h>
+
 typedef struct HyperLink{
-    char *text;
-    char *url;
+    std::string text;
+    std::string url;
 } HyperLink;
 
-char * get_bodyhtml_from_url(char *url);
-int select_hyperlinks_from_html(char *html,struct HyperLink *links);
+std::string get_bodyhtml_from_url(std::string url);
+int select_hyperlinks_from_html(std::string html,struct HyperLink *links);
 
 #endif
