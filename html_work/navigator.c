@@ -14,25 +14,25 @@ int main()
 	HyperLink *links;
 	links = malloc(0);
 	url = "https://wikipedia.org";
-	// url = "https://en.wikipedia.org/wiki/Computer";
+	//url = "https://en.wikipedia.org/wiki/Computer";
 	//url = "http://dahunicorn.xyz";
 	bodyhtml = get_bodyhtml_from_url(url);
 
 	nbLi = select_hyperlinks_from_html(bodyhtml, links);
 
-	//printf("ouiiiii : %d",nbLi);
-	/*for(int n=0;n<nbLi;n++) {
+	//printf("%d",strlen(links[0].url));
+	for(int n=0;n<nbLi;n++) {
 		printf("Url%d : ",n);
 		for(int z=0;z<strlen(links[n].url);z++) {
-			//printf("%c",links[n].url[z]);
+			printf("%c",links[n].url[z]);
 		}
 		printf("\n");
 		printf("Txt%d : ",n);
 		for(int t=0;t<strlen(links[n].text);t++) {
-			//printf("%c",links[n].text[t]);
+			printf("%c",links[n].text[t]);
 		}
 		printf("\n");
-	}*/
+	}
 
 	return 0;
 }
@@ -155,8 +155,21 @@ int select_hyperlinks_from_html(char *html,HyperLink *links) {
 			strcpy(link.url, buff_href);
 			link.text = malloc((strlen(buff_txt)+1)*sizeof(char));
 			strcpy(link.text, buff_txt);
-			links = (HyperLink*)calloc(cpt+1,sizeof(link));
-			links[cpt] = link;
+			links = (HyperLink*)calloc(cpt+1,sizeof(link.text)+sizeof(link.url));
+			links[cpt].url = strdup(link.url);
+			links[cpt].text = strdup(link.text);
+
+
+			// printf("Url%d : ",cpt);
+			// for(int z=0;z<strlen(links[cpt].url);z++) {
+			// 	printf("%c",links[cpt].url[z]);
+			// }
+			// printf("\n");
+			// printf("Txt%d : ",cpt);
+			// for(int t=0;t<strlen(links[cpt].text);t++) {
+			// 	printf("%c",links[cpt].text[t]);
+			// }
+			// printf("\n");
 			cpt++;
 			in_tag_a = 0;
 		}
