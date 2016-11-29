@@ -3,6 +3,7 @@
 std::string lang = "en";
 std::string layout = "en";
 std::string browser = "firefox";
+std::string url = "http://www.google.com";
 
 void print_help()
 {
@@ -37,75 +38,71 @@ void parse_config()
 	}
 }
 
-// void parse_arguments(int argc, char **argv)
-// {
-// 	int character;
-//
-// 	while(1) {
-// 		int this_option_optind = optind ? optind : 1;
-// 		int option_index = 0;
-// 		/* Listing options */
-// 		static struct option long_options[] = {
-// 			/* name, has_arg, flag, val */
-// 			{"help", no_argument, 0, 'h'},
-// 			{"config", no_argument, 0, 0},
-// 			{"language", required_argument, 0, 0},
-// 			/* That last line is necessary, but useless. */
-// 			{0,0,0,0}
-// 		};
-//
-// 		character = getopt_long(argc, argv, "h", long_options, &option_index);
-// 		if(character == -1)
-// 		break;
-// 		switch (character) {
-// 			case 0:
-// 			if(long_options[option_index].name == "config")
-// 			system("vim config.conf");
-// 			else if(long_options[option_index].name == "language")
-// 			lang = optarg;
-// 			break;
-// 			case 'h':
-// 			print_help();
-// 			break;
-// 			case '?':
-// 			/* character not in the optstd::string.
-// 			(3rd arg of getopt_long, where we put short options) */
-// 			break;
-// 			default:
-// 			printf("Uhh-uhh.");
-// 		}
-// 	}
-//
-//
-// 	if(optind < argc) {
-// 		printf("non-option ARGV-elements: ");
-// 		while (optind < argc)
-// 		printf("%s", argv[optind++]);
-// 		printf("\n");
-// 	}
-// }
-
-void exec_pycode()
+void parse_arguments(int argc, char **argv)
 {
-	//FILE* python_file = fopen("selenium/main.py", "r");
+	int character;
+
+	while(1) {
+		int option_index = 0;
+		/* Listing options */
+		static struct option long_options[] = {
+			/* name, has_arg, flag, val */
+			{"help", no_argument, 0, 'h'},
+			{"config", no_argument, 0, 0},
+			{"language", required_argument, 0, 0},
+			{"url", required_argument, 0, 0},
+			/* That last line is necessary, but useless. */
+			{0,0,0,0}
+		};
+
+		character = getopt_long(argc, argv, "h", long_options, &option_index);
+		if(character == -1)
+			break;
+		switch (character) {
+			case 0:
+				if(long_options[option_index].name == "config")
+					system("vim config.conf");
+				else if(long_options[option_index].name == "language")
+					lang = optarg;
+				else if(long_options[option_index].name == "url")
+					url = optarg;
+				break;
+			case 'h':
+				print_help();
+				break;
+			case '?':
+				/* character not in the optstring.
+				(3rd arg of getopt_long, where we put short options) */
+				break;
+			default:
+				printf("Uhh-uhh.");
+		}
+	}
+
+
+	if(optind < argc) {
+		printf("non-option ARGV-elements: ");
+		while (optind < argc)
+		printf("%s", argv[optind++]);
+		printf("\n");
+	}
+}
+
+void exec_pycode(std::string url)
+{
 	Py_Initialize();
-	//PyRun_SimpleFile(python_file, "main.py");
-	//PyObject *file = PyImport_Import("main");
-	//PyObject *pid_Python;
-	//pid_Python = PyObject_CallMethod(file, "get_pid", NULL);
-	/*int pid = PyLong_AsLong(pid_Python);
-	printf("%d", pid);*/
 	PyRun_SimpleString("from selenium import webdriver");
 	PyRun_SimpleString("driver = webdriver.Firefox()");
-	PyRun_SimpleString("driver.get('http://www.google.com')");
+	url = "driver.get('" + url + "')";
+	PyRun_SimpleString(url.c_str());
 	Py_Finalize();
 }
 
 int main(int argc, char **argv)
 {
 	parse_config();
-	//parse_arguments(argc, argv);
-	// exec_pycode();
+	parse_arguments(argc, argv);
+	exec_pycode(url);
 	return 0;
 }
 

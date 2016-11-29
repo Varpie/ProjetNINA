@@ -33,10 +33,6 @@ std::string HyperLink::getUrl() {
    return url;
 }
 
-
-
-
 std::string get_bodyhtml_from_url(std::string url);
 int select_hyperlinks_from_html(std::string html,std::list<HyperLink> links);
-
 #endif

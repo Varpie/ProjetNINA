@@ -21,9 +21,16 @@ int main(int argc, char ** argv){
     }
  }
  int j = 0;
- for(j=0;j<size-1;j++){
-   printf("\nDiff Temps %i : %i",j,t[j+1]-t[j]);
+ FILE* f = fopen("../conf","w+");
+ for(j=0;j<size-2;j++){
+   if((t[j+1]-t[j])<0){
+     fprintf(f,"%i\n", 1000000+t[j+1]-t[j]);
+   }else{
+     fprintf(f,"%i\n", t[j+1]-t[j]);
+  }
+   //printf("\nDiff Temps %i : %i",j,t[j+1]-t[j]);
  }
- printf("\n");
-fflush(stdin);
+ fclose(f);
+ //printf("\n");
+//fflush(stdin);
 }

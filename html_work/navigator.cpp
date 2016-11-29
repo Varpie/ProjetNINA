@@ -1,35 +1,21 @@
 #include "navigator.h"
+
 //Run browser as a child process and store it's pid in var child_pid
 int main()
 {
 	//parameters for execvp
 	std::string url, bodyhtml;
 	int nbLi;
-	// HyperLink *links;
-	std::list<HyperLink> links;
+	HyperLink *links;
+	links = malloc(0);
 	url = "https://wikipedia.org";
 	//url = "https://en.wikipedia.org/wiki/Computer";
 	//url = "http://dahunicorn.xyz";
 	bodyhtml = get_bodyhtml_from_url(url);
-	std::cout << "Test1" <<std::endl;
-	std::cout << bodyhtml << std::endl;
-	//nbLi = select_hyperlinks_from_html(bodyhtml, links);
-	//printf("Nb Links : %d\n",nbLi);
 
-	// for(int n=0;n<nbLi;n++) {
-	// 	printf("Url%d : ",n);
-	// 	// for(int z=0;z<strlen(links[n].url);z++) {
-	// 	// 	printf("%c",links[n].url[z]);
-	// 	// }
-	// 	printf("\n");
-	// 	printf("Txt%d : ",n);
-	// 	// for(int t=0;t<strlen(links[n].text);t++) {
-	// 	// 	printf("%c",links[n].text[t]);
-	// 	// }
-	// 	printf("\n");
-	// }
+	nbLi = select_hyperlinks_from_html(bodyhtml, links);
+	printf("Nb Links : %d\n",nbLi);
 
-	//FILE* file = fopen("word_list/word_list.txt", "r");
 
 	return 0;
 }
@@ -42,30 +28,30 @@ std::string get_bodyhtml_from_url(std::string url) {
     //PySys_SetPath(".");
     if(PyRun_SimpleString("import sys;sys.path.insert(0, '.')")) {
     	std::string error;
-      error = "path expansion failed\n";
-      return error;
+        error = "path expansion failed\n";
+        return error;
     }
 
     module = PyImport_ImportModule("main");
     if(module == NULL) {
     	std::string error;
-      error = "import failed\n";
-      PyErr_Print();
-      return error;
+        error = "import failed\n";
+        PyErr_Print();
+        return error;
     }
 
     fonction = PyObject_GetAttrString(module, "get_html_from_url");
     if(fonction == NULL) {
     	std::string error;
-      error = "could not find function\n";
-      return error;
+        error = "could not find function\n";
+        return error;
     }
 
-    arguments = Py_BuildValue("(s)", url.c_str());
+    arguments = Py_BuildValue("(s)", url);
     if(arguments == NULL) {
     	std::string error;
-      error = "arg parsing failed\n";
-      return error;
+        error = "arg parsing failed\n";
+        return error;
     }
 
     printf("Calling\n");
@@ -84,12 +70,10 @@ std::string get_bodyhtml_from_url(std::string url) {
     PyArg_Parse(retour, "s", &resultat);
 
     Py_Finalize();
-		std::cout << "Test2" <<std::endl;
-		std::string str(resultat);
-    return str;
+    return resultat;
 }
 
-int select_hyperlinks_from_html(std::string html,std::list<HyperLink> links) {
+int select_hyperlinks_from_html(std::string html,HyperLink *links) {
 	int cpt= 0,ihr=0,itx=0;
 	bool in_tag_a=false, in_href=false;
 	bool in_txt=false, rubbish_tag=false;
@@ -144,8 +128,24 @@ int select_hyperlinks_from_html(std::string html,std::list<HyperLink> links) {
 		}
 		if(html[i+1] == '<' && html[i+2] == '/' && html[i+3] == 'a' ) {
 			HyperLink link;
-			link.setUrl(buff_href);
-			link.setText(buff_txt);
+			// printf("%d\n",(strlen(buff_href)+1)*sizeof(char));
+			link.url = buff_href;
+			link.text = buff_txt;
+			//printf("Add : %d\n",(cpt+1)*sizeof(link));
+			links = (HyperLink*)calloc(cpt+1,sizeof(link));
+			links[cpt].url = link.url;
+			links[cpt].text = link.text;
+			// printf("Url%d : ",cpt);
+			// for(unsigned int z=0;z<strlen(link.url);z++) {
+			// 	printf("%c",link.url[z]);
+			// }
+			// printf("\n");
+			// printf("Txt%d : ",cpt);
+			// for(unsigned int t=0;t<strlen(link.text);t++) {
+			// 	printf("%c",link.text[t]);
+			// }
+			// printf("\n");
+			// printf("\n");
 			cpt++;
 			in_tag_a = 0;
 		}
