@@ -3,6 +3,7 @@
 std::string lang = "en";
 std::string layout = "en";
 std::string browser = "firefox";
+std::string url = "http://www.google.com";
 
 void print_help()
 {
@@ -49,6 +50,7 @@ void parse_arguments(int argc, char **argv)
 			{"help", no_argument, 0, 'h'},
 			{"config", no_argument, 0, 0},
 			{"language", required_argument, 0, 0},
+			{"url", required_argument, 0, 0},
 			/* That last line is necessary, but useless. */
 			{0,0,0,0}
 		};
@@ -62,12 +64,14 @@ void parse_arguments(int argc, char **argv)
 					system("vim config.conf");
 				else if(long_options[option_index].name == "language")
 					lang = optarg;
+				else if(long_options[option_index].name == "url")
+					url = optarg;
 				break;
 			case 'h':
 				print_help();
 				break;
 			case '?':
-				/* character not in the optstd::string.
+				/* character not in the optstring.
 				(3rd arg of getopt_long, where we put short options) */
 				break;
 			default:
@@ -84,19 +88,13 @@ void parse_arguments(int argc, char **argv)
 	}
 }
 
-void exec_pycode()
+void exec_pycode(std::string url)
 {
-	//FILE* python_file = fopen("selenium/main.py", "r");
 	Py_Initialize();
-	//PyRun_SimpleFile(python_file, "main.py");
-	//PyObject *file = PyImport_Import("main");
-	//PyObject *pid_Python;
-	//pid_Python = PyObject_CallMethod(file, "get_pid", NULL);
-	/*int pid = PyLong_AsLong(pid_Python);
-	printf("%d", pid);*/
 	PyRun_SimpleString("from selenium import webdriver");
 	PyRun_SimpleString("driver = webdriver.Firefox()");
-	PyRun_SimpleString("driver.get('http://www.google.com')");
+	url = "driver.get('" + url + "')";
+	PyRun_SimpleString(url.c_str());
 	Py_Finalize();
 }
 
@@ -104,7 +102,7 @@ int main(int argc, char **argv)
 {
 	parse_config();
 	parse_arguments(argc, argv);
-	// exec_pycode();
+	exec_pycode(url);
 	return 0;
 }
 
