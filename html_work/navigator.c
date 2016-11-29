@@ -13,8 +13,9 @@ int main()
 	int nbLi;
 	HyperLink *links;
 	links = malloc(0);
-
-	url = "https://en.wikipedia.org/wiki/Computer";
+	url = "https://wikipedia.org";
+	// url = "https://en.wikipedia.org/wiki/Computer";
+	//url = "http://dahunicorn.xyz";
 	bodyhtml = get_bodyhtml_from_url(url);
 
 	nbLi = select_hyperlinks_from_html(bodyhtml, links);
@@ -91,6 +92,7 @@ char * get_bodyhtml_from_url(char *url) {
 int select_hyperlinks_from_html(char *html,HyperLink *links) {
 	int cpt= 0,ihr=0,itx=0;
 	char in_tag_a=0,in_href=0,in_txt=0;
+	char rubbish_tag=0;
 	char buff_txt[512],buff_href[2048];
 
 	for(int i=0;i<strlen(html);i++) {
@@ -110,7 +112,7 @@ int select_hyperlinks_from_html(char *html,HyperLink *links) {
 				if(html[i+1]=='"') {
 					in_href = 0;
 					//links[cpt].url[ihr+1]='\0';
-					buff_href[ihr+1]='\0';
+					buff_href[ihr]='\0';
 					ihr=0;
 				}
 			}
@@ -118,37 +120,49 @@ int select_hyperlinks_from_html(char *html,HyperLink *links) {
 				in_txt = 1;
 			}
 			if(in_txt) {
+				if(html[i-1] == '>') {
+					rubbish_tag=0;
+				}
+				if(html[i] == '<') {
+					rubbish_tag=1;
+				}
 				//links[cpt].text[itx]=html[i];
-				buff_txt[itx] = html[i];
-				itx++;
-				if(html[i+1]=='<' && html[i+2]=='/' && html[i+3]=='a'
-				&& html[i+4]=='>') {
-					in_txt=0;
-					//links[cpt].text[itx+1]='\0';
-					buff_txt[itx+1] = '\0';
-					itx=0;
+				if(!rubbish_tag) {
+					if(html[i] != '\n') {
+						buff_txt[itx] = html[i];
+					}
+					itx++;
+					if(html[i+1]=='<' && html[i+2]=='/' && html[i+3]=='a'
+					&& html[i+4]=='>') {
+						in_txt=0;
+						//links[cpt].text[itx+1]='\0';
+						buff_txt[itx] = '\0';
+						itx=0;
+					}
 				}
 			}
 		}
 		if(html[i+1] == '<' && html[i+2] == '/' && html[i+3] == 'a' ) {
 			HyperLink link;
-			link.url = malloc(sizeof(buff_href));
-			link.url = buff_href;
-			link.text = malloc(sizeof(buff_txt));
-			link.text = buff_txt;
+			link.url = malloc((strlen(buff_href)+1)*sizeof(char));
+			// printf("%d\n",(strlen(buff_href)+1)*sizeof(char));
+			strcpy(link.url, buff_href);
+			link.text = malloc((strlen(buff_txt)+1)*sizeof(char));
+			strcpy(link.text, buff_txt);
 			//printf("Add : %d\n",(cpt+1)*sizeof(link));
 			links = (HyperLink*)calloc(cpt+1,sizeof(link));
 			links[cpt] = link;
 			printf("Url%d : ",cpt);
-			for(int z=0;z<strlen(links[cpt].url);z++) {
-				printf("%c",links[cpt].url[z]);
+			for(int z=0;z<strlen(link.url);z++) {
+				printf("%c",link.url[z]);
 			}
 			printf("\n");
 			printf("Txt%d : ",cpt);
-			for(int t=0;t<strlen(links[cpt].text);t++) {
-				printf("%c",links[cpt].text[t]);
+			for(int t=0;t<strlen(link.text);t++) {
+				printf("%c",link.text[t]);
 			}
-
+			printf("\n");
+			printf("\n");
 			cpt++;
 			in_tag_a = 0;
 		}
