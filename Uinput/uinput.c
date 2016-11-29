@@ -380,15 +380,16 @@ void writeChar(char c){
 void writeArray(char array[], int size){
 
 	int i;
-	for(i =0; i<size-1; i++){
-			writeChar(array[i]);
+	for(i=0; i<=size; i++){
+			/* Black magic */
+			writeChar(array[i-1]);
 			nanosleep((const struct timespec[]){{0, 100000000L}}, NULL);
 	}
 
 }
 /* This function will open the uInput device. Please make
 sure that you have inserted the uinput.ko into kernel. */
-int main()
+int main(int argc, char *argv[])
 {
 // Return an error if device not found.
 	if (setup_uinput_device() < 0)
@@ -397,24 +398,23 @@ int main()
 		return -1;
 	}
 
-char mot[] = " minuscule";
-char mo[] = "MAJUSCULE";
-int size = sizeof(mot)/sizeof(mot[0]);
-int sizemo = sizeof(mo)/sizeof(mo[0]);
+// char mot[] = " minuscule";
+// char mo[] = "MAJUSCULE";
+// int size = sizeof(mot)/sizeof(mot[0]);
+// int sizemo = sizeof(mo)/sizeof(mo[0]);
 
 // writeArray(mot, size);
 // writeArray(mo, sizemo);
-
-
-while(1){
-	sleep(1);
+writeArray(argv[1], strlen(argv[1]));
+//while(1){
+	//sleep(1);
 	// send_a_button(64,0);
 	// writeArray(mot,size);
 	// send_a_button(28,0);
 	// sleep(1);
-}
+//}
 //writeArray(mot, size);
-send_a_button(28,0);
+//send_a_button(28,0);
 
 /* Destroy the input device */
 ioctl(uinp_fd, UI_DEV_DESTROY);
