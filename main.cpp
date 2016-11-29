@@ -37,53 +37,52 @@ void parse_config()
 	}
 }
 
-// void parse_arguments(int argc, char **argv)
-// {
-// 	int character;
-//
-// 	while(1) {
-// 		int this_option_optind = optind ? optind : 1;
-// 		int option_index = 0;
-// 		/* Listing options */
-// 		static struct option long_options[] = {
-// 			/* name, has_arg, flag, val */
-// 			{"help", no_argument, 0, 'h'},
-// 			{"config", no_argument, 0, 0},
-// 			{"language", required_argument, 0, 0},
-// 			/* That last line is necessary, but useless. */
-// 			{0,0,0,0}
-// 		};
-//
-// 		character = getopt_long(argc, argv, "h", long_options, &option_index);
-// 		if(character == -1)
-// 		break;
-// 		switch (character) {
-// 			case 0:
-// 			if(long_options[option_index].name == "config")
-// 			system("vim config.conf");
-// 			else if(long_options[option_index].name == "language")
-// 			lang = optarg;
-// 			break;
-// 			case 'h':
-// 			print_help();
-// 			break;
-// 			case '?':
-// 			/* character not in the optstd::string.
-// 			(3rd arg of getopt_long, where we put short options) */
-// 			break;
-// 			default:
-// 			printf("Uhh-uhh.");
-// 		}
-// 	}
-//
-//
-// 	if(optind < argc) {
-// 		printf("non-option ARGV-elements: ");
-// 		while (optind < argc)
-// 		printf("%s", argv[optind++]);
-// 		printf("\n");
-// 	}
-// }
+void parse_arguments(int argc, char **argv)
+{
+	int character;
+
+	while(1) {
+		int option_index = 0;
+		/* Listing options */
+		static struct option long_options[] = {
+			/* name, has_arg, flag, val */
+			{"help", no_argument, 0, 'h'},
+			{"config", no_argument, 0, 0},
+			{"language", required_argument, 0, 0},
+			/* That last line is necessary, but useless. */
+			{0,0,0,0}
+		};
+
+		character = getopt_long(argc, argv, "h", long_options, &option_index);
+		if(character == -1)
+			break;
+		switch (character) {
+			case 0:
+				if(long_options[option_index].name == "config")
+					system("vim config.conf");
+				else if(long_options[option_index].name == "language")
+					lang = optarg;
+				break;
+			case 'h':
+				print_help();
+				break;
+			case '?':
+				/* character not in the optstd::string.
+				(3rd arg of getopt_long, where we put short options) */
+				break;
+			default:
+				printf("Uhh-uhh.");
+		}
+	}
+
+
+	if(optind < argc) {
+		printf("non-option ARGV-elements: ");
+		while (optind < argc)
+		printf("%s", argv[optind++]);
+		printf("\n");
+	}
+}
 
 void exec_pycode()
 {
@@ -104,7 +103,7 @@ void exec_pycode()
 int main(int argc, char **argv)
 {
 	parse_config();
-	//parse_arguments(argc, argv);
+	parse_arguments(argc, argv);
 	// exec_pycode();
 	return 0;
 }
