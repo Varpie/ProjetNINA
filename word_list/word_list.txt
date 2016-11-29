@@ -20,12 +20,15 @@ buffer
 bug
 bus
 byte
+c
+c++
+c#
 cache
 caps
 capslock
 captcha
-CD
-CD-ROM
+cd
+cd-rom
 client
 clip
 clipart
@@ -41,7 +44,7 @@ computing
 configure
 cookie
 copy
-CPU
+cpu
 cybercrime
 cyberspace
 dashboard
@@ -55,7 +58,7 @@ desktop
 development
 digital
 disk
-DNS
+dns
 document
 domain
 domainname
@@ -63,7 +66,7 @@ dot
 dotmatrix
 download
 drag
-DVD
+dvd
 dynamic
 editor
 email
@@ -72,7 +75,7 @@ encrypt
 encryption
 enter
 exabyte
-FAQ
+faq
 file
 finder
 firewall
@@ -102,12 +105,14 @@ icon
 inbox
 integer
 interface
-Internet
-IP
-IPaddress
+internet
+ip
+ipaddress
 iteration
-Java
+java
+javascript
 joystick
+jquery
 junkmail
 kernel
 key
@@ -152,6 +157,7 @@ password
 paste
 path
 phishing
+php
 piracy
 pirate
 platform
@@ -167,13 +173,13 @@ program
 programmer
 protocol
 queue
-QWERTY
-RAM
+qwerty
+ram
 real-time
 reboot
 resolution
 restore
-ROM
+rom
 root
 router
 runtime
@@ -199,6 +205,7 @@ software
 spam
 spammer
 spreadsheet
+sql
 status bar
 storage
 spyware
@@ -216,15 +223,15 @@ texteditor
 thread
 toolbar
 trash
-Trojan horse
+trojan horse
 typeface
 undo
-Unix
+unix
 upload
 user
 userinterface
 username
-URL
+url
 user
 utility
 version
@@ -235,7 +242,7 @@ web
 webhost
 webmaster
 website
-Wide
+wide
 widget
 window
 wireless
@@ -243,8 +250,8 @@ wiki
 word
 wordprocessor
 workstation
-World
+world
 worm
-WWW
-XML
+www
+xml
 zip
