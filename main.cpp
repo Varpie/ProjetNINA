@@ -1,9 +1,8 @@
 #include "main.h"
 
-char *lang = "en\0";
-char *layout = "en\0";
-char *browser = "firefox\0";
-bool visible = true;
+std::string lang = "en";
+std::string layout = "en";
+std::string browser = "firefox";
 
 void print_help()
 {
@@ -12,42 +11,30 @@ void print_help()
 
 void parse_config()
 {
-	FILE *configFile = fopen("config.conf", "r");
-
-	char *line = NULL;
-	size_t len = 100;
-	ssize_t read;
-
+	std::ifstream configFile("config.conf");
+	std::string line = "";
+	int i = 0;
 	/* Reading file line by line */
-	while((read = getline(&line, &len, configFile)) != -1) {
+	while((std::getline(configFile, line))) {
+		i++;
 		/* Removing commented and empty lines */
 		if(line[0] != '#' && line[0] != '\n') {
 			/* Splitting lines at '=' character */
-			char *var = strtok(line, "=");
+			std::string var = line.substr(0, line.find("="));
+			std::string value = line.substr(var.length()+1);
 
-
-			if(strcmp(var,"lang") == 0) {
-				/* Duplicating string and assigning it to variable*/
-				lang = strdup(strtok(NULL, "="));
-				/* Adding \0 char to make a well-made CString */
-				lang[strlen(lang)-1] = '\0';
-			} else if(strcmp(var,"layout") == 0) {
-				layout = strdup(strtok(NULL, "="));
-				layout[strlen(layout)-1]= '\0';
-			} else if(strcmp(var,"browser") == 0) {
-				browser = strdup(strtok(NULL, "="));
-				browser[strlen(browser)-1]= '\0';
-			} else if(strcmp(var,"visible") == 0) {
-	//			if(strcmp(strtok(NULL, "="),"true") == 0)
-	//				visible = true;
-	//			else visible = false;
+			 if(var == "lang") {
+			 	/* Getting value */
+				lang = value;
+			} else if(var == "layout") {
+				layout = value;
+			} else if(var == "browser") {
+				browser = value;
 			} else {
-				printf("Mistake on this line : %s\n", line);
+			 	std::cout << "Mistake on line " << i << ": " << line << std::endl;
 			}
 		}
 	}
-
-	fclose(configFile);
 }
 
 void parse_arguments(int argc, char **argv)
@@ -55,7 +42,6 @@ void parse_arguments(int argc, char **argv)
 	int character;
 
 	while(1) {
-		int this_option_optind = optind ? optind : 1;
 		int option_index = 0;
 		/* Listing options */
 		static struct option long_options[] = {
@@ -69,23 +55,23 @@ void parse_arguments(int argc, char **argv)
 
 		character = getopt_long(argc, argv, "h", long_options, &option_index);
 		if(character == -1)
-		break;
+			break;
 		switch (character) {
 			case 0:
-			if(strcmp(long_options[option_index].name, "config") == 0)
-			system("vim config.conf");
-			else if(strcmp(long_options[option_index].name, "language") == 0)
-			lang = optarg;
-			break;
+				if(long_options[option_index].name == "config")
+					system("vim config.conf");
+				else if(long_options[option_index].name == "language")
+					lang = optarg;
+				break;
 			case 'h':
-			print_help();
-			break;
+				print_help();
+				break;
 			case '?':
-			/* character not in the optstring.
-			(3rd arg of getopt_long, where we put short options) */
-			break;
+				/* character not in the optstd::string.
+				(3rd arg of getopt_long, where we put short options) */
+				break;
 			default:
-			printf("Uhh-uhh.");
+				printf("Uhh-uhh.");
 		}
 	}
 
@@ -98,16 +84,19 @@ void parse_arguments(int argc, char **argv)
 	}
 }
 
-void exec_py_function(char *function)
-{
-	PyEval_CallObject(function);
-}
-
 void exec_pycode()
 {
-	FILE* python_file = fopen("selenium/main.py", "r");
+	//FILE* python_file = fopen("selenium/main.py", "r");
 	Py_Initialize();
-	PyRun_SimpleFile(python_file, "main.py");
+	//PyRun_SimpleFile(python_file, "main.py");
+	//PyObject *file = PyImport_Import("main");
+	//PyObject *pid_Python;
+	//pid_Python = PyObject_CallMethod(file, "get_pid", NULL);
+	/*int pid = PyLong_AsLong(pid_Python);
+	printf("%d", pid);*/
+	PyRun_SimpleString("from selenium import webdriver");
+	PyRun_SimpleString("driver = webdriver.Firefox()");
+	PyRun_SimpleString("driver.get('http://www.google.com')");
 	Py_Finalize();
 }
 
@@ -115,28 +104,27 @@ int main(int argc, char **argv)
 {
 	parse_config();
 	parse_arguments(argc, argv);
-	exec_pycode();
-	// char *lang = getenv("LANG");
+	// exec_pycode();
 	return 0;
 }
 
 
 /*Prend un url et fait appel a la spider get_html.py*/
-char * get_bodyhtml_from_url(char *url) {
-    char *resultat;
+std::string  get_bodyhtml_from_url(std::string url) {
+    std::string resultat;
     PyObject *retour, *module, *fonction, *arguments;
 
     Py_Initialize();
     //PySys_SetPath(".");
     if(PyRun_SimpleString("import sys;sys.path.insert(0, '.')")) {
-    	char *error;
+    	std::string error;
         error = "path expansion failed\n";
         return error;
     }
 
     module = PyImport_ImportModule("get_html");
     if(module == NULL) {
-    	char *error;
+    	std::string error;
         error = "import failed\n";
         PyErr_Print();
         return error;
@@ -144,14 +132,14 @@ char * get_bodyhtml_from_url(char *url) {
 
     fonction = PyObject_GetAttrString(module, "runspider_with_url");
     if(fonction == NULL) {
-    	char *error;
+    	std::string error;
         error = "could not find function\n";
         return error;
     }
 
     arguments = Py_BuildValue("(s)", url);
     if(arguments == NULL) {
-    	char *error;
+    	std::string error;
         error = "arg parsing failed\n";
         return error;
     }
@@ -175,11 +163,11 @@ char * get_bodyhtml_from_url(char *url) {
     return resultat;
 }
 
-int select_hyperlinks_from_html(char *html,HyperLink *links) {
+int select_hyperlinks_from_html(std::string html,HyperLink *links) {
 	int cpt= 0,ihr=0,itx=0;
 	char in_tag_a=0,in_href=0,in_txt=0;
 
-	for(int i=0;i<strlen(html);i++) {
+	for(int i=0;i<html.length();i++) {
 		if(html[i-3] == '<' && html[i-2] == 'a' && html[i-1] == ' ') {
 			in_tag_a = 1;
 		}

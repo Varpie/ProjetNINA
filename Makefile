@@ -1,2 +1,2 @@
 all:
-	gcc -Wall main.c -lpython2.7 -o main
+	g++ -Wall main.cpp -lpython2.7 -o main
