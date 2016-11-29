@@ -376,6 +376,24 @@ void writeChar(char c){
 	send_a_button(a[0],a[1]);
 }
 
+void loadRandom(int rnd[]){
+	FILE* fd = fopen("../conf","r");
+	char *ptr;
+	int i=0;
+	if(fd != NULL){
+		char line[9];
+		while(fgets(line,9,fd) != EOF){
+			//rnd[i] = strtol(line, &ptr, 10)*1000;
+			printf("%s\n", line);
+			//i++;
+		}
+	}else{
+		for(i=0;i<45;i++)
+			rnd[i] = 100000000;
+	}
+	fclose(fd);
+}
+
 
 void writeArray(char array[], int size){
 
@@ -398,23 +416,13 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
-// char mot[] = " minuscule";
-// char mo[] = "MAJUSCULE";
-// int size = sizeof(mot)/sizeof(mot[0]);
-// int sizemo = sizeof(mo)/sizeof(mo[0]);
-
-// writeArray(mot, size);
-// writeArray(mo, sizemo);
-writeArray(argv[1], strlen(argv[1]));
-//while(1){
-	//sleep(1);
-	// send_a_button(64,0);
-	// writeArray(mot,size);
-	// send_a_button(28,0);
-	// sleep(1);
-//}
-//writeArray(mot, size);
-//send_a_button(28,0);
+//writeArray(argv[1], strlen(argv[1]));
+int i;
+int r[45];
+loadRandom(r);
+// for(i =0;i<45;i++){
+// 	printf("%d\n", r[i]);
+// }
 
 /* Destroy the input device */
 ioctl(uinp_fd, UI_DEV_DESTROY);
