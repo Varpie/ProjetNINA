@@ -1,9 +1,6 @@
 #include "navigator.h"
-
-//Run browser as a child process and store it's pid in var child_pid
 int main()
 {
-	//parameters for execvp
 	std::string url, bodyhtml;
 	std::list<HyperLink> links;
 	url = "https://wikipedia.org";
@@ -82,15 +79,42 @@ std::string get_bodyhtml_from_url(std::string url)
 void select_hyperlinks_from_html(std::string html,std::list<HyperLink> &links)
 {
 	//nps
-	HyperLink lk1;
-	lk1.url = "https://foo.com";
-	lk1.text = "foo";
-	HyperLink lk2;
-	lk2.url = "http://bar.fr";
-	lk2.text = "bar";
+	// std::string b_tag_a = "<a ";
+	// std::string a_txt = ">";
+	// std::string a_href = "href\"";
+	// std::string end_href = "\"";
+	// std::string end_a = "</a>";
+	size_t pos = 0;
+	bool loop = true;
+//std::string::npos
+	while(loop) {
+		size_t b_tag_a = html.find("<a ");
+		if(b_tag_a != std::string::npos) {
+			HyperLink lk;
+			size_t e_tag_a = html.find("</a>");
+			std::string tag_a = html.substr(b_tag_a+3,(e_tag_a-1-b_tag_a));
+			html.erase(0,e_tag_a+4);
 
-	links.push_back(lk1);
-	links.push_back(lk2);
+
+			size_t b_href = tag_a.find("href=\"");
+			size_t e_href = tag_a.find("\"");
+			size_t b_txt_a = tag_a.find(">");
+			lk.url = tag_a.substr(b_href+6,e_href-b_href);
+			lk.text = tag_a.substr(b_txt_a+1,(e_tag_a-b_txt_a)-10);
+			links.push_back(lk);
+		} else {
+			loop = false;
+		}
+	}
+
+	// HyperLink lk1;
+	// lk1.url = "https://foo.com";
+	// lk1.text = "foo";
+	// HyperLink lk2;
+	// lk2.url = "http://bar.fr";
+	// lk2.text = "bar";
+	// links.push_back(lk1);
+	// links.push_back(lk2);
 }
 
 
