@@ -1,22 +1,5 @@
-#include <string.h>
-#include <stdio.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <linux/input.h>
-#include <linux/uinput.h>
-#include <stdio.h>
-#include <sys/time.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <time.h>
-/* Globals */
-static int uinp_fd = -1;
+#include "writeKb.h"
 
-struct uinput_user_dev uinp; /* uInput device structure */
-struct input_event event; /* Input device structure */
-
-/* Setup the uinput device */
 int setup_uinput_device()
 {
 /* Temporary variable */
@@ -377,52 +360,49 @@ void writeChar(char c){
 }
 
 void loadRandom(int rnd[]){
-	FILE* fd = fopen("../conf","r");
-	char *ptr;
-	int i=0;
-	if(fd != NULL){
-		char line[9];
-		while(fgets(line,9,fd) != EOF){
-			//rnd[i] = strtol(line, &ptr, 10)*1000;
-			printf("%s\n", line);
-			//i++;
+    FILE * fp;
+    char * line = NULL;
+    size_t len = 0;
+    ssize_t read;
+    fp = fopen("../conf", "r");
+    if (fp == NULL){
+			printf("No file found");
+		}else{
+			int i =0;
+	    while ((read = getline(&line, &len, fp)) != -1) {
+					rnd[i] = (int) strtol(line, (char **)NULL, 10);
+					i++;
+	    }
 		}
-	}else{
-		for(i=0;i<45;i++)
-			rnd[i] = 100000000;
-	}
-	fclose(fd);
+    fclose(fp);
+    if (line)
+        free(line);
 }
 
 
-void writeArray(char array[], int size){
-
+void writeArray(char array[], int size, int r[]){
 	int i;
+	loadRandom(r);
+	srand(time(NULL));
 	for(i=0; i<=size; i++){
-			/* Black magic */
 			writeChar(array[i-1]);
-			nanosleep((const struct timespec[]){{0, 100000000L}}, NULL);
+			nanosleep((const struct timespec[]){{0, 1000*r[(rand())%45]}}, NULL);
 	}
 
 }
-/* This function will open the uInput device. Please make
-sure that you have inserted the uinput.ko into kernel. */
+/* you have to load uinput into the kernel */
 int main(int argc, char *argv[])
 {
-// Return an error if device not found.
+// error if device not found.
 	if (setup_uinput_device() < 0)
 	{
 		printf("Unable to find uinput device\n");
 		return -1;
 	}
 
-//writeArray(argv[1], strlen(argv[1]));
-int i;
 int r[45];
 loadRandom(r);
-// for(i =0;i<45;i++){
-// 	printf("%d\n", r[i]);
-// }
+writeArray(argv[1], strlen(argv[1]),r);
 
 /* Destroy the input device */
 ioctl(uinp_fd, UI_DEV_DESTROY);
