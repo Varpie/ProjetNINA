@@ -20,7 +20,7 @@ void parse_config()
 	while((std::getline(configFile, line))) {
 		i++;
 		/* Removing commented and empty lines */
-		if(line[0] != '#' && line[0] != '\n') {
+		if(line[0] != '#' && line[0] != '\n' && line.length() > 0) {
 			/* Splitting lines at '=' character */
 			std::string var = line.substr(0, line.find("="));
 			std::string value = line.substr(var.length()+1);
@@ -89,21 +89,16 @@ void parse_arguments(int argc, char **argv)
 	}
 }
 
-void exec_pycode(std::string url)
-{
-	Py_Initialize();
-	PyRun_SimpleString("from selenium import webdriver");
-	PyRun_SimpleString("driver = webdriver.Firefox()");
-	url = "driver.get('" + url + "')";
-	PyRun_SimpleString(url.c_str());
-	Py_Finalize();
-}
-
 int main(int argc, char **argv)
 {
 	parse_config();
 	parse_arguments(argc, argv);
 	std::string page_html = get_bodyhtml_from_url(url);
-	std::cout << page_html << std::endl;
+	std::list<HyperLink> links;
+	select_hyperlinks_from_html(page_html, links);
+	for(auto const& i : links) {
+		std::cout << "Url : " << i.url << std::endl;
+		std::cout << "Text : " << i.text << std::endl;
+	}
 	return 0;
 }

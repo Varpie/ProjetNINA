@@ -1,25 +1,4 @@
 #include "navigator.h"
-int main()
-{
-	std::string url, bodyhtml;
-	std::list<HyperLink> links;
-	url = "https://wikipedia.org";
-	//url = "https://en.wikipedia.org/wiki/Computer";
-	//url = "http://dahunicorn.xyz";
-	bodyhtml = get_bodyhtml_from_url(url);
-	//std::cout << bodyhtml << std::endl;
-	select_hyperlinks_from_html(bodyhtml, links);
-	// for(std::list<HyperLink>::iterator it = links.begin(); it != links.end();++it) {
-	// 	std::cout << (*it)->url << std::endl;
-	// 	std::cout << (*it)->text << std::endl;
-	// }
-
-	for(auto const& i : links) {
-		std::cout << "Url : " << i.url << std::endl;
-		std::cout << "Text : " << i.text << std::endl;
-	}
-	return 0;
-}
 
 std::string get_bodyhtml_from_url(std::string url)
 {
@@ -28,7 +7,7 @@ std::string get_bodyhtml_from_url(std::string url)
 
     Py_Initialize();
     //PySys_SetPath(".");
-    if(PyRun_SimpleString("import sys;sys.path.insert(0, '.')")) {
+    if(PyRun_SimpleString("import sys;sys.path.insert(0, './html_work/')")) {
     	std::string error;
         error = "path expansion failed\n";
         return error;
@@ -100,7 +79,7 @@ void select_hyperlinks_from_html(std::string html,std::list<HyperLink> &links)
 			size_t e_href = tag_a.find("\"");
 			size_t b_txt_a = tag_a.find(">");
 			lk.url = tag_a.substr(b_href+6,e_href-b_href);
-			lk.text = tag_a.substr(b_txt_a+1,(e_tag_a-b_txt_a)-10);
+			lk.text = tag_a.substr(b_txt_a+1,(e_tag_a-b_txt_a));
 			links.push_back(lk);
 		} else {
 			loop = false;
