@@ -63,7 +63,6 @@ void select_hyperlinks_from_html(std::string html,std::list<HyperLink> &links)
 	// std::string a_href = "href\"";
 	// std::string end_href = "\"";
 	// std::string end_a = "</a>";
-	size_t pos = 0;
 	bool loop = true;
 //std::string::npos
 	while(loop) {
@@ -71,15 +70,16 @@ void select_hyperlinks_from_html(std::string html,std::list<HyperLink> &links)
 		if(b_tag_a != std::string::npos) {
 			HyperLink lk;
 			size_t e_tag_a = html.find("</a>");
-			std::string tag_a = html.substr(b_tag_a+3,(e_tag_a-1-b_tag_a));
+			// std::string tag_a = html.substr(b_tag_a+3,(e_tag_a-1-b_tag_a));
+			std::string tag_a = html.substr(b_tag_a, e_tag_a - b_tag_a);
 			html.erase(0,e_tag_a+4);
 
 
 			size_t b_href = tag_a.find("href=\"");
-			size_t e_href = tag_a.find("\"");
+			size_t e_href = tag_a.substr(b_href+6).find("\"");
 			size_t b_txt_a = tag_a.find(">");
-			lk.url = tag_a.substr(b_href+6,e_href-b_href);
-			lk.text = tag_a.substr(b_txt_a+1,(e_tag_a-b_txt_a));
+			lk.url = tag_a.substr(b_href+6,e_href);
+			lk.text = tag_a.substr(b_txt_a+1);
 			links.push_back(lk);
 		} else {
 			loop = false;
