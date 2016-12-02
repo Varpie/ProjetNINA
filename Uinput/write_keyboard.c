@@ -364,7 +364,7 @@ void loadRandom(int rnd[]){
     char * line = NULL;
     size_t len = 0;
     ssize_t read;
-    fp = fopen("../conf", "r");
+    fp = fopen(name_conf, "r");
     if (fp == NULL){
 			printf("No file found");
 		}else{
