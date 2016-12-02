@@ -1,7 +1,6 @@
 #include "write_keyboard.h"
 
-int setup_uinput_device()
-{
+int setup_uinput_device(){
 /* Temporary variable */
 	int i=0;
 /* Open the input device */
@@ -43,8 +42,7 @@ int setup_uinput_device()
 }
 
 
-void send_click_events( )
-{
+void send_click_events( ){
 // Move pointer to (0,0) location
 	memset(&event, 0, sizeof(event));
 	gettimeofday(&event.time, NULL);
@@ -111,8 +109,7 @@ void release_a_button(int key){
 		event.value = 0;
 		write(uinp_fd, &event, sizeof(event));
 }
-void send_a_button(int key, int modifier)
-{
+void send_a_button(int key, int modifier){
 	if(modifier == 0)
 	{
 	press_a_button(key);
