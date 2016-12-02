@@ -55,108 +55,42 @@ std::string get_bodyhtml_from_url(std::string url)
     return cpp_str;
 }
 
-void select_hyperlinks_from_html(std::string html,std::list<HyperLink> &links)
+void select_hyperlinks_from_html(std::string html,std::vector<HyperLink> &links)
 {
-	//nps
-	// std::string b_tag_a = "<a ";
-	// std::string a_txt = ">";
-	// std::string a_href = "href\"";
-	// std::string end_href = "\"";
-	// std::string end_a = "</a>";
-	bool loop = true;
-//std::string::npos
-	while(loop) {
-		size_t b_tag_a = html.find("<a ");
-		if(b_tag_a != std::string::npos) {
-			HyperLink lk;
-			size_t e_tag_a = html.find("</a>");
-			// std::string tag_a = html.substr(b_tag_a+3,(e_tag_a-1-b_tag_a));
-			std::string tag_a = html.substr(b_tag_a, e_tag_a - b_tag_a);
-			html.erase(0,e_tag_a+4);
+	while(html.find("<a ") != std::string::npos) {
+        size_t b_tag_a = html.find("<a ");
+        HyperLink lk;
+        size_t e_tag_a = html.find("</a>");
+        std::string tag_a = html.substr(b_tag_a, e_tag_a - b_tag_a);
+        html.erase(0,e_tag_a+4);
+
+        size_t b_href = tag_a.find("href=\"");
+        size_t e_href = tag_a.substr(b_href+6).find("\"");
+        size_t b_txt_a = tag_a.find(">");
+        lk.url = tag_a.substr(b_href+6,e_href);
+        if(lk.url.find("//") == 0) {
+            lk.url = "htpp:"+lk.url;
+        }
 
 
-			size_t b_href = tag_a.find("href=\"");
-			size_t e_href = tag_a.substr(b_href+6).find("\"");
-			size_t b_txt_a = tag_a.find(">");
-			lk.url = tag_a.substr(b_href+6,e_href);
-			lk.text = tag_a.substr(b_txt_a+1);
-			links.push_back(lk);
-		} else {
-			loop = false;
-		}
-	}
-
-	// HyperLink lk1;
-	// lk1.url = "https://foo.com";
-	// lk1.text = "foo";
-	// HyperLink lk2;
-	// lk2.url = "http://bar.fr";
-	// lk2.text = "bar";
-	// links.push_back(lk1);
-	// links.push_back(lk2);
+        lk.text = tag_a.substr(b_txt_a+1);
+        while(lk.text.find("</") != std::string::npos) {
+            size_t b_close = lk.text.find("</");
+            size_t e_close = lk.text.find(">",b_close);
+            std::string type_tag = lk.text.substr(b_close+2,e_close - 2 - b_close);
+            size_t b_open = lk.text.find("<"+type_tag);
+            size_t e_open = lk.text.find(">",b_open);
+            lk.text = lk.text.erase(b_close,e_close - b_close +1);
+            lk.text = lk.text.erase(b_open,e_open - b_open +1);
+            std::string::size_type i = 0;
+            while(i < lk.text.length()) {
+                i = lk.text.find('\n',i);
+                if(i == std::string::npos) {
+                    break;
+                }
+                lk.text.erase(i);
+            }
+        }
+        links.push_back(lk);
+    }
 }
-
-
-/*
-int cpt= 0,ihr=0,itx=0;
-bool in_tag_a=false, in_href=false;
-bool in_txt=false, rubbish_tag=false;
-std::string buff_txt, buff_href;
-std::cout << "2" << std::endl;
-for(int i=0;i<html.length();i++) {
-	std::cout << "3" << std::endl;
-	if(html[i-3] == '<' && html[i-2] == 'a' && html[i-1] == ' ') {
-		std::cout << "4" << std::endl;
-		in_tag_a = true;
-	}
-
-	if(in_tag_a) {
-		if(html[i-6]=='h' && html[i-5]=='r' && html[i-4]=='e' && html[i-3]=='f'
-		&& html[i-2]=='=' && html[i-1]=='"') {
-			in_href=true;
-		}
-		if(in_href) {
-			// links[cpt].url[ihr]=html[i];
-			buff_href[ihr]=html[i];
-			ihr++;
-			if(html[i+1]=='"') {
-				in_href = true;
-				//links[cpt].url[ihr+1]='\0';
-				//buff_href[ihr]='\0';
-				ihr=0;
-			}
-		}
-		if(html[i-1]=='>') {
-			in_txt = true;
-		}
-		if(in_txt) {
-			if(html[i-1] == '>') {
-				rubbish_tag=false;
-			}
-			if(html[i] == '<') {
-				rubbish_tag=true;
-			}
-			//links[cpt].text[itx]=html[i];
-			if(!rubbish_tag) {
-				if(html[i] != '\n') {
-					buff_txt[itx] = html[i];
-				}
-				itx++;
-				if(html[i+1]=='<' && html[i+2]=='/' && html[i+3]=='a'
-				&& html[i+4]=='>') {
-					in_txt=false;
-					//links[cpt].text[itx+1]='\0';
-					//buff_txt[itx] = '\0';
-					itx=0;
-				}
-			}
-		}
-	}
-	if(html[i+1] == '<' && html[i+2] == '/' && html[i+3] == 'a' ) {
-		std::cout << "4" << std::endl;
-		HyperLink link;
-		link.setUrl(buff_href);
-		link.setText(buff_txt);
-		cpt++;
-		in_tag_a = 0;
-	}*/
