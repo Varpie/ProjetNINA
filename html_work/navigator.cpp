@@ -71,6 +71,8 @@ std::string Navigator::navigate(std::string url)
 
 void Navigator::select_hyperlinks_from_html(std::string html,std::vector<HyperLink> &links)
 {
+    // Just in case it is not empty yet.
+    links.clear();
 	while(html.find("<a ") != std::string::npos) {
         size_t b_tag_a = html.find("<a ");
         HyperLink lk;
@@ -105,7 +107,6 @@ void Navigator::select_hyperlinks_from_html(std::string html,std::vector<HyperLi
                 lk.text.erase(i);
             }
         }
-        // std::cout << "text: " << lk.text << "\nurl: " << lk.url << std::endl;
         links.push_back(lk);
     }
 }
@@ -114,6 +115,7 @@ HyperLink select_random_in_vector(std::vector<HyperLink> &links)
 {
     int size = links.size();
     int rand = (std::rand() % (int)(size));
+    std::cout << rand << std::endl;
     HyperLink link = links.at(rand);
     return link;
 }
