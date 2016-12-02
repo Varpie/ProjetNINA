@@ -5,7 +5,7 @@ import random
 import lxml.html.clean
 
 driver = webdriver.Firefox()
-def get_html_from_url(var_url):
+def get_body_html(var_url):
     driver.get(var_url)
     html = driver.page_source
     cleaner = lxml.html.clean.Cleaner()

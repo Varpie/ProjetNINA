@@ -17,21 +17,20 @@ Navigator::~Navigator(void) {
     Py_Finalize();
 }
 
-std::string Navigator::get_bodyhtml_from_url(std::string url)
-{
+std::string Navigator::call_python_function(std::string function,std::string arg) {
     char *resultat;
     PyObject *retour, *fonction, *arguments;
 
-    fonction = PyObject_GetAttrString(module, "get_html_from_url");
+    fonction = PyObject_GetAttrString(module, function.c_str());
     if(fonction == NULL) {
-    	std::string error;
+        std::string error;
         error = "could not find function\n";
         return error;
     }
 
-    arguments = Py_BuildValue("(s)", url.c_str());
+    arguments = Py_BuildValue("(s)", arg.c_str());
     if(arguments == NULL) {
-    	std::string error;
+        std::string error;
         error = "arg parsing failed\n";
         return error;
     }
@@ -42,54 +41,32 @@ std::string Navigator::get_bodyhtml_from_url(std::string url)
 
     // note: need to release arguments
     Py_DECREF(arguments);
+    Py_DECREF(fonction);
+
 
     if(retour == NULL) {
         printf("It all went wrong\n");
         PyErr_Print();
-        return url;
+        return arg;
     }
 
     PyArg_Parse(retour, "s", &resultat);
 
     std::string cpp_str = resultat;
+    Py_DECREF(retour);
     return cpp_str;
+}
+
+
+
+std::string Navigator::get_body_html(std::string url)
+{
+    return this->call_python_function("get_body_html",url);
 }
 
 std::string Navigator::navigate(std::string url)
 {
-    char *resultat;
-    PyObject *retour, *fonction, *arguments;
-
-    fonction = PyObject_GetAttrString(module, "navigate");
-    if(fonction == NULL) {
-        std::string error;
-        error = "could not find function\n";
-        return error;
-    }
-
-    arguments = Py_BuildValue("(s)", url.c_str());
-    if(arguments == NULL) {
-        std::string error;
-        error = "arg parsing failed\n";
-        return error;
-    }
-
-    printf("Calling\n");
-    retour = PyEval_CallObject(fonction, arguments);
-    printf("Returned\n");
-
-    // note: need to release arguments
-    Py_DECREF(arguments);
-
-    if(retour == NULL) {
-        printf("It all went wrong\n");
-        PyErr_Print();
-        return url;
-    }
-
-    PyArg_Parse(retour, "s", &resultat);
-    std::string cpp_str = resultat;
-    return cpp_str;
+    return this->call_python_function("navigate",url);
 }
 
 void Navigator::select_hyperlinks_from_html(std::string html,std::vector<HyperLink> &links)

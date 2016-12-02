@@ -92,10 +92,10 @@ void parse_arguments(int argc, char **argv)
 
 int main(int argc, char **argv)
 {
-	Navigator nav;
 	parse_config();
 	parse_arguments(argc, argv);
-	std::string page_html = nav.get_bodyhtml_from_url(url);
+	Navigator nav;
+	std::string page_html = nav.get_body_html(url);
 	std::vector<HyperLink> links;
 	nav.select_hyperlinks_from_html(page_html, links);
 	HyperLink link = select_random_in_vector(links);

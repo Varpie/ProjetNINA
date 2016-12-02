@@ -22,9 +22,10 @@ class Navigator
 	public:
 		Navigator();
 		~Navigator();
-		std::string get_bodyhtml_from_url(std::string url);
-		void select_hyperlinks_from_html(std::string html,std::vector<HyperLink> &links);
+		std::string call_python_function(std::string function,std::string arg);
+		std::string get_body_html(std::string url);
 		std::string navigate(std::string url);
+		void select_hyperlinks_from_html(std::string html,std::vector<HyperLink> &links);
 	private:
     	PyObject *module;
 };
