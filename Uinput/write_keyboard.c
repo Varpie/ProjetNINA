@@ -1,4 +1,4 @@
-#include "writeKb.h"
+#include "write_keyboard.h"
 
 int setup_uinput_device()
 {
@@ -359,19 +359,20 @@ void writeChar(char c){
 	send_a_button(a[0],a[1]);
 }
 
-void loadRandom(int rnd[]){
+void loadRandom(double stat[]){
     FILE * fp;
     char * line = NULL;
+		char ** ptr;
     size_t len = 0;
     ssize_t read;
     fp = fopen(name_conf, "r");
     if (fp == NULL){
 			printf("No file found");
 		}else{
-			int i =0;
+			int i=0;
 	    while ((read = getline(&line, &len, fp)) != -1) {
-					rnd[i] = (int) strtol(line, (char **)NULL, 10);
-					i++;
+				stat [i] = strtod(line,ptr);
+				i++;
 	    }
 		}
     fclose(fp);
@@ -379,14 +380,28 @@ void loadRandom(int rnd[]){
         free(line);
 }
 
+double box_muller(double mean, double sig){
+	struct timespec ts;
+	clock_gettime(CLOCK_MONOTONIC,&ts);
+	srand((time_t)ts.tv_nsec);
+	double u = rand()/(double)RAND_MAX;
+	//printf("u : %f\n",u);
+	double v = rand()/(double)RAND_MAX;
+	//printf("v : %f\n",v);
+	double x = sqrt(-2.0*log(u))*cos(2.0*M_PI*v);
+	return mean+x*sig;
+}
 
-void writeArray(char array[], int size, int r[]){
+
+void writeArray(char array[], int size, double r[]){
 	int i;
 	loadRandom(r);
-	srand(time(NULL));
+	double t = 0;
 	for(i=0; i<=size; i++){
 			writeChar(array[i-1]);
-			nanosleep((const struct timespec[]){{0, 1000*r[(rand())%45]}}, NULL);
+			double t = box_muller(r[0],r[1]);
+			printf("%f\n",t);
+			nanosleep((const struct timespec[]){{0, (int)(1000*t)}}, NULL);
 	}
 
 }
@@ -400,9 +415,9 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
-int r[45];
-loadRandom(r);
+double r[2];
 writeArray(argv[1], strlen(argv[1]),r);
+int i;
 
 /* Destroy the input device */
 ioctl(uinp_fd, UI_DEV_DESTROY);
