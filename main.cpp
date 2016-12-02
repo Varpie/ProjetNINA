@@ -4,7 +4,8 @@
 std::string lang = "en";
 std::string layout = "en";
 std::string browser = "firefox";
-std::string url = "http://www.google.com";
+//std::string url = "http://www.google.com";
+std::string url = "https://en.wikipedia.org/wiki/Special:Random";
 
 void print_help()
 {
@@ -93,12 +94,14 @@ int main(int argc, char **argv)
 {
 	parse_config();
 	parse_arguments(argc, argv);
-	std::string page_html = get_bodyhtml_from_url(url);
-	std::list<HyperLink> links;
-	select_hyperlinks_from_html(page_html, links);
-	for(auto const& i : links) {
-		std::cout << "Url : " << i.url << std::endl;
-		std::cout << "Text : " << i.text << std::endl;
-	}
+	Navigator nav;
+	std::string page_html = nav.get_body_html(url);
+	std::vector<HyperLink> links;
+	int x = 0;
+	do {
+		nav.select_hyperlinks_from_html(page_html, links);
+		HyperLink link = select_random_in_vector(links);
+		url = nav.navigate(link.url);
+	} while(x++ < 15);
 	return 0;
 }
