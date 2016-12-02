@@ -83,7 +83,7 @@ void Navigator::select_hyperlinks_from_html(std::string html,std::vector<HyperLi
         size_t b_txt_a = tag_a.find(">");
         lk.url = tag_a.substr(b_href+6,e_href);
         if(lk.url.find("//") == 0) {
-            lk.url = "htpp:"+lk.url;
+            lk.url = "http:"+lk.url;
         }
 
 
@@ -105,6 +105,7 @@ void Navigator::select_hyperlinks_from_html(std::string html,std::vector<HyperLi
                 lk.text.erase(i);
             }
         }
+        // std::cout << "text: " << lk.text << "\nurl: " << lk.url << std::endl;
         links.push_back(lk);
     }
 }
@@ -112,8 +113,7 @@ void Navigator::select_hyperlinks_from_html(std::string html,std::vector<HyperLi
 HyperLink select_random_in_vector(std::vector<HyperLink> &links)
 {
     int size = links.size();
-    int rand = (std::rand() * (int)(size) / RAND_MAX);
+    int rand = (std::rand() % (int)(size));
     HyperLink link = links.at(rand);
     return link;
 }
-
