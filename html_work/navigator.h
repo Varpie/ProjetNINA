@@ -8,6 +8,7 @@
 #include <string>
 #include <python2.7/Python.h>
 #include <vector>
+#include <time.h>
 
 class HyperLink 
 {
@@ -16,7 +17,18 @@ class HyperLink
     std::string url;
 };
 
-std::string get_bodyhtml_from_url(std::string url);
-void select_hyperlinks_from_html(std::string html,std::vector<HyperLink> &links);
+class Navigator
+{
+	public:
+		Navigator();
+		~Navigator();
+		std::string get_bodyhtml_from_url(std::string url);
+		void select_hyperlinks_from_html(std::string html,std::vector<HyperLink> &links);
+		std::string navigate(std::string url);
+	private:
+    	PyObject *module;
+};
+
+HyperLink select_random_in_vector(std::vector<HyperLink> &links);
 
 #endif

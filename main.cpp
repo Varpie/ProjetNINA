@@ -4,7 +4,8 @@
 std::string lang = "en";
 std::string layout = "en";
 std::string browser = "firefox";
-std::string url = "http://www.google.com";
+//std::string url = "http://www.google.com";
+std::string url = "http://dahunicorn.xyz";
 
 void print_help()
 {
@@ -91,14 +92,15 @@ void parse_arguments(int argc, char **argv)
 
 int main(int argc, char **argv)
 {
+	Navigator nav;
 	parse_config();
 	parse_arguments(argc, argv);
-	std::string page_html = get_bodyhtml_from_url(url);
-	std::list<HyperLink> links;
-	select_hyperlinks_from_html(page_html, links);
-	for(auto const& i : links) {
-		std::cout << "Url : " << i.url << std::endl;
-		std::cout << "Text : " << i.text << std::endl;
-	}
+	std::string page_html = nav.get_bodyhtml_from_url(url);
+	std::vector<HyperLink> links;
+	nav.select_hyperlinks_from_html(page_html, links);
+	HyperLink link = select_random_in_vector(links);
+	std::string current_url = nav.navigate("JohnnyDepp.html");
+	//std::cout << "Url : " << link.url << std::endl;
+	//std::cout << "Text : " << link.text << std::endl;
 	return 0;
 }
