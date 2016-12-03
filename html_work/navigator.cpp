@@ -72,6 +72,7 @@ std::string Navigator::navigate(std::string url)
 
 void Navigator::select_hyperlinks_from_html(std::string html,std::vector<HyperLink> &links)
 {
+    // Just in case it is not empty yet.
     links.clear();
 	while(html.find("<a ") != std::string::npos) {
         size_t b_tag_a = html.find("<a ");
@@ -85,7 +86,7 @@ void Navigator::select_hyperlinks_from_html(std::string html,std::vector<HyperLi
         size_t b_txt_a = tag_a.find(">");
         lk.url = tag_a.substr(b_href+6,e_href);
         if(lk.url.find("//") == 0) {
-            lk.url = "htpp:"+lk.url;
+            lk.url = "http:"+lk.url;
         }
 
 

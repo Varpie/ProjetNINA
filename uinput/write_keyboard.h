@@ -14,10 +14,11 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <time.h>
+#include <math.h>
 
 /* Globals */
 static int uinp_fd = -1;
-static const char name_conf[] = "../TimedKeystrokes/conf";
+static const char name_conf[] = "../timed_keystrokes/conf";
 
 /* uInput device structure */
 struct uinput_user_dev uinp;
@@ -52,12 +53,14 @@ void cvrtChar(int *a, int c);
 void writeChar(char c);
 
 /* write an array using the Uinput device */
-void writeArray(char array[], int size, int r[]);
+void writeArray(char array[], int size, double r[]);
 
 /*
 Load the conf file containing time.
 These delays are put between each stoke to make the typing looks more normal
 */
-void loadRandom(int rnd[]);
+void loadRandom(double stat[]);
+
+double box_muller(double mean, double sig);
 
 #endif

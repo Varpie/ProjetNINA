@@ -7,7 +7,7 @@ std::string lang = "en";
 std::string layout = "en";
 std::string browser = "firefox";
 //std::string url = "http://www.google.com";
-std::string url = "http://dahunicorn.xyz";
+std::string url = "https://en.wikipedia.org/wiki/Special:Random";
 
 void print_help()
 {
@@ -99,8 +99,11 @@ int main(int argc, char **argv)
 	Navigator nav;
 	std::string page_html = nav.get_body_html(url);
 	std::vector<HyperLink> links;
-	nav.select_hyperlinks_from_html(page_html, links);
-	HyperLink link = select_random_in_vector(links);
-	std::string current_url = nav.navigate("JohnnyDepp.html");
+	int x = 0;
+	do {
+		nav.select_hyperlinks_from_html(page_html, links);
+		HyperLink link = select_random_in_vector(links);
+		url = nav.navigate(link.url);
+	} while(x++ < 15);
 	return 0;
 }
