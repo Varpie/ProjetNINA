@@ -1,5 +1,5 @@
-#ifndef NAVIGATOR_H_
-#define NAVIGATOR_H_
+#ifndef NAVIGATOR_HPP_
+#define NAVIGATOR_HPP_
 
 #include <iostream>
 #include <stdio.h>
@@ -29,7 +29,5 @@ class Navigator
 	private:
     	PyObject *module;
 };
-
-HyperLink select_random_in_vector(std::vector<HyperLink> &links);
 
 #endif

@@ -1,4 +1,4 @@
-#include "navigator.h"
+#include "navigator.hpp"
 
 Navigator::Navigator(void) {
     Py_Initialize();
@@ -21,6 +21,7 @@ std::string Navigator::call_python_function(std::string function,std::string arg
     char *resultat;
     PyObject *retour, *fonction, *arguments;
 
+    std::cout << "fonction : " << function << std::endl; 
     fonction = PyObject_GetAttrString(module, function.c_str());
     if(fonction == NULL) {
         std::string error;
@@ -28,6 +29,7 @@ std::string Navigator::call_python_function(std::string function,std::string arg
         return error;
     }
 
+    std::cout << "arg : " << arg << std::endl; 
     arguments = Py_BuildValue("(s)", arg.c_str());
     if(arguments == NULL) {
         std::string error;
@@ -35,9 +37,9 @@ std::string Navigator::call_python_function(std::string function,std::string arg
         return error;
     }
 
-    printf("Calling\n");
+    std::cout << "Calling" << std::endl;
     retour = PyEval_CallObject(fonction, arguments);
-    printf("Returned\n");
+    std::cout << "Returned" << std::endl;
 
     // note: need to release arguments
     Py_DECREF(arguments);
@@ -49,7 +51,6 @@ std::string Navigator::call_python_function(std::string function,std::string arg
         PyErr_Print();
         return arg;
     }
-
     PyArg_Parse(retour, "s", &resultat);
 
     std::string cpp_str = resultat;
@@ -71,6 +72,7 @@ std::string Navigator::navigate(std::string url)
 
 void Navigator::select_hyperlinks_from_html(std::string html,std::vector<HyperLink> &links)
 {
+    links.clear();
 	while(html.find("<a ") != std::string::npos) {
         size_t b_tag_a = html.find("<a ");
         HyperLink lk;
@@ -108,12 +110,3 @@ void Navigator::select_hyperlinks_from_html(std::string html,std::vector<HyperLi
         links.push_back(lk);
     }
 }
-
-HyperLink select_random_in_vector(std::vector<HyperLink> &links)
-{
-    int size = links.size();
-    int rand = (std::rand() * (int)(size) / RAND_MAX);
-    HyperLink link = links.at(rand);
-    return link;
-}
-

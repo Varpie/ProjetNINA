@@ -1,5 +1,7 @@
-#include "main.h"
-#include "html_work/navigator.h"
+#include "main.hpp"
+#include "html_work/navigator.hpp"
+#include "html_work/intelligence.hpp"
+
 
 std::string lang = "en";
 std::string layout = "en";
@@ -100,7 +102,5 @@ int main(int argc, char **argv)
 	nav.select_hyperlinks_from_html(page_html, links);
 	HyperLink link = select_random_in_vector(links);
 	std::string current_url = nav.navigate("JohnnyDepp.html");
-	//std::cout << "Url : " << link.url << std::endl;
-	//std::cout << "Text : " << link.text << std::endl;
 	return 0;
 }

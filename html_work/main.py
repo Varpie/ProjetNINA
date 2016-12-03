@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from selenium import webdriver
-
 import random
 import lxml.html.clean
 
