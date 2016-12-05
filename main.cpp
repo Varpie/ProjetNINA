@@ -1,10 +1,13 @@
-#include "main.h"
-#include "html_work/navigator.h"
+#include "main.hpp"
+#include "html_work/navigator.hpp"
+#include "html_work/intelligence.hpp"
+
 
 std::string lang = "en";
 std::string layout = "en";
 std::string browser = "firefox";
-std::string url = "http://www.google.com";
+//std::string url = "http://www.google.com";
+std::string url = "https://en.wikipedia.org/wiki/Special:Random";
 
 void print_help()
 {
@@ -20,7 +23,7 @@ void parse_config()
 	while((std::getline(configFile, line))) {
 		i++;
 		/* Removing commented and empty lines */
-		if(line[0] != '#' && line[0] != '\n') {
+		if(line[0] != '#' && line[0] != '\n' && line.length() > 0) {
 			/* Splitting lines at '=' character */
 			std::string var = line.substr(0, line.find("="));
 			std::string value = line.substr(var.length()+1);
@@ -89,21 +92,18 @@ void parse_arguments(int argc, char **argv)
 	}
 }
 
-void exec_pycode(std::string url)
-{
-	Py_Initialize();
-	PyRun_SimpleString("from selenium import webdriver");
-	PyRun_SimpleString("driver = webdriver.Firefox()");
-	url = "driver.get('" + url + "')";
-	PyRun_SimpleString(url.c_str());
-	Py_Finalize();
-}
-
 int main(int argc, char **argv)
 {
 	parse_config();
 	parse_arguments(argc, argv);
-	std::string page_html = get_bodyhtml_from_url(url);
-	std::cout << page_html << std::endl;
+	Navigator nav;
+	std::string page_html = nav.get_body_html(url);
+	std::vector<HyperLink> links;
+	int x = 0;
+	do {
+		nav.select_hyperlinks_from_html(page_html, links);
+		HyperLink link = select_random_in_vector(links);
+		url = nav.navigate(link.url);
+	} while(x++ < 15);
 	return 0;
 }
