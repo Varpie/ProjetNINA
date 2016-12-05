@@ -83,7 +83,6 @@ void parse_arguments(int argc, char **argv)
 		}
 	}
 
-
 	if(optind < argc) {
 		printf("non-option ARGV-elements: ");
 		while (optind < argc)
@@ -97,13 +96,7 @@ int main(int argc, char **argv)
 	parse_config();
 	parse_arguments(argc, argv);
 	Navigator nav;
-	std::string page_html = nav.get_body_html(url);
-	std::vector<HyperLink> links;
-	int x = 0;
-	do {
-		nav.select_hyperlinks_from_html(page_html, links);
-		HyperLink link = select_random_in_vector(links);
-		url = nav.navigate(link.url);
-	} while(x++ < 15);
+	Intelligence intel(nav,url);
+	intel.roam();
 	return 0;
 }

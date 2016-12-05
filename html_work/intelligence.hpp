@@ -13,7 +13,7 @@
 class Intelligence
 {
 	public:
-		Intelligence(Navigator *nav,std::string &start_url);
+		Intelligence(Navigator &nav,std::string &start_url);
 		void roam(void);
 	private:
 		std::string current_url;
