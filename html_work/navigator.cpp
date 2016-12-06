@@ -21,7 +21,6 @@ std::string Navigator::call_python_function(std::string function,std::string arg
     char *resultat;
     PyObject *retour, *fonction, *arguments;
 
-    std::cout << "fonction : " << function << std::endl; 
     fonction = PyObject_GetAttrString(module, function.c_str());
     if(fonction == NULL) {
         std::string error;
@@ -29,7 +28,6 @@ std::string Navigator::call_python_function(std::string function,std::string arg
         return error;
     }
 
-    std::cout << "arg : " << arg << std::endl; 
     arguments = Py_BuildValue("(s)", arg.c_str());
     if(arguments == NULL) {
         std::string error;
@@ -37,9 +35,9 @@ std::string Navigator::call_python_function(std::string function,std::string arg
         return error;
     }
 
-    std::cout << "Calling" << std::endl;
+    //std::cout << "Calling" << std::endl;
     retour = PyEval_CallObject(fonction, arguments);
-    std::cout << "Returned" << std::endl;
+    //std::cout << "Returned" << std::endl;
 
     // note: need to release arguments
     Py_DECREF(arguments);
@@ -74,6 +72,7 @@ void Navigator::select_hyperlinks_from_html(std::string html,std::vector<HyperLi
 {
     // Just in case it is not empty yet.
     links.clear();
+
 	while(html.find("<a ") != std::string::npos) {
         size_t b_tag_a = html.find("<a ");
         HyperLink lk;
@@ -100,6 +99,7 @@ void Navigator::select_hyperlinks_from_html(std::string html,std::vector<HyperLi
             lk.text = lk.text.erase(b_close,e_close - b_close +1);
             lk.text = lk.text.erase(b_open,e_open - b_open +1);
             std::string::size_type i = 0;
+            /* remove \n */
             while(i < lk.text.length()) {
                 i = lk.text.find('\n',i);
                 if(i == std::string::npos) {
