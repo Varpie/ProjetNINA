@@ -60,6 +60,7 @@ std::string Navigator::call_python_function(std::string function,std::string arg
 
 std::string Navigator::get_body_html(std::string url)
 {
+    std::cout << "gbhtml called" << std::endl;
     return this->call_python_function("get_body_html",url);
 }
 
@@ -84,10 +85,6 @@ void Navigator::select_hyperlinks_from_html(std::string html,std::vector<HyperLi
         size_t e_href = tag_a.substr(b_href+6).find("\"");
         size_t b_txt_a = tag_a.find(">");
         lk.url = tag_a.substr(b_href+6,e_href);
-        if(lk.url.find("//") == 0) {
-            lk.url = "http:"+lk.url;
-        }
-
 
         lk.text = tag_a.substr(b_txt_a+1);
         while(lk.text.find("</") != std::string::npos) {
