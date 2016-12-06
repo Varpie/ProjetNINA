@@ -14,6 +14,7 @@ class Intelligence
 {
 	public:
 		Intelligence(Navigator &nav,std::string &start_url);
+		~Intelligence();
 		void roam(void);
 	private:
 		std::string current_url;
@@ -21,5 +22,7 @@ class Intelligence
 };
 
 HyperLink select_random_in_vector(std::vector<HyperLink> &links);
+HyperLink select_diff_random_in_vector(std::vector<HyperLink> &links,std::string url);
+
 
 #endif

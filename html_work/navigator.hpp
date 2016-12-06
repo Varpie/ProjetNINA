@@ -10,7 +10,7 @@
 #include <vector>
 #include <time.h>
 
-class HyperLink 
+class HyperLink
 {
   public:
     std::string text;

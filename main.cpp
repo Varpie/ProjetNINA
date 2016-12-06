@@ -7,7 +7,10 @@ std::string lang = "en";
 std::string layout = "en";
 std::string browser = "firefox";
 //std::string url = "http://www.google.com";
-std::string url = "https://en.wikipedia.org/wiki/Special:Random";
+//std::string url = "http://arstechnica.com/";
+//std::string url = "http://dahunicorn.xyz/";
+std::string url = "http://www.wikipedia.org/wiki/Special:Random";
+
 
 void print_help()
 {

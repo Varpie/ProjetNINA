@@ -74,20 +74,26 @@ void Navigator::select_hyperlinks_from_html(std::string html,std::vector<HyperLi
     links.clear();
 
 	while(html.find("<a ") != std::string::npos) {
-        size_t b_tag_a = html.find("<a ");
+        int c = 0;
         HyperLink lk;
+
+        size_t b_tag_a = html.find("<a ");
         size_t e_tag_a = html.find("</a>");
+
         std::string tag_a = html.substr(b_tag_a, e_tag_a - b_tag_a);
         html.erase(0,e_tag_a+4);
 
         size_t b_href = tag_a.find("href=\"");
         size_t e_href = tag_a.substr(b_href+6).find("\"");
         size_t b_txt_a = tag_a.find(">");
+
         lk.url = tag_a.substr(b_href+6,e_href);
+        /* put link in form */
         if(lk.url.find("//") == 0) {
             lk.url = "http:"+lk.url;
+        } else if((lk.url.find("#") == 0) && c<=5) {
+          //todo : 1/5 relative link. 
         }
-
 
         lk.text = tag_a.substr(b_txt_a+1);
         while(lk.text.find("</") != std::string::npos) {
