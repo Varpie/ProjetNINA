@@ -60,7 +60,6 @@ std::string Navigator::call_python_function(std::string function,std::string arg
 
 std::string Navigator::get_body_html(std::string url)
 {
-    std::cout << "gbhtml called" << std::endl;
     return this->call_python_function("get_body_html",url);
 }
 
