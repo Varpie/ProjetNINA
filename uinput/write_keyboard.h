@@ -18,11 +18,12 @@
 
 /* Globals */
 static int uinp_fd = -1;
+static int box_muller_v = -1;
 static const char name_conf[] = "../timed_keystrokes/conf";
 
 /* uInput device structure */
 struct uinput_user_dev uinp;
- /* Input device structure */
+/* Input device structure */
 struct input_event event;
 
 /* Setup the uinput device */
@@ -38,8 +39,8 @@ void press_a_button(int key);
 void release_a_button(int key);
 
 /*
-Send press event then release event of key (passed as an ascii character)
-Possibility to add a modifier (shift, for example)
+ * Send press event then release event of key (passed as an ascii character)
+ * Possibility to add a modifier (shift, for example)
  */
 void send_a_button(int key, int modifier);
 
@@ -56,11 +57,17 @@ void writeChar(char c);
 void writeArray(char array[], int size, double r[]);
 
 /*
-Load the conf file containing time.
-These delays are put between each stoke to make the typing looks more normal
-*/
+ * Load the conf file containing time.
+ * These delays are put between each stoke to make the typing looks more normal
+ */
 void loadRandom(double stat[]);
-
+/*
+ * Return an independent random number following normal distribution
+ * It uses the box muller approximation.
+ * TODO : benchmark vs Marsaglia Polar Approximation
+ * mean : mean of the normal distribution (N(mean, sig))
+ * sig : standrad deviation of the normal distribution (N(mean, sig))
+ */
 double box_muller(double mean, double sig);
 
 #endif
