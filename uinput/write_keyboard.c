@@ -379,15 +379,16 @@ void loadRandom(double stat[]){
 
 double box_muller(double mean, double sig){
 	struct timespec ts;
+	double x;
 	box_muller_v = -box_muller_v;
 	clock_gettime(CLOCK_MONOTONIC,&ts);
 	srand((time_t)ts.tv_nsec);
 	double u = rand()/(double)RAND_MAX;
 	double v = rand()/(double)RAND_MAX;
-	if(bux_muller_v == 1)
-		double x = sqrt(-2.0*log(u))*cos(2.0*M_PI*v);
+	if(box_muller_v == 1)
+		x = sqrt(-2.0*log(u))*cos(2.0*M_PI*v);
 	else
-		double x = sqrt(-2.0*log(u))*sin(2.0*M_PI*v);
+		x = sqrt(-2.0*log(u))*sin(2.0*M_PI*v);
 	return mean+x*sig;
 }
 
