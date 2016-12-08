@@ -1,6 +1,6 @@
-# ProjetSIDA
+# ProjetNINA
 
-Coding style :
+## Coding style
 
 - Only C-style comments
 
@@ -26,23 +26,10 @@ Coding style :
 
 - Functions work the opposite way (curly brackets under the function name)
 
-Python :
-
-- Install python:
-    ```
-    sudo apt-get install python-dev
-    ```
-
-- Install pip:
-    ```
-    sudo apt-get install python-pip
-    ```
-
-
-Doxygen comments :
+### Documentation (Doxygen)
 
 Python :
-  
+  ```
   def my_method(x,y):
   """
     my_method description
@@ -56,11 +43,11 @@ Python :
     @rtype: string
     @return: Returns a sentence with your variables in it
   """
-
+  ```
 
 C++:
   
-
+  ```
   /** my_function description
    * \fn returntype my_function(argtype arg)
    * \param arg argtype utility
@@ -79,3 +66,16 @@ C++:
    * \class classname header.h(pp)
    */
   class Classname{};
+  ```
+  
+## Python installation
+
+- Install python:
+    ```
+    sudo apt-get install python-dev
+    ```
+
+- Install pip:
+    ```
+    sudo apt-get install python-pip
+    ```
