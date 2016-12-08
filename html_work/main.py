@@ -42,6 +42,7 @@ def navigate(var_url):
 	driver.implicitly_wait(0.5)
 	# current url, and domain
 	current = driver.current_url
+	print("current :" + current);
 	# protocol relative url -> free to http or https
 	if(var_url[:2] == "//"):
 		# we change it to absolute
@@ -56,7 +57,7 @@ def navigate(var_url):
 	elif(var_url[:1] == '#'):
 		# we add current url to it => absolute url
 		# if we're not alrealy in case of relative at the end of current
-		if(var_url.find('#') == -1):
+		if(var_url.find('#') == -1 and var_url.len() != 1):
 			var_url = current[:-1] + var_url
 		#otherwise we return "failed" to get another random from C++
 		else:
@@ -83,4 +84,4 @@ def navigate(var_url):
 		print("failed") #debug
 		return "failed"
 	#we return current url to keep navigate
-	return current
+	return driver.current_url

@@ -16,14 +16,16 @@ void Intelligence::roam()
 	HyperLink link;
 	int x = 0;
 	do {
+		std::cout << "début : " << this->current_url << std::endl;
 		page_html = this->navigator.get_body_html(this->current_url);
 		this->navigator.select_hyperlinks_from_html(page_html, links);
-		link = select_diff_random_in_vector(links,this->current_url);
-		std::string nav_return = this->navigator.navigate(link.url);
-		if(nav_return == "failed") {
-			std::cout << "invalid url" << std::endl;
+		this->current_url = select_diff_random_in_vector(links,this->current_url).url;
+		this->current_url = this->navigator.navigate(this->current_url);
+		if(this->current_url == "failed") {
+			this->current_url = select_diff_random_in_vector(links,this->current_url).url;
 			//TODO : mettre l'url en question en blacklist
 		}
+		std::cout << "fin : " << this->current_url << std::endl;
 	} while(x++ <= 15);
 }
 
