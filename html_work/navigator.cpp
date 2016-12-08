@@ -74,7 +74,6 @@ void Navigator::select_hyperlinks_from_html(std::string html,std::vector<HyperLi
     links.clear();
 
 	while(html.find("<a ") != std::string::npos) {
-        int c = 0;
         HyperLink lk;
 
         size_t b_tag_a = html.find("<a ");

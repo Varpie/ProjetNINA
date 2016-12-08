@@ -7,6 +7,17 @@ import time
 driver = webdriver.Firefox()
 
 def get_body_html(var_url):
+	"""
+	Get body html of a page, and strips it from its Styles and Scripts
+	It does so, with webdriver.
+	Cleaning it does with lxml.html.clean dependance
+
+	@type var_url: string
+	@param var_url: The url where to get html
+
+	@rtype: string
+	@return: returns html
+	"""
 	driver.get(var_url)
 	html = driver.page_source
 	cleaner = lxml.html.clean.Cleaner()
@@ -15,6 +26,16 @@ def get_body_html(var_url):
 	return cleaner.clean_html(html).encode('utf-8')
 
 def navigate(var_url):
+	"""
+	Browse to indicated page
+
+	@type var_url: string
+	@param var_url: Destination url to browse
+
+	@rtype: string
+	@return: returns current url (to avoid redirections errors) 
+	| returns failed if url wasn't valid
+	"""
 	#print("entered") #debug
 	#print("entree : "+var_url) #debug
 	# wait at least 0.5s
@@ -59,7 +80,7 @@ def navigate(var_url):
 	# invalid url
 	else:
 		''' we return failed to get another rand from C++ '''
-		#print("failed") #debug
+		print("failed") #debug
 		return "failed"
 	#we return current url to keep navigate
 	return current

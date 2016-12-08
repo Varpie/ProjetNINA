@@ -21,12 +21,10 @@ void Intelligence::roam()
 		link = select_diff_random_in_vector(links,this->current_url);
 		std::string nav_return = this->navigator.navigate(link.url);
 		if(nav_return == "failed") {
-			link = select_diff_random_in_vector(links,this->current_url);
-			this->current_url = link.url;
-		} else {
-			this->current_url = nav_return;
+			std::cout << "invalid url" << std::endl;
+			//TODO : mettre l'url en question en blacklist
 		}
-	} while(x++ < 5);
+	} while(x++ <= 15);
 }
 
 HyperLink select_random_in_vector(std::vector<HyperLink> &links)

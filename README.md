@@ -37,3 +37,45 @@ Python :
     ```
     sudo apt-get install python-pip
     ```
+
+
+Doxygen comments :
+
+Python :
+  
+  def my_method(x,y):
+  """
+    my_method description
+
+    @type x: int
+    @param x: An integer
+
+    @type y: int|string
+    @param y: An integer or string
+
+    @rtype: string
+    @return: Returns a sentence with your variables in it
+  """
+
+
+C++:
+  
+
+  /** my_function description
+   * \fn returntype my_function(argtype arg)
+   * \param arg argtype utility
+   * \return returntype what is returned
+   * \brief brief description -> this is optional
+   * 
+   * More description, and even even
+   * even even even even
+   * even More -> this is optional
+   */
+  returntype my_function(argtype arg);
+
+
+  /** 
+   * description 
+   * \class classname header.h(pp)
+   */
+  class Classname{};
