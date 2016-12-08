@@ -26,7 +26,7 @@
 
 - Functions work the opposite way (curly brackets under the function name)
 
-### Documentation (Doxygen)
+## Documentation (Doxygen)
 
 Python :
   ```
