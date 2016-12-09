@@ -1,6 +1,7 @@
 #include "main.hpp"
 #include "html_work/navigator.hpp"
 #include "html_work/intelligence.hpp"
+#include "timed_keystrokes/timed_keystrokes.h"
 
 
 std::string lang = "en";
@@ -58,11 +59,12 @@ void parse_arguments(int argc, char **argv)
 			{"config", no_argument, 0, 0},
 			{"language", required_argument, 0, 0},
 			{"url", required_argument, 0, 0},
+			{"timedkey", no_argument,0,'k'},
 			/* That last line is necessary, but useless. */
 			{0,0,0,0}
 		};
 
-		character = getopt_long(argc, argv, "h", long_options, &option_index);
+		character = getopt_long(argc, argv, "hk", long_options, &option_index);
 		if(character == -1)
 			break;
 		switch (character) {
@@ -76,6 +78,10 @@ void parse_arguments(int argc, char **argv)
 				break;
 			case 'h':
 				print_help();
+				return;
+				break;
+			case 'k':
+				ask_keystrokes();
 				break;
 			case '?':
 				/* character not in the optstring.
