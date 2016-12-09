@@ -35,14 +35,13 @@ double std_dev(double t[]) {
 void clean_stdin(void)
 {
     int c;
-
     do {
         c = getchar();
     } while (c != '\n' && c != EOF);
 }
 
 
-int main(int argc, char ** argv){
+void ask_keystrokes(){
  int fd = open("/dev/input/event0", O_RDONLY);
  struct input_event ev;
  double t[sizeText];

@@ -1,6 +1,10 @@
 #ifndef GET_TIMED_KEY_
 #define GET_TIME_KEY_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <linux/input.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -17,5 +21,10 @@ void writeConfFile(double m, double sig);
 double esperance(double t[]);
 double std_dev(double t[]);
 void clean_stdin();
+void ask_keystrokes();
+
+#ifdef __cplusplus
+ } /* extern C */
+#endif
 
 #endif
