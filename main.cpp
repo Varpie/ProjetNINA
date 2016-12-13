@@ -2,6 +2,7 @@
 #include "html_work/navigator.hpp"
 #include "html_work/intelligence.hpp"
 #include "timed_keystrokes/timed_keystrokes.h"
+#include "uinput/write_keyboard.h"
 
 bool logging::verbose = false;
 std::string lang = "en";
@@ -86,8 +87,15 @@ void parse_arguments(int argc, char **argv)
 				return;
 				break;
 			case 'k':
+			{
 				ask_keystrokes();
+				setup_uinput_device();
+				std::string word = "cool un Test";
+				double r[2];
+				write_array(const_cast<char*>(word.c_str()),word.length());
+				destroy_uinput_device();
 				break;
+			}
 			case '?':
 				/* character not in the optstring.
 				(3rd arg of getopt_long, where we put short options) */
