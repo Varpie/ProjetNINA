@@ -1,6 +1,10 @@
 #ifndef WRITE_KB_
 #define WRITE_KB_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <string.h>
 #include <stdio.h>
 #include <sys/types.h>
@@ -19,14 +23,17 @@
 /* Globals */
 static int uinp_fd = -1;
 static int box_muller_v = -1;
-static const char name_conf[] = "../timed_keystrokes/conf";
+static const char name_conf[] = "conf";
 
 /* uInput device structure */
 struct uinput_user_dev uinp;
 /* Input device structure */
 struct input_event event;
 
-/* Setup the uinput device */
+/*
+ *Setup the uinput device
+ * -1 if error, 0 if OK.
+ */
 int setup_uinput_device();
 
 /* Implementation for mouse event */
@@ -48,19 +55,19 @@ void send_a_button(int key, int modifier);
 void send_a_button_default(int key);
 
 /* Convert ASCII code to KEY defined in /linux/input.h */
-void cvrtChar(int *a, int c);
+void cvrt_char(int *a, int c);
 
 /* write a character using the Uinput device */
-void writeChar(char c);
+void write_char(char c);
 
 /* write an array using the Uinput device */
-void writeArray(char array[], int size, double r[]);
+void write_array(char array[], int size);
 
 /*
  * Load the conf file containing time.
  * These delays are put between each stoke to make the typing looks more normal
  */
-void loadRandom(double stat[]);
+void load_random(double stat[]);
 /*
  * Return an independent random number following normal distribution
  * It uses the box muller approximation.
@@ -69,5 +76,14 @@ void loadRandom(double stat[]);
  * sig : standrad deviation of the normal distribution (N(mean, sig))
  */
 double box_muller(double mean, double sig);
+/*
+ * Destroy uinput device
+ * Return -1 if error, 0 if ok
+ */
+int destroy_uinput_device();
+
+#ifdef __cplusplus
+ } /* extern C */
+#endif
 
 #endif
