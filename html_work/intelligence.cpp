@@ -26,7 +26,7 @@ void Intelligence::roam()
 			//TODO : mettre l'url en question en blacklist
 		}
 		std::cout << "fin : " << this->current_url << std::endl;
-	} while(x++ <= 15);
+	} while(x++ <= 150);
 }
 
 HyperLink select_random_in_vector(std::vector<HyperLink> &links)

@@ -19,6 +19,9 @@ def get_body_html(var_url):
 	@return: returns html
 	"""
 	driver.get(var_url)
+	links = driver.find_elements_by_tag_name("a")
+	if(len(links) < 1):
+		driver.back()
 	html = driver.page_source
 	cleaner = lxml.html.clean.Cleaner()
 	cleaner.javascript = True
@@ -33,7 +36,7 @@ def navigate(var_url):
 	@param var_url: Destination url to browse
 
 	@rtype: string
-	@return: returns current url (to avoid redirections errors) 
+	@return: returns current url (to avoid redirections errors)
 	| returns failed if url wasn't valid
 	"""
 	#print("entered") #debug
@@ -55,13 +58,19 @@ def navigate(var_url):
 		var_url = domain + var_url[1:]
 	# tag url
 	elif(var_url[:1] == '#'):
-		# we add current url to it => absolute url
-		# if we're not alrealy in case of relative at the end of current
-		if(var_url.find('#') == -1 and var_url.len() != 1):
-			var_url = current[:-1] + var_url
-		#otherwise we return "failed" to get another random from C++
-		else:
-			return "failed"
+		css_selector = "a[href*='"+var_url+"']"
+		try:
+			element = driver.find_element_by_css_selector(css_selector)
+			if(element.is_displayed()):
+				element.click()
+			else:
+				driver.get(var_url)
+		except:
+			if(current.find('#') == -1 and var_url.len() != 1):
+				var_url = current[:-1] + var_url
+			else:
+				#print "failed"
+				return "failed"
 	# absolute url
 	if(var_url[:4] == "http"):
 		css_selector = "a[href*='"+var_url+"']"
@@ -74,14 +83,14 @@ def navigate(var_url):
 			else:
 				#print("sortie : "+var_url) #debug
 				driver.get(var_url)
-		# if not we get it 
+		# if not we get it
 		except:
 			#print("sortie : "+var_url) #debug
 			driver.get(var_url)
 	# invalid url
 	else:
-		''' we return failed to get another rand from C++ '''
-		print("failed") #debug
+		# we return failed to get another rand from C++
+		#print "failed" #debug
 		return "failed"
 	#we return current url to keep navigate
 	return driver.current_url
