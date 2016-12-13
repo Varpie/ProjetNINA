@@ -11,6 +11,7 @@
 #include <stdbool.h>
 #include <getopt.h>
 #include <unistd.h>
+#include "log.hpp"
 
 void print_help();
 void parse_config();

@@ -9,8 +9,9 @@
 #include <python2.7/Python.h>
 #include <vector>
 #include <time.h>
+#include "../log.hpp"
 
-/** 
+/**
  * HyperLink Class, a class to gather text and url of a <a> tag
  * \class HyperLink Navigator.hpp
  */
@@ -21,8 +22,8 @@ class HyperLink
     std::string url;
 };
 
-/** 
- * Navigator Class, ensure navigation connexion 
+/**
+ * Navigator Class, ensure navigation connexion
  * \class Navigator Navigator.hpp
  */
 class Navigator
@@ -41,16 +42,16 @@ class Navigator
 		 * \param function String the name of the function
 		 * \param arg String the argument passed to the function
 		 * \return String Result of python function
-		 * 
-		 * A function that parse parameters into py_objects type 
+		 *
+		 * A function that parse parameters into py_objects type
 		 * and call the function with it thank to python connexion opened
-		 * in constructor 
+		 * in constructor
 		 */
 		std::string call_python_function(std::string function,std::string arg);
 		/** Function to get html of a page
 		 * \fn std::string get_body_html(std::string url)
 		 * \param url the url to get page
-		 * \return String the raw html of the page stripped of Styles and Scripts 
+		 * \return String the raw html of the page stripped of Styles and Scripts
 		 * \brief Calls call_python_function with get_body_html in function parametter
 		 */
 		std::string get_body_html(std::string url);
