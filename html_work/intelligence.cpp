@@ -1,13 +1,15 @@
 #include "intelligence.hpp"
-#include "navigator.hpp"
 
 Intelligence::Intelligence(Navigator &nav,std::string &start_url)
 {
+	logging::vout("Creating Intelligence object");
 	this->current_url = start_url;
 	this->navigator = nav;
 }
 
-Intelligence::~Intelligence() { }
+Intelligence::~Intelligence() {
+	logging::vout("Deleting Intelligence object");
+}
 
 void Intelligence::roam()
 {
@@ -16,7 +18,7 @@ void Intelligence::roam()
 	HyperLink link;
 	int x = 0;
 	do {
-		std::cout << "début : " << this->current_url << std::endl;
+		logging::vout("début : " + this->current_url);
 		page_html = this->navigator.get_body_html(this->current_url);
 		this->navigator.select_hyperlinks_from_html(page_html, links);
 		this->current_url = select_diff_random_in_vector(links,this->current_url).url;
@@ -25,7 +27,7 @@ void Intelligence::roam()
 			this->current_url = select_diff_random_in_vector(links,this->current_url).url;
 			//TODO : mettre l'url en question en blacklist
 		}
-		std::cout << "fin : " << this->current_url << std::endl;
+		logging::vout("fin : " + this->current_url);
 	} while(x++ <= 150);
 }
 

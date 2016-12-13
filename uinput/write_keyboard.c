@@ -12,7 +12,6 @@ int setup_uinput_device(){
 	}
 	memset(&uinp,0,sizeof(uinp)); // Intialize the uInput device to NULL
 	strncpy(uinp.name, "Custom Keyboard", UINPUT_MAX_NAME_SIZE);
-	uinp.id.version = 4;
 	uinp.id.bustype = BUS_USB;
 	// Setup the uinput device
 	ioctl(uinp_fd, UI_SET_EVBIT, EV_KEY);
@@ -38,7 +37,7 @@ int setup_uinput_device(){
 		printf("Unable to create UINPUT device.");
 		return -1;
 	}
-	return 1;
+	return 0;
 }
 
 
@@ -129,7 +128,7 @@ void send_a_button_default(int key){
 
 
 
-void cvrtChar(int *a, int c){
+void cvrt_char(int *a, int c){
 	if(sizeof(a)/sizeof(a[0]) > 2){
 		printf("erreur, tableau de taille sup à 2");
 		return;
@@ -350,21 +349,21 @@ void cvrtChar(int *a, int c){
 	}
 }
 
-void writeChar(char c){
+void write_char(char c){
 	int a[2];
-	cvrtChar(a,c);
+	cvrt_char(a,c);
 	send_a_button(a[0],a[1]);
 }
 
-void loadRandom(double stat[]){
-    FILE * fp;
+void load_random(double stat[]){
+		FILE * fp;
     char * line = NULL;
-		char ** ptr;
+		char ** ptr = NULL;
     size_t len = 0;
     ssize_t read;
     fp = fopen(name_conf, "r");
     if (fp == NULL){
-			printf("No file found");
+			printf("No file found\n");
 		}else{
 			int i=0;
 	    while ((read = getline(&line, &len, fp)) != -1) {
@@ -375,6 +374,8 @@ void loadRandom(double stat[]){
     fclose(fp);
     if (line)
         free(line);
+		if (ptr)
+				free (ptr);
 }
 
 double box_muller(double mean, double sig){
@@ -393,34 +394,39 @@ double box_muller(double mean, double sig){
 }
 
 
-void writeArray(char array[], int size, double r[]){
+void write_array(char array[], int size){
 	int i;
-	loadRandom(r);
+	double r[2];
+	load_random(r);
 	double t = 0;
 	for(i=0; i<=size; i++){
-			writeChar(array[i-1]);
-			double t = box_muller(r[0],r[1]);
-			printf("%f\n",t);
+			write_char(array[i-1]);
+			t = box_muller(r[0],r[1]);
 			nanosleep((const struct timespec[]){{0, (int)(1000*t)}}, NULL);
 	}
 
 }
-/* you have to load uinput into the kernel */
+
+int destroy_uinput_device(){
+	/* Destroy the input device */
+	ioctl(uinp_fd, UI_DEV_DESTROY);
+	/* Close the UINPUT device */
+	return close(uinp_fd);
+}
+/*
 int main(int argc, char *argv[])
 {
-// error if device not found.
+	// error if device not found.
 	if (setup_uinput_device() < 0)
 	{
 		printf("Unable to find uinput device\n");
 		return -1;
 	}
 
-double r[2];
-writeArray(argv[1], strlen(argv[1]),r);
-int i;
 
-/* Destroy the input device */
-ioctl(uinp_fd, UI_DEV_DESTROY);
-/* Close the UINPUT device */
-close(uinp_fd);
+	double r[2];
+	writeArray(argv[1], strlen(argv[1]),r);
+	int i;
+
 }
+*/

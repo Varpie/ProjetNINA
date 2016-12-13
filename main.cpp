@@ -2,8 +2,9 @@
 #include "html_work/navigator.hpp"
 #include "html_work/intelligence.hpp"
 #include "timed_keystrokes/timed_keystrokes.h"
+#include "uinput/write_keyboard.h"
 
-
+bool logging::verbose = false;
 std::string lang = "en";
 std::string layout = "en";
 std::string browser = "firefox";
@@ -60,6 +61,7 @@ void parse_arguments(int argc, char **argv)
 			{"language", required_argument, 0, 0},
 			{"url", required_argument, 0, 0},
 			{"timedkey", no_argument,0,'k'},
+			{"verbose", no_argument, 0, 0},
 			/* That last line is necessary, but useless. */
 			{0,0,0,0}
 		};
@@ -75,27 +77,38 @@ void parse_arguments(int argc, char **argv)
 					lang = optarg;
 				else if(long_options[option_index].name == "url")
 					url = optarg;
+				else if(long_options[option_index].name == "timedkey")
+					ask_keystrokes();
+				else if(long_options[option_index].name == "verbose")
+					logging::verbose = true;
 				break;
 			case 'h':
 				print_help();
 				return;
 				break;
 			case 'k':
+			{
 				ask_keystrokes();
+				setup_uinput_device();
+				std::string word = "cool un Test";
+				double r[2];
+				write_array(const_cast<char*>(word.c_str()),word.length());
+				destroy_uinput_device();
 				break;
+			}
 			case '?':
 				/* character not in the optstring.
 				(3rd arg of getopt_long, where we put short options) */
 				break;
 			default:
-				printf("Uhh-uhh.");
+				logging::verr("Argument parsing error");
 		}
 	}
 
 	if(optind < argc) {
 		printf("non-option ARGV-elements: ");
 		while (optind < argc)
-		printf("%s", argv[optind++]);
+			printf("%s", argv[optind++]);
 		printf("\n");
 	}
 }
@@ -104,8 +117,10 @@ int main(int argc, char **argv)
 {
 	parse_config();
 	parse_arguments(argc, argv);
+	logging::vout("Verbose is active");
 	Navigator nav;
 	Intelligence intel(nav,url);
 	intel.roam();
+	logging::vout("Program finished");
 	return 0;
 }

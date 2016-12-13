@@ -1,19 +1,22 @@
 #include "navigator.hpp"
 
 Navigator::Navigator(void) {
+    logging::vout("Creating Navigator object");
     Py_Initialize();
+    logging::vout("Python initialized");
     if(PyRun_SimpleString("import sys;sys.path.insert(0, './html_work/')")) {
-        std::cout << "path expansion failed" << std::endl;
+        logging::verr("path expansion failed");
     }
 
     module = PyImport_ImportModule("main");
     if(module == NULL) {
-        std::cout << "import failed" << std::endl;
+        logging::verr("import failed");
         PyErr_Print();
     }
 }
 
 Navigator::~Navigator(void) {
+    logging::vout("Destroying Navigator object");
     Py_Finalize();
 }
 
@@ -23,15 +26,15 @@ std::string Navigator::call_python_function(std::string function,std::string arg
 
     fonction = PyObject_GetAttrString(module, function.c_str());
     if(fonction == NULL) {
-        std::string error;
-        error = "could not find function\n";
+        std::string error = "could not find function\n";
+        logging::verr(error);
         return error;
     }
 
     arguments = Py_BuildValue("(s)", arg.c_str());
     if(arguments == NULL) {
-        std::string error;
-        error = "arg parsing failed\n";
+        std::string error = "arg parsing failed\n";
+        logging::verr(error);
         return error;
     }
 

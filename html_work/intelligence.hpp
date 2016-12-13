@@ -9,10 +9,11 @@
 #include <python2.7/Python.h>
 #include <vector>
 #include "navigator.hpp"
+#include "../log.hpp"
 
 
-/** 
- * Intelligence Class, regroup navigation processes 
+/**
+ * Intelligence Class, regroup navigation processes
  * \class Intelligence Intelligence.hpp
  */
 class Intelligence
