@@ -67,9 +67,12 @@ def navigate(var_url):
 				driver.get(var_url)
 		except:
 			if(current.find('#') == -1 and var_url.len() != 1):
-				var_url = current[:-1] + var_url
+				# Execute javascript, and avoir driver to wait for DOM readyState event
+				print "sortie 1 js : "+var_url
+				driver.execute_script("document.querySelector([href='"+var_url+"']).click()")
+				return driver.current_url
 			else:
-				#print "failed"
+				print "failed"
 				return "failed"
 	# absolute url
 	if(var_url[:4] == "http"):
@@ -79,18 +82,19 @@ def navigate(var_url):
 			element = driver.find_element_by_css_selector(css_selector)
 			if(element.is_displayed()):
 			# if findable and displayed we click on it
+				print "sortie 2 : "+element
 				element.click()
 			else:
-				#print("sortie : "+var_url) #debug
+				print("sortie : "+var_url) #debug
 				driver.get(var_url)
 		# if not we get it
 		except:
-			#print("sortie : "+var_url) #debug
+			print "sortie 3 : "+var_url #debug
 			driver.get(var_url)
 	# invalid url
 	else:
 		# we return failed to get another rand from C++
-		#print "failed" #debug
+		print "failed" #debug
 		return "failed"
 	#we return current url to keep navigate
 	return driver.current_url
