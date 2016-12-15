@@ -2,6 +2,7 @@
 #define INTELLIGENCE_HPP_
 
 #include <iostream>
+#include <fstream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -51,4 +52,11 @@ HyperLink select_random_in_vector(std::vector<HyperLink> &links);
  */
 HyperLink select_diff_random_in_vector(std::vector<HyperLink> &links,std::string url);
 
+/** Function that selects a random in a vector matching with whitelist
+ * \fn HyperLink select_from_word_list(std::vector<HyperLink> &links,std::string url)
+ * \param links Vector of HyperLinks
+ * \param url Url to compare
+ * \return an HyperLink matching with whitelist
+ */
+HyperLink select_from_word_list(std::vector<HyperLink> &links,std::string url);
 #endif
