@@ -9,5 +9,5 @@ else
   echo "uinput already loaded";
 fi
 
-sudo chmod 666 /dev/uinput;
-echo "uinput chmod set to 666";
+sudo chmod 002 /dev/uinput;
+echo "uinput chmod set to 002";

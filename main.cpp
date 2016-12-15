@@ -47,10 +47,10 @@ void parse_config()
 	}
 }
 
-void parse_arguments(int argc, char **argv)
+bool parse_arguments(int argc, char **argv)
 {
 	int character;
-
+	bool flag = true;
 	while(1) {
 		int option_index = 0;
 		/* Listing options */
@@ -67,60 +67,70 @@ void parse_arguments(int argc, char **argv)
 		};
 
 		character = getopt_long(argc, argv, "hk", long_options, &option_index);
-		if(character == -1)
-			break;
+		if(character == -1){
+			return true;
+		}
 		switch (character) {
 			case 0:
-				if(long_options[option_index].name == "config")
+				if(long_options[option_index].name == "config"){
+					flag = false;
 					system("vim config.conf");
-				else if(long_options[option_index].name == "language")
+				}
+				else if(long_options[option_index].name == "language"){
 					lang = optarg;
-				else if(long_options[option_index].name == "url")
+				}else if(long_options[option_index].name == "url"){
 					url = optarg;
-				else if(long_options[option_index].name == "timedkey")
+				}else if(long_options[option_index].name == "timedkey"){
 					ask_keystrokes();
-				else if(long_options[option_index].name == "verbose")
+					flag = false;
+				}else if(long_options[option_index].name == "verbose"){
 					logging::verbose = true;
+				}
 				break;
 			case 'h':
 				print_help();
-				return;
+				flag = false;
 				break;
 			case 'k':
 			{
 				ask_keystrokes();
-				setup_uinput_device();
 				std::string word = "cool un Test";
 				double r[2];
 				write_array(const_cast<char*>(word.c_str()),word.length());
-				destroy_uinput_device();
+				flag = false;
 				break;
 			}
 			case '?':
 				/* character not in the optstring.
 				(3rd arg of getopt_long, where we put short options) */
+				print_help();
+				flag = false;
 				break;
 			default:
 				logging::verr("Argument parsing error");
+				flag = false;
 		}
 	}
 
 	if(optind < argc) {
-		printf("non-option ARGV-elements: ");
+		std::cerr << "non-option ARGV-elements: " << std::endl;
 		while (optind < argc)
-			printf("%s", argv[optind++]);
-		printf("\n");
+			std::cerr << argv[optind++] << std::endl;
 	}
+	return flag;
 }
 
 int main(int argc, char **argv)
 {
 	parse_config();
-	parse_arguments(argc, argv);
+	if(!parse_arguments(argc, argv))
+		return 0;
+	setup_uinput_device();
 	logging::vout("Verbose is active");
 	Navigator nav;
 	Intelligence intel(nav,url);
 	intel.roam();
+	destroy_uinput_device();
 	logging::vout("Program finished");
 	return 0;
 }
