@@ -34,7 +34,7 @@ int setup_uinput_device(){
 	write(uinp_fd, &uinp, sizeof(uinp));
 	if (ioctl(uinp_fd, UI_DEV_CREATE))
 	{
-		printf("Unable to create UINPUT device.");
+		printf("Unable to create UINPUT device.\n");
 		return -1;
 	}
 	return 0;
@@ -130,7 +130,7 @@ void send_a_button_default(int key){
 
 void cvrt_char(int *a, int c){
 	if(sizeof(a)/sizeof(a[0]) > 2){
-		printf("erreur, tableau de taille sup à 2");
+		//printf("erreur, tableau de taille sup à 2\n");
 		return;
 	}else{
 		switch (c) {
