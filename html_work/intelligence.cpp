@@ -24,26 +24,25 @@ void Intelligence::roam()
 		page_html = this->navigator.get_body_html();
 		this->navigator.select_hyperlinks_from_html(page_html, links);
 		this->current_url = select_diff_random_in_vector(links,this->current_url).url;
+		std::cout << x << std::endl;
 		this->current_url = this->navigator.navigate(this->current_url);
 		if(this->current_url == "failed") {
 			this->current_url = select_diff_random_in_vector(links,this->current_url).url;
 			//TODO : mettre l'url en question en blacklist
 		}
 		logging::vout("fin : " + this->current_url);
-	} while(x++ <= 150);
+	} while(x++ <= 300);
 }
 
 HyperLink select_random_in_vector(std::vector<HyperLink> &links)
 {
-  	std::cout << "rand" << std::endl;
-		int rand = (int)(std::rand() % links.size());
-		if(rand == 0) {
-			rand =1;
+		int random;
+		if(links.size() <= 1) {
+			random = 0;
+		} else {
+			random = (int)(std::rand() % links.size());
 		}
-    HyperLink link = links.at(rand);
-		std::cout << "rand : " << rand << " / " << links.size() << std::endl;
-		std::cout << "rSelected : " << link.url << std::endl;
-		//std::cout << "rand af" << std::endl;
+    HyperLink link = links.at(random);
     return link;
 }
 

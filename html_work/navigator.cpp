@@ -59,7 +59,6 @@ std::string Navigator::call_python_function(std::string function,std::string arg
     return cpp_str;
 }
 
-
 std::string Navigator::get_body_html()
 {
     return this->call_python_function("get_body_html","");
@@ -107,6 +106,13 @@ void Navigator::select_hyperlinks_from_html(std::string html,std::vector<HyperLi
                 }
                 lk.text.erase(i);
             }
+        }
+        /* remove urls with extensions other than .php or .html such as .pdf, .png and so on... */
+        if(lk.url.length()>5){
+          std::string ext = lk.url.substr(lk.url.length()-6);
+          if((ext.find('.') != std::string::npos && (lk.url.substr(lk.url.length()-4) != ".php" || lk.url.substr(lk.url.length()-5) != ".html"))){
+              continue;
+          }
         }
         links.push_back(lk);
     }

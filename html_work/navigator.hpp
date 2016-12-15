@@ -52,16 +52,21 @@ class Navigator
 		 * \fn std::string get_body_html(std::string url)
 		 * \param url the url to get page
 		 * \return String the raw html of the page stripped of Styles and Scripts
-		 * \brief Calls call_python_function with get_body_html in function parametter
+		 * \brief Calls call_python_function with get_body_html as function parametter
 		 */
 		std::string get_body_html();
 		/** Function to change page of the browser
 		 * \fn std::string navigate(std::string url)
 		 * \param url the url to navigate
 		 * \return String current url of the browser, avoid redirection problems
-		 * \brief Calls call_python_function with navigate in function parametter
+		 * \brief Calls call_python_function with navigate as function parametter
 		 */
 		std::string navigate(std::string url);
+    /** Function to start python webdriver
+     * \fn void start_driver();
+     * \brief Calls call_python_function with start_driver as function parametter
+     */
+    void close_driver();
 		/** Function to get HyperLinks from raw html
 		 * \fn select_hyperlinks_from_html(std::string html,std::vector<HyperLink> &links)
 		 * \param html Raw html
