@@ -16,11 +16,26 @@ extern "C" {
 
 static const char testText[] = "this is a simple test to get your typing speed";
 static const int sizeText = 46;
-
+/*
+ * Write the two parameters in a file named conf in the root of the program
+ */
 void writeConfFile(double m, double sig);
+/*
+ * Calculate the mean of the array passed in argument
+ */
 double esperance(double t[]);
+/*
+ * Calculate the standard deviation of the array passed in argument
+ */
 double std_dev(double t[]);
+/*
+ * Clean the buffer
+ */
 void clean_stdin();
+/*
+ * Ask the user to type a phrase. Log the time of the input and calculate
+ * the difference between each time
+ */
 void ask_keystrokes();
 
 #ifdef __cplusplus
