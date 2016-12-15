@@ -6,7 +6,7 @@ import time
 
 driver = webdriver.Firefox()
 
-def get_body_html(var_url):
+def get_body_html(v):
 	"""
 	Get body html of a page, and strips it from its Styles and Scripts
 	It does so, with webdriver.
@@ -18,7 +18,6 @@ def get_body_html(var_url):
 	@rtype: string
 	@return: returns html
 	"""
-	driver.get(var_url)
 	links = driver.find_elements_by_tag_name("a")
 	if(len(links) < 1):
 		driver.back()
@@ -56,23 +55,25 @@ def navigate(var_url):
 		pos = current.find('/',9)
 		domain = current[:pos+1]
 		var_url = domain + var_url[1:]
-	# tag url
-	elif(var_url[:1] == '#'):
-		css_selector = "a[href*='"+var_url+"']"
-		try:
-			element = driver.find_element_by_css_selector(css_selector)
-			if(element.is_displayed()):
-				element.click()
-			else:
-				driver.get(var_url)
-		except:
-			if(current.find('#') == -1 and var_url.len() != 1):
-				# Execute javascript, and avoir driver to wait for DOM readyState event
-				print "sortie 1 js : "+var_url
-				driver.execute_script("document.querySelector([href='"+var_url+"']).click()")
-				return driver.current_url
-			else:
-				print "failed"
+	# tag url or full url with tag at the end
+	elif(var_url.find('#') != -1 and len(var_url) > 1):
+		if(var_url[:1] == '#'):
+			# Execute javascript, and avoir driver to wait for DOM readyState event
+			print "sortie, js : "+var_url
+			driver.execute_script("document.querySelector([href='"+var_url+"']).click()")
+			return driver.current_url
+		else:
+			css_selector = "a[href*='"+var_url+"']"
+			try:
+				element = driver.find_element_by_css_selector(css_selector)
+				if(element.is_displayed()):
+					print "sortie : clicked #"
+					element.click()
+				else:
+					print "sortie, get 1 : "+var_url
+					driver.get(var_url)
+			except:
+				print "sortie failed"
 				return "failed"
 	# absolute url
 	if(var_url[:4] == "http"):
@@ -82,19 +83,19 @@ def navigate(var_url):
 			element = driver.find_element_by_css_selector(css_selector)
 			if(element.is_displayed()):
 			# if findable and displayed we click on it
-				print "sortie 2 : "+element
+				print "sortie : clicked http"
 				element.click()
 			else:
-				print("sortie : "+var_url) #debug
+				print("sortie, get 2 : "+var_url) #debug
 				driver.get(var_url)
 		# if not we get it
 		except:
-			print "sortie 3 : "+var_url #debug
+			print "sortie, get 3 : "+var_url #debug
 			driver.get(var_url)
 	# invalid url
 	else:
 		# we return failed to get another rand from C++
-		print "failed" #debug
+		print "sortie failed" #debug
 		return "failed"
 	#we return current url to keep navigate
 	return driver.current_url

@@ -54,7 +54,7 @@ class Navigator
 		 * \return String the raw html of the page stripped of Styles and Scripts
 		 * \brief Calls call_python_function with get_body_html in function parametter
 		 */
-		std::string get_body_html(std::string url);
+		std::string get_body_html();
 		/** Function to change page of the browser
 		 * \fn std::string navigate(std::string url)
 		 * \param url the url to navigate

@@ -17,9 +17,10 @@ void Intelligence::roam()
 	std::vector<HyperLink> links;
 	HyperLink link;
 	int x = 0;
+	this->current_url = this->navigator.navigate(this->current_url);
 	do {
 		logging::vout("début : " + this->current_url);
-		page_html = this->navigator.get_body_html(this->current_url);
+		page_html = this->navigator.get_body_html();
 		this->navigator.select_hyperlinks_from_html(page_html, links);
 		this->current_url = select_diff_random_in_vector(links,this->current_url).url;
 		this->current_url = this->navigator.navigate(this->current_url);
@@ -33,6 +34,7 @@ void Intelligence::roam()
 
 HyperLink select_random_in_vector(std::vector<HyperLink> &links)
 {
+	std::cout << "rand" << std::endl;
     int rand = (int)(std::rand() % links.size());
     //std::cout << "rand : " << rand << " / " << links.size() << std::endl;
     HyperLink link = links.at(rand);
