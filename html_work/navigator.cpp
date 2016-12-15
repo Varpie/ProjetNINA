@@ -60,10 +60,9 @@ std::string Navigator::call_python_function(std::string function,std::string arg
 }
 
 
-
-std::string Navigator::get_body_html(std::string url)
+std::string Navigator::get_body_html()
 {
-    return this->call_python_function("get_body_html",url);
+    return this->call_python_function("get_body_html","");
 }
 
 std::string Navigator::navigate(std::string url)
