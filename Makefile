@@ -8,7 +8,7 @@ EXECUTABLE=main
 all: $(SOURCES) $(EXECUTABLE)
 
 clean:
-	rm *.o
+	find -name *.o -type f -delete
 
 $(EXECUTABLE): $(OBJECTS)
 	$(CXX) $(LDLIBS) $(OBJECTS) -o $(EXECUTABLE)
