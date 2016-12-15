@@ -5,6 +5,7 @@ Intelligence::Intelligence(Navigator &nav,std::string &start_url)
 	logging::vout("Creating Intelligence object");
 	this->current_url = start_url;
 	this->navigator = nav;
+	srand(time(NULL));
 }
 
 Intelligence::~Intelligence() {
@@ -28,17 +29,21 @@ void Intelligence::roam()
 			this->current_url = select_diff_random_in_vector(links,this->current_url).url;
 			//TODO : mettre l'url en question en blacklist
 		}
-		logging::vout("fin : ", this->current_url);
-	} while(x++ <= 5);
+		logging::vout("fin : " + this->current_url);
+	} while(x++ <= 150);
 }
 
 HyperLink select_random_in_vector(std::vector<HyperLink> &links)
 {
   	std::cout << "rand" << std::endl;
-		srand (time(NULL));
-    int rand = (int)(std::rand() % links.size());
-    //std::cout << "rand : " << rand << " / " << links.size() << std::endl;
+		int rand = (int)(std::rand() % links.size());
+		if(rand == 0) {
+			rand =1;
+		}
     HyperLink link = links.at(rand);
+		std::cout << "rand : " << rand << " / " << links.size() << std::endl;
+		std::cout << "rSelected : " << link.url << std::endl;
+		//std::cout << "rand af" << std::endl;
     return link;
 }
 

@@ -18,14 +18,18 @@ def get_body_html(v):
 	@rtype: string
 	@return: returns html
 	"""
-	links = driver.find_elements_by_tag_name("a")
-	if(len(links) < 1):
+	try:
+		link = driver.find_element_by_css_selector('a:first-child')
+		if link is None:
+			driver.back()
+		html = driver.page_source
+		cleaner = lxml.html.clean.Cleaner()
+		cleaner.javascript = True
+		cleaner.style = True
+		return cleaner.clean_html(html).encode('utf-8')
+	except:
 		driver.back()
-	html = driver.page_source
-	cleaner = lxml.html.clean.Cleaner()
-	cleaner.javascript = True
-	cleaner.style = True
-	return cleaner.clean_html(html).encode('utf-8')
+		return get_body_html("")
 
 def navigate(var_url):
 	"""
@@ -60,7 +64,7 @@ def navigate(var_url):
 		if(var_url[:1] == '#'):
 			# Execute javascript, and avoir driver to wait for DOM readyState event
 			print "sortie, js : "+var_url
-			driver.execute_script("document.querySelector([href='"+var_url+"']).click()")
+			driver.execute_script("document.body.querySelector('a[href=\""+var_url+"\"]').click()");
 			return driver.current_url
 		else:
 			css_selector = "a[href*='"+var_url+"']"
