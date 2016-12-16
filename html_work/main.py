@@ -16,7 +16,7 @@ def close_driver(v):
 	@rtype: string
 	@return: returns unused
 	"""
-	driver.close()
+	driver.quit()
 	print "end"
 	return "True"
 
@@ -81,8 +81,8 @@ def navigate(var_url):
 			#print "sortie, js : "+var_url #debug
 			driver.execute_script("document.body.querySelector('a[href=\""+var_url+"\"]').click()");
 			return driver.current_url
-		except:
-			pass
+		except Exception, e:
+			print e
 	# absolute url
 	if(var_url[:4] == "http"):
 		css_selector = "a[href*='"+var_url+"']"

@@ -16,8 +16,9 @@ Navigator::Navigator(void) {
 }
 
 Navigator::~Navigator(void) {
-    logging::vout("Destroying Navigator object");
-    Py_Finalize();
+  logging::vout("Destroying Navigator object");
+  close_driver();
+  Py_Finalize();
 }
 
 std::string Navigator::call_python_function(std::string function,std::string arg) {
@@ -67,6 +68,11 @@ std::string Navigator::get_body_html()
 std::string Navigator::navigate(std::string url)
 {
     return this->call_python_function("navigate",url);
+}
+
+void Navigator::close_driver()
+{
+    std::string res = this->call_python_function("close_driver","");
 }
 
 void Navigator::select_hyperlinks_from_html(std::string html,std::vector<HyperLink> &links)

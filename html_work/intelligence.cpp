@@ -5,11 +5,34 @@ Intelligence::Intelligence(Navigator &nav,std::string &start_url)
 	logging::vout("Creating Intelligence object");
 	this->current_url = start_url;
 	this->navigator = nav;
+	this->load_blacklist();
+	/* Blacklist content
+	for(auto const& line: this->blacklist) {
+		 std::cout << line << std::endl;
+	}*/
 	srand(time(NULL));
 }
 
 Intelligence::~Intelligence() {
+	this->dump_blacklist();
 	logging::vout("Deleting Intelligence object");
+}
+
+void Intelligence::load_blacklist() {
+	std::ifstream file("dictionaries/blacklist.txt");
+	std::string line;
+	std::string file_contents;
+	while (std::getline(file, line))
+	  this->blacklist.push_back(line);
+}
+void Intelligence::dump_blacklist() {
+	std::ofstream blacklist;
+	blacklist.open("dictionaries/blacklist.txt", std::ofstream::out | std::ofstream::trunc);
+	for(auto const& value: Intelligence::blacklist) {
+     /* std::cout << value; ... */
+		 blacklist << value+"\n";
+	 }
+	blacklist.close();
 }
 
 void Intelligence::roam()
@@ -25,13 +48,15 @@ void Intelligence::roam()
 		this->navigator.select_hyperlinks_from_html(page_html, links);
 		this->current_url = select_diff_random_in_vector(links,this->current_url).url;
 		std::cout << x << std::endl;
-		this->current_url = this->navigator.navigate(this->current_url);
-		if(this->current_url == "failed") {
+		std::string navigate_res = this->navigator.navigate(this->current_url);
+		if(navigate_res == "failed") {
+			blacklist.push_back(this->current_url);
 			this->current_url = select_diff_random_in_vector(links,this->current_url).url;
-			//TODO : mettre l'url en question en blacklist
+		} else {
+			this->current_url = navigate_res;
 		}
 		logging::vout("fin : " + this->current_url);
-	} while(x++ <= 300);
+	} while(x++ <= 50);
 }
 
 HyperLink select_random_in_vector(std::vector<HyperLink> &links)
@@ -68,18 +93,10 @@ HyperLink select_from_word_list(std::vector<HyperLink> &links,std::string url)
 	else
 		std::cout << "Fichier non ouvert" << std::endl;
 	link = select_random_in_vector(links);
-	/*do {
-		link = select_diff_random_in_vector(links, link.url);
-		std::cout << "Lien " << c << " : " << link.text << std::endl;
-		d = 0;
-		while(std::getline(file, line) && not_in_link) {
-			if(link.text.find(line) != std::string::npos) {
-				not_in_link = false;
-				std::cout << "Lien valide : " << link.text << std::endl;
-			}
-			std::cout << d << std::endl;
-		}
-	} while(not_in_link && c++<50);*/
 	std::cout << "Lien retourné : " << link.url << std::endl;
 	return link;
+}
+
+void add_to_blacklist(std::string wrong_url) {
+	std::cout << "TODO";
 }

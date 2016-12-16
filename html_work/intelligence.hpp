@@ -32,9 +32,12 @@ class Intelligence
 		 * \fn void roam(void)
 		 */
 		void roam(void);
+		void load_blacklist();
+		void dump_blacklist();
 	private:
 		std::string current_url;
 		Navigator navigator;
+		std::vector<std::string> blacklist;
 };
 
 /** Function to select a random in a vector
@@ -59,4 +62,6 @@ HyperLink select_diff_random_in_vector(std::vector<HyperLink> &links,std::string
  * \return an HyperLink matching with whitelist
  */
 HyperLink select_from_word_list(std::vector<HyperLink> &links,std::string url);
+void add_to_blacklist(std::string wrong_url);
+
 #endif
