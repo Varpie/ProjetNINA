@@ -125,12 +125,12 @@ int main(int argc, char **argv)
 	parse_config();
 	if(!parse_arguments(argc, argv))
 		return 0;
-	setup_uinput_device();
+	//setup_uinput_device();
 	logging::vout("Verbose is active");
 	Navigator nav;
 	Intelligence intel(nav,url);
 	intel.roam();
-	destroy_uinput_device();
+	//destroy_uinput_device();
 	logging::vout("Program finished");
 	return 0;
 }

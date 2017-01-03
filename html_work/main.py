@@ -3,6 +3,7 @@ from selenium import webdriver
 import random
 import lxml.html.clean
 import time
+import signal
 
 driver = webdriver.Firefox()
 
@@ -16,8 +17,8 @@ def close_driver(v):
 	@rtype: string
 	@return: returns unused
 	"""
-	driver.quit()
-	print "end"
+	driver.close()
+	# print "end"
 	return "True"
 
 def get_body_html(v):
@@ -47,6 +48,35 @@ def get_body_html(v):
 		return get_body_html("")
 
 def navigate(var_url):
+	ret = runFunctionWithTimeout(nav, (var_url,), timeout_duration=40)
+	if(len(ret) != 0):
+		return ret
+	else:
+		return "failed"
+
+def runFunctionWithTimeout(func, args=(), kwargs={}, timeout_duration=10, default=None):
+    import threading
+    class InterruptableThread(threading.Thread):
+        def __init__(self):
+            threading.Thread.__init__(self)
+            self.result = default
+        def run(self):
+            self.result = runFunctionCatchExceptions(func, *args, **kwargs)
+    it = InterruptableThread()
+    it.start()
+    it.join(timeout_duration)
+    if it.isAlive():
+        return default
+
+    if it.result[0] == "exception":
+        raise it.result[1]
+
+    return it.result[1]
+
+def write_search(keyword):
+	pass:
+
+def nav(var_url):
 	"""
 	Browse to indicated page
 

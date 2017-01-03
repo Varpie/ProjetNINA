@@ -70,9 +70,14 @@ std::string Navigator::navigate(std::string url)
     return this->call_python_function("navigate",url);
 }
 
-void Navigator::close_driver()
+std::string Navigator::close_driver()
 {
-    std::string res = this->call_python_function("close_driver","");
+    return this->call_python_function("close_driver","");
+}
+
+std::string Navigator::write_search(std::string keyword)
+{
+  return this->call_python_function("write_search",keyword)
 }
 
 void Navigator::select_hyperlinks_from_html(std::string html,std::vector<HyperLink> &links)

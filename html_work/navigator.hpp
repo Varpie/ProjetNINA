@@ -66,7 +66,7 @@ class Navigator
      * \fn void start_driver();
      * \brief Calls call_python_function with start_driver as function parametter
      */
-    void close_driver();
+    std::string close_driver();
 		/** Function to get HyperLinks from raw html
 		 * \fn select_hyperlinks_from_html(std::string html,std::vector<HyperLink> &links)
 		 * \param html Raw html
@@ -74,6 +74,7 @@ class Navigator
 		 * \brief Get href and text for each <a> tag, and put them in an HyperLink
 		 */
 		void select_hyperlinks_from_html(std::string html,std::vector<HyperLink> &links);
+    std::string write_search(std::string keyword);
 	private:
     	PyObject *module;
 };

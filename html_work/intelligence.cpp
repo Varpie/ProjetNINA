@@ -10,6 +10,7 @@ Intelligence::Intelligence(Navigator &nav,std::string &start_url)
 	for(auto const& line: this->blacklist) {
 		 std::cout << line << std::endl;
 	}*/
+	// rand seed common to all vector rands
 	srand(time(NULL));
 }
 
@@ -56,14 +57,15 @@ void Intelligence::roam()
 			this->current_url = navigate_res;
 		}
 		logging::vout("fin : " + this->current_url);
-	} while(x++ <= 50);
+	} while(x++ <= 350);
 }
 
 HyperLink select_random_in_vector(std::vector<HyperLink> &links)
 {
 		int random;
 		if(links.size() <= 1) {
-			random = 0;
+			//TODO : Call search function
+
 		} else {
 			random = (int)(std::rand() % links.size());
 		}
