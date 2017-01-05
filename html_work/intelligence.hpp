@@ -61,7 +61,10 @@ HyperLink select_diff_random_in_vector(std::vector<HyperLink> &links,std::string
  * \param url Url to compare
  * \return an HyperLink matching with whitelist
  */
-HyperLink select_from_word_list(std::vector<HyperLink> &links,std::string url);
+ HyperLink select_from_word_list(std::vector<HyperLink> &links,std::string url, std::vector<std::string> whiteList);
+
+ std::vector<std::string> initWhiteList(std::string name);
+
 void add_to_blacklist(std::string wrong_url);
 
 #endif
