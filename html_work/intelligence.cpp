@@ -13,7 +13,13 @@ Intelligence::Intelligence(Navigator& nav,std::string &start_url) : navigator(na
 	srand(time(NULL));
 }
 
-Intelligence::~Intelligence() {
+Intelligence::Intelligence(const Intelligence& obj)
+{
+	std::cout << "!!========= Copy constructor called !! ============= !!" << std::endl;
+}
+
+Intelligence::~Intelligence()
+{
 	this->dump_blacklist();
 	logging::vout("Deleting Intelligence object");
 }

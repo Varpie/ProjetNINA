@@ -25,6 +25,8 @@ class Intelligence
 		 * \param start_url a String that define start_url of browse
 		 */
 		Intelligence(Navigator& nav,std::string &start_url);
+		Intelligence(const Intelligence& obj){std::cout << "Intelligence Copy constructor" << std::endl;}
+		Intelligence& operator=(const Intelligence& obj){std::cout << "Intelligence assignment " << std::endl;}
 		/** Intelligence class destructor
 		 */
 		~Intelligence();
