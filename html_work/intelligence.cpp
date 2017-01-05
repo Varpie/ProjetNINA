@@ -39,18 +39,24 @@ void Intelligence::roam()
 {
 	std::string page_html;
 	std::vector<HyperLink> links;
-	std::vector<std::string> whiteList = initWhiteList("./word_list/word_list.txt");
+	std::vector<std::string> whitelist = initWhiteList(dict::whitefile);
 	HyperLink link;
 	int x = 0;
 	this->current_url = this->navigator.navigate(this->current_url);
 	do {
 		page_html = this->navigator.get_body_html();
 		this->navigator.select_hyperlinks_from_html(page_html, links);
-		this->current_url = select_from_word_list(links,this->current_url,whiteList).url;
+		if(dict::whitelist)
+			this->current_url = select_from_word_list(links,this->current_url,whitelist).url;
+		else
+			this->current_url = select_diff_random_in_vector(links,this->current_url).url;
 		std::string navigate_res = this->navigator.navigate(this->current_url);
 		if(navigate_res == "failed") {
 			blacklist.push_back(this->current_url);
-			this->current_url = select_from_word_list(links,this->current_url,whiteList).url;
+			if(dict::whitelist)
+				this->current_url = select_from_word_list(links,this->current_url,whitelist).url;
+			else
+				this->current_url = select_diff_random_in_vector(links,this->current_url).url;
 		} else {
 			this->current_url = navigate_res;
 		}
@@ -78,7 +84,7 @@ HyperLink select_diff_random_in_vector(std::vector<HyperLink> &links,std::string
 	return link;
 }
 
-HyperLink select_from_word_list(std::vector<HyperLink> &links,std::string url, std::vector<std::string> whiteList)
+HyperLink select_from_word_list(std::vector<HyperLink> &links,std::string url, std::vector<std::string> whitelist)
 {
 	HyperLink link;
 	std::string line;
@@ -88,14 +94,11 @@ HyperLink select_from_word_list(std::vector<HyperLink> &links,std::string url, s
 	link = select_random_in_vector(links);
 	do {
 		link = select_diff_random_in_vector(links, link.url);
-		for(int i=0; i<whiteList.size(); i++) {
+		for(int i=0; i<whitelist.size(); i++) {
 			text = " "+link.text+" ";
-			line = whiteList[i];
+			line = whitelist[i];
 			if(text.find(" "+line+" ") != std::string::npos) {
 				not_in_link = false;
-				std::cout << "#LIEN VALIDE : " << line << std::endl;
-				std::cout << "TXT == " << link.text << std::endl;
-				std::cout << "URL == " << link.url << std::endl;
 			}
 		}
 	} while(not_in_link && c++<50);
@@ -107,19 +110,16 @@ HyperLink select_from_word_list(std::vector<HyperLink> &links,std::string url, s
 std::vector<std::string> initWhiteList(std::string name) {
 	std::string line;
 	std::ifstream file(name);
-	std::vector<std::string> whiteList;
+	std::vector<std::string> whitelist;
 	if(file) {
 		while(std::getline(file, line)) {
-			whiteList.push_back(line);
+			whitelist.push_back(line);
 		}
 	} else {
 		logging::vout("Impossible d'ouvrir le fichier.");
 	}
-	for(int i=0; i<whiteList.size(); i++) {
-		std::cout << whiteList[i] << std::endl;
-	}
 	file.close();
-	return whiteList;
+	return whitelist;
 }
 
 void add_to_blacklist(std::string wrong_url) {

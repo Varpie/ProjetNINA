@@ -12,4 +12,10 @@ namespace logging {
             std::cerr << msg << std::endl;
     }
 }
+
+namespace dict {
+    extern bool whitelist;
+    extern std::string whitefile;
+}
+
 #endif
