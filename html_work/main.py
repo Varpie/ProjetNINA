@@ -21,7 +21,7 @@ def close_driver(v):
 	@rtype: string
 	@return: returns unused
 	"""
-	driver.close()
+	driver.quit()
 	# print "end"
 	return "True"
 

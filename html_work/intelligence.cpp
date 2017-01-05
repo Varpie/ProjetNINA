@@ -1,10 +1,9 @@
 #include "intelligence.hpp"
 
-Intelligence::Intelligence(Navigator &nav,std::string &start_url)
+Intelligence::Intelligence(Navigator& nav,std::string &start_url) : navigator(nav)
 {
 	logging::vout("Creating Intelligence object");
 	this->current_url = start_url;
-	this->navigator = nav;
 	this->load_blacklist();
 	/* Blacklist content
 	for(auto const& line: this->blacklist) {
@@ -57,7 +56,7 @@ void Intelligence::roam()
 			this->current_url = navigate_res;
 		}
 		logging::vout("fin : " + this->current_url);
-	} while(x++ <= 350);
+	} while(x++ <= 5);
 }
 
 HyperLink select_random_in_vector(std::vector<HyperLink> &links)

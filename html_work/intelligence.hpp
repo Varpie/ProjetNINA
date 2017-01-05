@@ -24,7 +24,7 @@ class Intelligence
 		 * \param nav a Navigator Object that ensure connexion with navigator functions
 		 * \param start_url a String that define start_url of browse
 		 */
-		Intelligence(Navigator &nav,std::string &start_url);
+		Intelligence(Navigator& nav,std::string &start_url);
 		/** Intelligence class destructor
 		 */
 		~Intelligence();
