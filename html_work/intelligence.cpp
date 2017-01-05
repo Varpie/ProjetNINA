@@ -63,12 +63,11 @@ void Intelligence::roam()
 HyperLink select_random_in_vector(std::vector<HyperLink> &links)
 {
 		int random;
-		if(links.size() <= 1) {
+		//if(links.size() <= 1) {
 			//TODO : Call search function
-
-		} else {
-			random = (int)(std::rand() % links.size());
-		}
+		//} else {
+		random = (int)(std::rand() % links.size());
+		//}
     HyperLink link = links.at(random);
     return link;
 }

@@ -77,7 +77,7 @@ std::string Navigator::close_driver()
 
 std::string Navigator::write_search(std::string keyword)
 {
-  return this->call_python_function("write_search",keyword)
+  return this->call_python_function("write_search",keyword);
 }
 
 void Navigator::select_hyperlinks_from_html(std::string html,std::vector<HyperLink> &links)

@@ -7,6 +7,10 @@ import signal
 
 driver = webdriver.Firefox()
 
+
+def write_search(keyworkd):
+	pass
+
 def close_driver(v):
 	"""
 	Close driver when navigation is over
@@ -35,46 +39,18 @@ def get_body_html(v):
 	"""
 	try:
 		#get 1st link of page to test if there is at least one
-		link = driver.find_element_by_css_selector('a:first-child')
-		if link is None:
+		link = driver.find_element_by_tag_name("a")
+		if not link:
 			driver.back()
-		html = driver.page_source
-		cleaner = lxml.html.clean.Cleaner()
-		cleaner.javascript = True
-		cleaner.style = True
-		return cleaner.clean_html(html).encode('utf-8')
+		else:
+			html = driver.page_source
+			cleaner = lxml.html.clean.Cleaner()
+			cleaner.javascript = True
+			cleaner.style = True
+			return cleaner.clean_html(html).encode('utf-8')
 	except:
 		driver.back()
 		return get_body_html("")
-
-def navigate(var_url):
-	ret = runFunctionWithTimeout(nav, (var_url,), timeout_duration=40)
-	if(len(ret) != 0):
-		return ret
-	else:
-		return "failed"
-
-def runFunctionWithTimeout(func, args=(), kwargs={}, timeout_duration=10, default=None):
-    import threading
-    class InterruptableThread(threading.Thread):
-        def __init__(self):
-            threading.Thread.__init__(self)
-            self.result = default
-        def run(self):
-            self.result = runFunctionCatchExceptions(func, *args, **kwargs)
-    it = InterruptableThread()
-    it.start()
-    it.join(timeout_duration)
-    if it.isAlive():
-        return default
-
-    if it.result[0] == "exception":
-        raise it.result[1]
-
-    return it.result[1]
-
-def write_search(keyword):
-	pass:
 
 def nav(var_url):
 	"""
@@ -137,3 +113,40 @@ def nav(var_url):
 		return "failed"
 	#we return current url to keep navigate
 	return driver.current_url
+
+
+
+def runFunctionCatchExceptions(func, *args, **kwargs):
+    try:
+        result = func(*args, **kwargs)
+    except Exception, message:
+        return ["exception", message]
+
+    return ["RESULT", result]
+
+
+def runFunctionWithTimeout(func, args=(), kwargs={}, timeout_duration=10, default=None):
+    import threading
+    class InterruptableThread(threading.Thread):
+        def __init__(self):
+            threading.Thread.__init__(self)
+            self.result = default
+        def run(self):
+            self.result = runFunctionCatchExceptions(func, *args, **kwargs)
+    it = InterruptableThread()
+    it.start()
+    it.join(timeout_duration)
+    if it.isAlive():
+        return default
+
+    if it.result[0] == "exception":
+        raise it.result[1]
+
+    return it.result[1]
+
+def navigate(var_url):
+	ret = runFunctionWithTimeout(nav, (var_url,), timeout_duration=40)
+	if(len(ret) != 0):
+		return ret
+	else:
+		return "failed"
