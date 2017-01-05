@@ -7,6 +7,8 @@
 bool logging::verbose = false;
 bool dict::whitelist = false;
 std::string dict::whitefile;
+bool dict::blacklist = false;
+std::string dict::blackfile;
 std::string lang = "en";
 std::string layout = "en";
 std::string browser = "firefox";
@@ -65,6 +67,7 @@ bool parse_arguments(int argc, char **argv)
 			{"timedkey", no_argument,0,'k'},
 			{"verbose", no_argument, 0, 0},
 			{"whitelist", no_argument, 0, 0},
+			{"blacklist", no_argument, 0, 0},
 			/* That last line is necessary, but useless. */
 			{0,0,0,0}
 		};
@@ -90,7 +93,10 @@ bool parse_arguments(int argc, char **argv)
 					logging::verbose = true;
 				}else if(long_options[option_index].name == "whitelist"){
 					dict::whitelist = true;
-					dict::whitefile = "./word_list/word_list.txt";
+					dict::whitefile = "./dictionaries/whitelist.txt";
+				}else if(long_options[option_index].name == "blacklist"){
+					dict::blacklist = true;
+					dict::blackfile = "./dictionaries/blacklist.txt";
 				}
 				break;
 			case 'h':

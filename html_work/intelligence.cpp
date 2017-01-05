@@ -5,7 +5,7 @@ Intelligence::Intelligence(Navigator &nav,std::string &start_url)
 	logging::vout("Creating Intelligence object");
 	this->current_url = start_url;
 	this->navigator = nav;
-	this->load_blacklist();
+	/* this->load_blacklist(); */
 	/* Blacklist content
 	for(auto const& line: this->blacklist) {
 		 std::cout << line << std::endl;
@@ -14,11 +14,11 @@ Intelligence::Intelligence(Navigator &nav,std::string &start_url)
 }
 
 Intelligence::~Intelligence() {
-	this->dump_blacklist();
+	/* this->dump_blacklist(); */
 	logging::vout("Deleting Intelligence object");
 }
 
-void Intelligence::load_blacklist() {
+/*void Intelligence::load_blacklist() {
 	std::ifstream file("dictionaries/blacklist.txt");
 	std::string line;
 	std::string file_contents;
@@ -29,17 +29,25 @@ void Intelligence::dump_blacklist() {
 	std::ofstream blacklist;
 	blacklist.open("dictionaries/blacklist.txt", std::ofstream::out | std::ofstream::trunc);
 	for(auto const& value: Intelligence::blacklist) {
-     /* std::cout << value; ... */
+     /* std::cout << value; ... *//*
 		 blacklist << value+"\n";
 	 }
 	blacklist.close();
-}
+}*/
 
 void Intelligence::roam()
 {
 	std::string page_html;
 	std::vector<HyperLink> links;
-	std::vector<std::string> whitelist = initWhiteList(dict::whitefile);
+	std::vector<std::string> whitelist;
+	if(dict::whitelist){
+		logging::vout("=====WHITELIST=====");
+		whitelist = init_whitelist(dict::whitefile);
+	}
+	if(dict::blacklist){
+		logging::vout("=====BLACKLIST=====");
+		blacklist = init_blacklist(dict::blackfile);
+	}
 	HyperLink link;
 	int x = 0;
 	this->current_url = this->navigator.navigate(this->current_url);
@@ -47,20 +55,24 @@ void Intelligence::roam()
 		page_html = this->navigator.get_body_html();
 		this->navigator.select_hyperlinks_from_html(page_html, links);
 		if(dict::whitelist)
-			this->current_url = select_from_word_list(links,this->current_url,whitelist).url;
+			this->current_url = select_whitelist(links,this->current_url,whitelist).url;
+		else if(dict::blacklist)
+			this->current_url = select_blacklist(links,this->current_url,blacklist).url;
 		else
 			this->current_url = select_diff_random_in_vector(links,this->current_url).url;
 		std::string navigate_res = this->navigator.navigate(this->current_url);
 		if(navigate_res == "failed") {
 			blacklist.push_back(this->current_url);
 			if(dict::whitelist)
-				this->current_url = select_from_word_list(links,this->current_url,whitelist).url;
+				this->current_url = select_whitelist(links,this->current_url,whitelist).url;
+			else if(dict::blacklist)
+				this->current_url = select_blacklist(links,this->current_url,blacklist).url;
 			else
 				this->current_url = select_diff_random_in_vector(links,this->current_url).url;
 		} else {
 			this->current_url = navigate_res;
 		}
-	} while(x++ <= 20);
+	} while(x++ <= 5);
 }
 
 HyperLink select_random_in_vector(std::vector<HyperLink> &links)
@@ -84,7 +96,7 @@ HyperLink select_diff_random_in_vector(std::vector<HyperLink> &links,std::string
 	return link;
 }
 
-HyperLink select_from_word_list(std::vector<HyperLink> &links,std::string url, std::vector<std::string> whitelist)
+HyperLink select_whitelist(std::vector<HyperLink> &links,std::string url, std::vector<std::string> whitelist)
 {
 	HyperLink link;
 	std::string line;
@@ -107,7 +119,7 @@ HyperLink select_from_word_list(std::vector<HyperLink> &links,std::string url, s
 	return link;
 }
 
-std::vector<std::string> initWhiteList(std::string name) {
+std::vector<std::string> init_whitelist(std::string name) {
 	std::string line;
 	std::ifstream file(name);
 	std::vector<std::string> whitelist;
@@ -120,6 +132,44 @@ std::vector<std::string> initWhiteList(std::string name) {
 	}
 	file.close();
 	return whitelist;
+}
+
+HyperLink select_blacklist(std::vector<HyperLink> &links,std::string url, std::vector<std::string> blacklist)
+{
+	HyperLink link;
+	std::string line;
+	std::string text;
+	bool not_in_link = true;
+	int c = 0;
+	link = select_random_in_vector(links);
+	do {
+		link = select_diff_random_in_vector(links, link.url);
+		for(int i=0; i<blacklist.size(); i++) {
+			text = " "+link.text+" ";
+			line = blacklist[i];
+			if(text.find(" "+line+" ") != std::string::npos) {
+				not_in_link = false;
+			}
+		}
+	} while(not_in_link && c++<50);
+	if(c==50)
+		link.url = url;
+	return link;
+}
+
+std::vector<std::string> init_blacklist(std::string name) {
+	std::string line;
+	std::ifstream file(name);
+	std::vector<std::string> blacklist;
+	if(file) {
+		while(std::getline(file, line)) {
+			blacklist.push_back(line);
+		}
+	} else {
+		logging::vout("Impossible d'ouvrir le fichier.");
+	}
+	file.close();
+	return blacklist;
 }
 
 void add_to_blacklist(std::string wrong_url) {
