@@ -58,12 +58,19 @@ HyperLink select_random_in_vector(std::vector<HyperLink> &links);
 HyperLink select_diff_random_in_vector(std::vector<HyperLink> &links,std::string url);
 
 /** Function that selects a random in a vector matching with whitelist
- * \fn HyperLink select_from_word_list(std::vector<HyperLink> &links,std::string url)
+ * \fn HyperLink select_whitelist(std::vector<HyperLink> &links,std::string url)
  * \param links Vector of HyperLinks
  * \param url Url to compare
  * \return an HyperLink matching with whitelist
  */
-HyperLink select_from_word_list(std::vector<HyperLink> &links,std::string url);
+ HyperLink select_whitelist(std::vector<HyperLink> &links,std::string url, std::vector<std::string> whitelist);
+
+ std::vector<std::string> init_whitelist(std::string name);
+
+ HyperLink select_blacklist(std::vector<HyperLink> &links,std::string url, std::vector<std::string> blacklist);
+
+ std::vector<std::string> init_blacklist(std::string name);
+
 void add_to_blacklist(std::string wrong_url);
 
 #endif
