@@ -1,8 +1,4 @@
 #include "main.hpp"
-#include "html_work/navigator.hpp"
-#include "html_work/intelligence.hpp"
-#include "timed_keystrokes/timed_keystrokes.h"
-#include "uinput/write_keyboard.h"
 
 bool logging::verbose = false;
 bool dict::whitelist = false;
@@ -139,8 +135,7 @@ int main(int argc, char **argv)
 		return 0;
 	//setup_uinput_device();
 	logging::vout("Verbose is active");
-	Navigator nav;
-	Intelligence intel(nav,url);
+	Intelligence intel(url);
 	intel.roam();
 	//destroy_uinput_device();
 	logging::vout("Program finished");

@@ -1,10 +1,10 @@
 #include "intelligence.hpp"
 
-Intelligence::Intelligence(Navigator &nav,std::string &start_url)
+Intelligence::Intelligence(std::string &start_url)
 {
 	logging::vout("Creating Intelligence object");
 	this->current_url = start_url;
-	this->navigator = nav;
+	this->navigator = new Navigator();
 	/* this->load_blacklist(); */
 	/* Blacklist content
 	for(auto const& line: this->blacklist) {
@@ -14,6 +14,8 @@ Intelligence::Intelligence(Navigator &nav,std::string &start_url)
 }
 
 Intelligence::~Intelligence() {
+	/* important, not destroyed dynamically */
+	delete(this->navigator);
 	/* this->dump_blacklist(); */
 	logging::vout("Deleting Intelligence object");
 }
@@ -50,17 +52,17 @@ void Intelligence::roam()
 	}
 	HyperLink link;
 	int x = 0;
-	this->current_url = this->navigator.navigate(this->current_url);
+	this->current_url = this->navigator->navigate(this->current_url);
 	do {
-		page_html = this->navigator.get_body_html();
-		this->navigator.select_hyperlinks_from_html(page_html, links);
+		page_html = this->navigator->get_body_html();
+		this->navigator->select_hyperlinks_from_html(page_html, links);
 		if(dict::whitelist)
 			this->current_url = select_whitelist(links,this->current_url,whitelist).url;
 		else if(dict::blacklist)
 			this->current_url = select_blacklist(links,this->current_url,blacklist).url;
 		else
 			this->current_url = select_diff_random_in_vector(links,this->current_url).url;
-		std::string navigate_res = this->navigator.navigate(this->current_url);
+		std::string navigate_res = this->navigator->navigate(this->current_url);
 		if(navigate_res == "failed") {
 			blacklist.push_back(this->current_url);
 			if(dict::whitelist)
