@@ -27,5 +27,5 @@ esac
 git config --global user.name $name
 git config --global user.email $email
 
-# Caching password for 1 hour
+# Caching password for 4 hours
 git config --global credential.helper 'cache --timeout=14400'
