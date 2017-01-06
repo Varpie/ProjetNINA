@@ -43,12 +43,16 @@ void Intelligence::roam()
 	std::vector<HyperLink> links;
 	std::vector<std::string> whitelist;
 	if(dict::whitelist){
-		logging::vout("=====WHITELIST=====");
-		whitelist = init_whitelist(dict::whitefile);
+		logging::vout("Load whitelist");
+		whitelist = init_list(dict::whitefile);
 	}
 	if(dict::blacklist){
-		logging::vout("=====BLACKLIST=====");
-		blacklist = init_blacklist(dict::blackfile);
+		logging::vout("Load blacklist");
+		blacklist = init_list(dict::blackfile);
+	}
+	if(dict::other){
+		logging::vout("Load list");
+		otherlist = init_list(dict::otherfile);
 	}
 	HyperLink link;
 	int x = 0;
@@ -60,6 +64,8 @@ void Intelligence::roam()
 			this->current_url = select_whitelist(links,this->current_url,whitelist).url;
 		else if(dict::blacklist)
 			this->current_url = select_blacklist(links,this->current_url,blacklist).url;
+		else if(dict::other)
+			this->current_url = select_blacklist(links,this->current_url,otherlist).url;
 		else
 			this->current_url = select_diff_random_in_vector(links,this->current_url).url;
 		std::string navigate_res = this->navigator->navigate(this->current_url);
@@ -121,21 +127,6 @@ HyperLink select_whitelist(std::vector<HyperLink> &links,std::string url, std::v
 	return link;
 }
 
-std::vector<std::string> init_whitelist(std::string name) {
-	std::string line;
-	std::ifstream file(name);
-	std::vector<std::string> whitelist;
-	if(file) {
-		while(std::getline(file, line)) {
-			whitelist.push_back(line);
-		}
-	} else {
-		logging::vout("Impossible d'ouvrir le fichier.");
-	}
-	file.close();
-	return whitelist;
-}
-
 HyperLink select_blacklist(std::vector<HyperLink> &links,std::string url, std::vector<std::string> blacklist)
 {
 	HyperLink link;
@@ -159,21 +150,41 @@ HyperLink select_blacklist(std::vector<HyperLink> &links,std::string url, std::v
 	return link;
 }
 
-std::vector<std::string> init_blacklist(std::string name) {
+std::vector<std::string> init_list(std::string name) {
 	std::string line;
 	std::ifstream file(name);
-	std::vector<std::string> blacklist;
+	std::vector<std::string> list;
 	if(file) {
 		while(std::getline(file, line)) {
-			blacklist.push_back(line);
+			list.push_back(line);
 		}
 	} else {
 		logging::vout("Impossible d'ouvrir le fichier.");
 	}
 	file.close();
-	return blacklist;
+	return list;
 }
-
+/*
+tuple_list<int,std::string> init_otherlist(std::string name) {
+	std::string line;
+	int value;
+	std::string word;
+	std::ifstream file(name);
+	tuple_list<int,std::string> list;
+	if(file) {
+		while(std::getline(file, line)) {
+			value = line.substr(0, line.find(";"));
+			word = line.substr(value.length()+1);
+			list.push_back(tuple<int,std::string> (value,word))
+		}
+	} else {
+		logging::vout("Impossible d'ouvrir le fichier.");
+	}
+	file.close();
+	return list;
+}*/
+/*
 void add_to_blacklist(std::string wrong_url) {
 	std::cout << "TODO";
 }
+*/

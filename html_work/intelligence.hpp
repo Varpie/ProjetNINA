@@ -12,6 +12,7 @@
 #include "navigator.hpp"
 #include "../log.hpp"
 
+typedef std::vector<tuple<int,std::string>> tuple_list;
 
 /**
  * Intelligence Class, regroup navigation processes
@@ -23,9 +24,11 @@ class Intelligence
 		/** Intelligence class constructor
 		 * \param start_url a String that define start_url of browse
 		 */
+
 		Intelligence(std::string &start_url);
 		Intelligence(const Intelligence& obj){std::cout << "Intelligence Copy constructor" << std::endl;}
 		Intelligence& operator=(const Intelligence& obj){std::cout << "Intelligence assignment " << std::endl;}
+
 		/** Intelligence class destructor
 		 */
 		~Intelligence();
