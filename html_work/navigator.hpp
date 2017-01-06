@@ -36,6 +36,8 @@ class Navigator
 		/** Navigator class destructor
 		 * \brief Closes python connexion
 		 */
+    Navigator(const Navigator& obj){std::cout << "Navigator Copy constructor" << std::endl;}
+    Navigator& operator=(const Navigator& obj){std::cout << "Navigator assignment " << std::endl;}
 		~Navigator();
 		/** Function to call python code
 		 * \fn std::string call_python_function(std::string function,std::string arg)

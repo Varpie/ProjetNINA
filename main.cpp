@@ -1,10 +1,10 @@
 #include "main.hpp"
-#include "html_work/navigator.hpp"
-#include "html_work/intelligence.hpp"
-#include "timed_keystrokes/timed_keystrokes.h"
-#include "uinput/write_keyboard.h"
 
 bool logging::verbose = false;
+bool dict::whitelist = false;
+std::string dict::whitefile;
+bool dict::blacklist = false;
+std::string dict::blackfile;
 std::string lang = "en";
 std::string layout = "en";
 std::string browser = "firefox";
@@ -62,6 +62,8 @@ bool parse_arguments(int argc, char **argv)
 			{"url", required_argument, 0, 0},
 			{"timedkey", no_argument,0,'k'},
 			{"verbose", no_argument, 0, 0},
+			{"whitelist", no_argument, 0, 0},
+			{"blacklist", no_argument, 0, 0},
 			/* That last line is necessary, but useless. */
 			{0,0,0,0}
 		};
@@ -85,6 +87,12 @@ bool parse_arguments(int argc, char **argv)
 					flag = false;
 				}else if(long_options[option_index].name == "verbose"){
 					logging::verbose = true;
+				}else if(long_options[option_index].name == "whitelist"){
+					dict::whitelist = true;
+					dict::whitefile = "./dictionaries/whitelist.txt";
+				}else if(long_options[option_index].name == "blacklist"){
+					dict::blacklist = true;
+					dict::blackfile = "./dictionaries/blacklist.txt";
 				}
 				break;
 			case 'h':
@@ -127,8 +135,7 @@ int main(int argc, char **argv)
 		return 0;
 	//setup_uinput_device();
 	logging::vout("Verbose is active");
-	Navigator nav;
-	Intelligence intel(nav,url);
+	Intelligence intel(url);
 	intel.roam();
 	//destroy_uinput_device();
 	logging::vout("Program finished");

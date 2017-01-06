@@ -21,10 +21,11 @@ class Intelligence
 {
 	public:
 		/** Intelligence class constructor
-		 * \param nav a Navigator Object that ensure connexion with navigator functions
 		 * \param start_url a String that define start_url of browse
 		 */
-		Intelligence(Navigator &nav,std::string &start_url);
+		Intelligence(std::string &start_url);
+		Intelligence(const Intelligence& obj){std::cout << "Intelligence Copy constructor" << std::endl;}
+		Intelligence& operator=(const Intelligence& obj){std::cout << "Intelligence assignment " << std::endl;}
 		/** Intelligence class destructor
 		 */
 		~Intelligence();
@@ -36,7 +37,7 @@ class Intelligence
 		void dump_blacklist();
 	private:
 		std::string current_url;
-		Navigator navigator;
+		Navigator* navigator;
 		std::vector<std::string> blacklist;
 };
 
@@ -56,12 +57,19 @@ HyperLink select_random_in_vector(std::vector<HyperLink> &links);
 HyperLink select_diff_random_in_vector(std::vector<HyperLink> &links,std::string url);
 
 /** Function that selects a random in a vector matching with whitelist
- * \fn HyperLink select_from_word_list(std::vector<HyperLink> &links,std::string url)
+ * \fn HyperLink select_whitelist(std::vector<HyperLink> &links,std::string url)
  * \param links Vector of HyperLinks
  * \param url Url to compare
  * \return an HyperLink matching with whitelist
  */
-HyperLink select_from_word_list(std::vector<HyperLink> &links,std::string url);
+ HyperLink select_whitelist(std::vector<HyperLink> &links,std::string url, std::vector<std::string> whitelist);
+
+ std::vector<std::string> init_whitelist(std::string name);
+
+ HyperLink select_blacklist(std::vector<HyperLink> &links,std::string url, std::vector<std::string> blacklist);
+
+ std::vector<std::string> init_blacklist(std::string name);
+
 void add_to_blacklist(std::string wrong_url);
 
 #endif

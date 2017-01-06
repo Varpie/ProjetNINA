@@ -21,7 +21,7 @@ def close_driver(v):
 	@rtype: string
 	@return: returns unused
 	"""
-	driver.close()
+	driver.quit()
 	# print "end"
 	return "True"
 
@@ -69,7 +69,6 @@ def nav(var_url):
 	driver.implicitly_wait(0.5)
 	# current url, and domain
 	current = driver.current_url
-	print("current :" + current);
 	# protocol relative url -> free to http or https
 	if(var_url[:2] == "//"):
 		# we change it to absolute
