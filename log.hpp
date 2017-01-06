@@ -16,8 +16,10 @@ namespace logging {
 namespace dict {
     extern bool whitelist;
     extern bool blacklist;
+    extern bool other;
     extern std::string whitefile;
     extern std::string blackfile;
+    extern std::string otherfile;
 }
 
 #endif

@@ -9,6 +9,8 @@ bool dict::whitelist = false;
 std::string dict::whitefile;
 bool dict::blacklist = false;
 std::string dict::blackfile;
+bool dict::other = false;
+std::string dict::otherfile;
 std::string lang = "en";
 std::string layout = "en";
 std::string browser = "firefox";
@@ -66,8 +68,7 @@ bool parse_arguments(int argc, char **argv)
 			{"url", required_argument, 0, 0},
 			{"timedkey", no_argument,0,'k'},
 			{"verbose", no_argument, 0, 0},
-			{"whitelist", no_argument, 0, 0},
-			{"blacklist", no_argument, 0, 0},
+			{"dict", required_argument, 0, 0},
 			/* That last line is necessary, but useless. */
 			{0,0,0,0}
 		};
@@ -91,12 +92,20 @@ bool parse_arguments(int argc, char **argv)
 					flag = false;
 				}else if(long_options[option_index].name == "verbose"){
 					logging::verbose = true;
-				}else if(long_options[option_index].name == "whitelist"){
-					dict::whitelist = true;
-					dict::whitefile = "./dictionaries/whitelist.txt";
-				}else if(long_options[option_index].name == "blacklist"){
-					dict::blacklist = true;
-					dict::blackfile = "./dictionaries/blacklist.txt";
+				}else if(long_options[option_index].name == "dict"){
+					if(!strcmp(optarg,"whitelist")){
+						logging("Using whitelist");
+						dict::whitelist = true;
+						dict::whitefile = "./dictionaries/whitelist.txt";
+					}else if(!strcmp(optarg,"whitelist")){
+						logging("Using blacklist");
+						dict::blacklist = true;
+						dict::blackfile = "./dictionaries/blacklist.txt";
+					}else{
+						logging("Using list");
+						dict::other = true;
+						dict::otherfile = optarg;
+					}
 				}
 				break;
 			case 'h':
