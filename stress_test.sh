@@ -14,6 +14,7 @@ while sleep 1; do
     elif [[ $timeout -gt 3 ]]; then
         gnuplot -p -e "plot 'ps.dat' using 2 title 'pmem' with lines, \
                             'ps.dat' using 3 title 'pcpu' with lines"
+        rm ps.dat
         exit
     else
         (( timeout++ ))
