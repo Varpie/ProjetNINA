@@ -90,15 +90,15 @@ bool parse_arguments(int argc, char **argv)
 					logging::verbose = true;
 				}else if(long_options[option_index].name == "dict"){
 					if(!strcmp(optarg,"whitelist")){
-						logging("Using whitelist");
+						logging::vout("Using whitelist");
 						dict::whitelist = true;
 						dict::whitefile = "./dictionaries/whitelist.txt";
 					}else if(!strcmp(optarg,"whitelist")){
-						logging("Using blacklist");
+						logging::vout("Using blacklist");
 						dict::blacklist = true;
 						dict::blackfile = "./dictionaries/blacklist.txt";
 					}else{
-						logging("Using list");
+						logging::vout("Using list");
 						dict::other = true;
 						dict::otherfile = optarg;
 					}
