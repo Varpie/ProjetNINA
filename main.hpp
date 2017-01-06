@@ -12,6 +12,9 @@
 #include <getopt.h>
 #include <unistd.h>
 #include "log.hpp"
+#include "html_work/intelligence.hpp"
+#include "timed_keystrokes/timed_keystrokes.h"
+#include "uinput/write_keyboard.h"
 
 void print_help();
 void parse_config();

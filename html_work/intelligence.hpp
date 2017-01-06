@@ -22,10 +22,13 @@ class Intelligence
 {
 	public:
 		/** Intelligence class constructor
-		 * \param nav a Navigator Object that ensure connexion with navigator functions
 		 * \param start_url a String that define start_url of browse
 		 */
-		Intelligence(Navigator& nav,std::string &start_url);
+
+		Intelligence(std::string &start_url);
+		Intelligence(const Intelligence& obj){std::cout << "Intelligence Copy constructor" << std::endl;}
+		Intelligence& operator=(const Intelligence& obj){std::cout << "Intelligence assignment " << std::endl;}
+
 		/** Intelligence class destructor
 		 */
 		~Intelligence();
@@ -37,7 +40,7 @@ class Intelligence
 		void dump_blacklist();
 	private:
 		std::string current_url;
-		Navigator navigator;
+		Navigator* navigator;
 		std::vector<std::string> blacklist;
 };
 
