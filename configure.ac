@@ -1,0 +1,6 @@
+AC_INIT([nina], [0.1], [test@example.com])
+AM_INIT_AUTOMAKE
+AC_PROG_CXX
+AC_PROG_CC
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT
