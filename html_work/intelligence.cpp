@@ -42,6 +42,8 @@ void Intelligence::roam()
 	std::string page_html;
 	std::vector<HyperLink> links;
 	std::vector<std::string> whitelist;
+	std::vector<std::string> blacklist;
+	tuple_list otherlist;
 	if(dict::whitelist){
 		logging::vout("Load whitelist");
 		whitelist = init_list(dict::whitefile);
@@ -52,7 +54,7 @@ void Intelligence::roam()
 	}
 	if(dict::other){
 		logging::vout("Load list");
-		otherlist = init_list(dict::otherfile);
+		otherlist = init_otherlist(dict::otherfile);
 	}
 	HyperLink link;
 	int x = 0;
@@ -65,7 +67,7 @@ void Intelligence::roam()
 		else if(dict::blacklist)
 			this->current_url = select_blacklist(links,this->current_url,blacklist).url;
 		else if(dict::other)
-			this->current_url = select_blacklist(links,this->current_url,otherlist).url;
+			this->current_url = select_otherlist(links,this->current_url,otherlist).url;
 		else
 			this->current_url = select_diff_random_in_vector(links,this->current_url).url;
 		std::string navigate_res = this->navigator->navigate(this->current_url);
@@ -150,6 +152,32 @@ HyperLink select_blacklist(std::vector<HyperLink> &links,std::string url, std::v
 	return link;
 }
 
+HyperLink select_otherlist(std::vector<HyperLink> &links,std::string url, tuple_list list)
+{
+	HyperLink link;
+	std::string line;
+	std::string text;
+	bool test = true;
+	int c = 0;
+	link = select_random_in_vector(links);
+	do {
+		link = select_diff_random_in_vector(links, link.url);
+		for(int i=0; i<list.size(); i++) {
+			text = " "+link.text+" ";
+			line = std::get<1>(list[i]);
+			if((text.find(" "+line+" ")!=std::string::npos)&&(std::get<0>(list[i])==1)) {
+				test = false;
+			}
+			else if(std::get<0>(list[i])==0){
+					test = false;
+			}
+		}
+	} while(test && c++<50);
+	if(c==50)
+		link.url = url;
+	return link;
+}
+
 std::vector<std::string> init_list(std::string name) {
 	std::string line;
 	std::ifstream file(name);
@@ -164,25 +192,26 @@ std::vector<std::string> init_list(std::string name) {
 	file.close();
 	return list;
 }
-/*
-tuple_list<int,std::string> init_otherlist(std::string name) {
+
+tuple_list init_otherlist(std::string name) {
 	std::string line;
 	int value;
 	std::string word;
 	std::ifstream file(name);
-	tuple_list<int,std::string> list;
+	tuple_list list;
 	if(file) {
 		while(std::getline(file, line)) {
-			value = line.substr(0, line.find(";"));
-			word = line.substr(value.length()+1);
-			list.push_back(tuple<int,std::string> (value,word))
+			value = std::stoi(line.substr(0, line.find(";")));
+			word = line.substr(2);
+			list.emplace_back(std::tuple<int,std::string> (value,word));
 		}
 	} else {
 		logging::vout("Impossible d'ouvrir le fichier.");
 	}
 	file.close();
 	return list;
-}*/
+}
+
 /*
 void add_to_blacklist(std::string wrong_url) {
 	std::cout << "TODO";
