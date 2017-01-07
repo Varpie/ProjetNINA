@@ -4,7 +4,7 @@ Navigator::Navigator(void) {
     logging::vout("Creating Navigator object");
     Py_Initialize();
     logging::vout("Python initialized");
-    if(PyRun_SimpleString("import sys;sys.path.insert(0, './html_work/')")) {
+    if(PyRun_SimpleString("import sys;sys.path.insert(0, './src/html_work/')")) {
         logging::verr("path expansion failed");
     }
 
