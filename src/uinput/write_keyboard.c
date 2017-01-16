@@ -121,8 +121,9 @@ void send_a_button(int key, int modifier){
 }
 
 }
-void send_a_button_default(int key){
+int send_a_button_default(int key){
 	send_a_button(key,0);
+	return 0;
 }
 
 
