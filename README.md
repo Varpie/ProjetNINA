@@ -1,5 +1,17 @@
 # ProjetNINA
 
+## Building the project
+
+Using autotools (install `autoconf` if you don't have it), run the following commands:
+
+  ```
+  aclocal
+  autoconf
+  automake
+  ./configure
+  make
+  ```
+
 ## Coding style
 
 - Only C-style comments

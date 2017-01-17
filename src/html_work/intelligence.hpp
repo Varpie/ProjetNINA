@@ -9,6 +9,7 @@
 #include <string>
 #include <python2.7/Python.h>
 #include <vector>
+#include <tuple>
 #include "navigator.hpp"
 #include "../log.hpp"
 
@@ -42,7 +43,6 @@ class Intelligence
 		std::string current_url;
 		Navigator* navigator;
 		std::vector<std::string> blacklist;
-		std::vector<std::string> otherlist;
 };
 
 /** Function to select a random in a vector
@@ -68,13 +68,13 @@ HyperLink select_diff_random_in_vector(std::vector<HyperLink> &links,std::string
  */
  HyperLink select_whitelist(std::vector<HyperLink> &links,std::string url, std::vector<std::string> whitelist);
 
- std::vector<std::string> init_whitelist(std::string name);
+ HyperLink select_blacklist(std::vector<HyperLink> &links,std::string url, std::vector<std::string> whitelist);
 
- HyperLink select_blacklist(std::vector<HyperLink> &links,std::string url, std::vector<std::string> blacklist);
+ HyperLink select_otherlist(std::vector<HyperLink> &links,std::string url, tuple_list list);
 
  std::vector<std::string> init_list(std::string name);
 
- std::vector<std::string> init_blacklist(std::string name);
+ tuple_list init_otherlist(std::string name);
 
 void add_to_blacklist(std::string wrong_url);
 

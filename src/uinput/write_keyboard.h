@@ -51,8 +51,9 @@ void release_a_button(int key);
  */
 void send_a_button(int key, int modifier);
 
-/* send press event then release event of a key */
-void send_a_button_default(int key);
+/* send press event then release event of a key
+ * return 0 if success */
+int send_a_button_default(int key);
 
 /* Convert ASCII code to KEY defined in /linux/input.h */
 void cvrt_char(int *a, int c);

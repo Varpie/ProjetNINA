@@ -88,6 +88,7 @@ bool parse_arguments(int argc, char **argv)
 					flag = false;
 				}else if(long_options[option_index].name == "verbose"){
 					logging::verbose = true;
+					logging::vout("Verbose is active");
 				}else if(long_options[option_index].name == "dict"){
 					if(!strcmp(optarg,"whitelist")){
 						logging::vout("Using whitelist");
@@ -143,7 +144,6 @@ int main(int argc, char **argv)
 	if(!parse_arguments(argc, argv))
 		return 0;
 	//setup_uinput_device();
-	logging::vout("Verbose is active");
 	Intelligence intel(url);
 	intel.roam();
 	//destroy_uinput_device();
