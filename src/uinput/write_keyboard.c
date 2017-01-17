@@ -395,7 +395,7 @@ double box_muller(double mean, double sig){
 }
 
 
-void write_array(char array[], int size){
+int write_array(char array[], int size){
 	int i;
 	double r[2];
 	load_random(r);
@@ -405,7 +405,7 @@ void write_array(char array[], int size){
 			t = box_muller(r[0],r[1]);
 			nanosleep((const struct timespec[]){{0, (int)(1000*t)}}, NULL);
 	}
-
+	return 0;
 }
 
 int destroy_uinput_device(){
@@ -431,3 +431,10 @@ int main(int argc, char *argv[])
 
 }
 */
+
+// int main() {
+// 	setup_uinput_device();
+// 	write_array("toto",4);
+// 	destroy_uinput_device();
+// 	return 0;
+// }
