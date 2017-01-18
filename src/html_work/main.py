@@ -1,45 +1,42 @@
 # -*- coding: utf-8 -*-
+# import sys
 from selenium import webdriver
+# realtive url !!!
+# sys.path.append('/home/etienne/ProjetNINA/src/uinput')
+import uinput_wrapping_module
 import random
 import lxml.html.clean
 import time
 import signal
-import ../uinput/setup.py
+dir(uinput_wrapping_module)
 
 driver = webdriver.Firefox()
+uinput_wrapping_module.setup_uinput_device_func()
 
+def write_search(keyword):
+    # f6 -> 64 | entrée -> 28
+    # driver.get("https://www.google.com")
+    # inputElement = driver.find_element_by_name("q")
+    # inputElement.click();
+    # TODO : Choose between google search or taburl search
+    uinput_wrapping_module.send_a_button_default_func(64)
+    uinput_wrapping_module.write_array_func(keyword)
+    uinput_wrapping_module.send_a_button_default_func(28)
+    driver.implicitly_wait(0.5)
+    return driver.current_url
 
+def end_python():
+    """
+    Close driver and destroy keyboad when navigation is over
+    """
+    uinput_wrapping_module.destroy_uinput_device_func()
+    driver.quit()
 
-def write_search(keyworkd):
--> ref 64 : f6 (-> focus sur l'url)
-    #void send_a_button_default(int key)
--> keyword + len(keyword)
-	#void write_array(char array[], int size);
-
-
-
-def close_driver(v):
-	"""
-	Close driver when navigation is over
-
-	@type v: string
-	@param v: Unused
-
-	@rtype: string
-	@return: returns unused
-	"""
-	driver.quit()
-	# print "end"
-	return "True"
-
-def get_body_html(v):
+def get_body_html():
 	"""
 	Get body html of a page, and strips it from its Styles and Scripts
 	It does so, with webdriver.
 	Cleaning it does with lxml.html.clean dependance
-
-	@type v: string
-	@param v: Unused
 
 	@rtype: string
 	@return: returns html
@@ -119,8 +116,6 @@ def nav(var_url):
 		return "failed"
 	#we return current url to keep navigate
 	return driver.current_url
-
-
 
 def runFunctionCatchExceptions(func, *args, **kwargs):
     try:

@@ -5,7 +5,7 @@ int setup_uinput_device(){
 	int i=0;
 /* Open the input device */
 	uinp_fd = open("/dev/uinput", O_WRONLY | O_NDELAY);
-	if (uinp_fd == NULL)
+	if (fcntl(uinp_fd, F_GETFD) == -1)
 	{
 		printf("Unable to open /dev/uinput\n");
 		return -1;
@@ -83,30 +83,30 @@ void send_click_events( ){
 
 void press_a_button(int key){
 	// Report BUTTON CLICK - PRESS event
-		memset(&event, 0, sizeof(event));
-		gettimeofday(&event.time, NULL);
-		event.type = EV_KEY;
-		event.code = key;
-		event.value = 1;
-		write(uinp_fd, &event, sizeof(event));
-		event.type = EV_SYN;
-		event.code = SYN_REPORT;
-		event.value = 0;
-		write(uinp_fd, &event, sizeof(event));
+	memset(&event, 0, sizeof(event));
+	gettimeofday(&event.time, NULL);
+	event.type = EV_KEY;
+	event.code = key;
+	event.value = 1;
+	write(uinp_fd, &event, sizeof(event));
+	event.type = EV_SYN;
+	event.code = SYN_REPORT;
+	event.value = 0;
+	write(uinp_fd, &event, sizeof(event));
 }
 
 void release_a_button(int key){
 	// Report BUTTON CLICK - RELEASE event
-		memset(&event, 0, sizeof(event));
-		gettimeofday(&event.time, NULL);
-		event.type = EV_KEY;
-		event.code = key;
-		event.value = 0;
-		write(uinp_fd, &event, sizeof(event));
-		event.type = EV_SYN;
-		event.code = SYN_REPORT;
-		event.value = 0;
-		write(uinp_fd, &event, sizeof(event));
+	memset(&event, 0, sizeof(event));
+	gettimeofday(&event.time, NULL);
+	event.type = EV_KEY;
+	event.code = key;
+	event.value = 0;
+	write(uinp_fd, &event, sizeof(event));
+	event.type = EV_SYN;
+	event.code = SYN_REPORT;
+	event.value = 0;
+	write(uinp_fd, &event, sizeof(event));
 }
 void send_a_button(int key, int modifier){
 	if(modifier == 0)
@@ -121,9 +121,8 @@ void send_a_button(int key, int modifier){
 }
 
 }
-int send_a_button_default(int key){
+void send_a_button_default(int key){
 	send_a_button(key,0);
-	return 0;
 }
 
 
@@ -357,26 +356,26 @@ void write_char(char c){
 }
 
 void load_random(double stat[]){
-		FILE * fp;
-    char * line = NULL;
-		char ** ptr = NULL;
-    size_t len = 0;
-    ssize_t read;
-    fp = fopen(name_conf, "r");
-    if (fp == NULL){
-			printf("No file found\n");
-		}else{
-			int i=0;
-	    while ((read = getline(&line, &len, fp)) != -1) {
-				stat [i] = strtod(line,ptr);
-				i++;
-	    }
-		}
-    fclose(fp);
-    if (line)
-        free(line);
-		if (ptr)
-				free (ptr);
+	FILE * fp;
+  char * line = NULL;
+	char ** ptr = NULL;
+  size_t len = 0;
+  ssize_t read;
+  fp = fopen(name_conf, "r");
+  if (fp == NULL){
+		printf("No file found\n");
+	}else{
+		int i=0;
+    while ((read = getline(&line, &len, fp)) != -1) {
+			stat [i] = strtod(line,ptr);
+			i++;
+    }
+	}
+  fclose(fp);
+  if (line)
+      free(line);
+	if (ptr)
+			free (ptr);
 }
 
 double box_muller(double mean, double sig){
@@ -395,7 +394,7 @@ double box_muller(double mean, double sig){
 }
 
 
-int write_array(char array[], int size){
+void write_array(char array[], int size){
 	int i;
 	double r[2];
 	load_random(r);
@@ -405,7 +404,6 @@ int write_array(char array[], int size){
 			t = box_muller(r[0],r[1]);
 			nanosleep((const struct timespec[]){{0, (int)(1000*t)}}, NULL);
 	}
-	return 0;
 }
 
 int destroy_uinput_device(){
