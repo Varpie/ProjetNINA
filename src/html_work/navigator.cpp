@@ -17,7 +17,7 @@ Navigator::Navigator(void) {
 
 Navigator::~Navigator(void) {
   logging::vout("Destroying Navigator object");
-  close_driver();
+  end_python();
   Py_Finalize();
   logging::vout("Python context finalized");
 }
@@ -71,9 +71,9 @@ std::string Navigator::navigate(std::string url)
     return this->call_python_function("navigate",url);
 }
 
-std::string Navigator::close_driver()
+std::string Navigator::end_python()
 {
-    return this->call_python_function("close_driver","");
+    return this->call_python_function("end_python","");
 }
 
 std::string Navigator::write_search(std::string keyword)
