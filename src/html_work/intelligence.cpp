@@ -56,6 +56,7 @@ void Intelligence::roam()
 		logging::vout("Load list");
 		otherlist = init_otherlist(dict::otherfile);
 	}
+	logging::vout("Program began");
 	HyperLink link;
 	int x = 0;
 	this->current_url = this->navigator->navigate(this->current_url);
@@ -72,7 +73,6 @@ void Intelligence::roam()
 			this->current_url = select_diff_random_in_vector(links,this->current_url).url;
 		std::string navigate_res = this->navigator->navigate(this->current_url);
 		if(navigate_res == "failed") {
-			blacklist.push_back(this->current_url);
 			if(dict::whitelist)
 				this->current_url = select_whitelist(links,this->current_url,whitelist).url;
 			else if(dict::blacklist)
@@ -120,6 +120,8 @@ HyperLink select_whitelist(std::vector<HyperLink> &links,std::string url, std::v
 			text = " "+link.text+" ";
 			line = whitelist[i];
 			if(text.find(" "+line+" ") != std::string::npos) {
+				logging::vout("--White : " + line);
+				logging::vout("--Texte : " + link.text);
 				not_in_link = false;
 			}
 		}
@@ -143,6 +145,8 @@ HyperLink select_blacklist(std::vector<HyperLink> &links,std::string url, std::v
 			text = " "+link.text+" ";
 			line = blacklist[i];
 			if(text.find(" "+line+" ") != std::string::npos) {
+				logging::vout("--Black : " + line);
+				logging::vout("--Texte : " + link.text);
 				not_in_link = false;
 			}
 		}

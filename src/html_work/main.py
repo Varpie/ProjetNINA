@@ -4,19 +4,8 @@ import random
 import lxml.html.clean
 import time
 import signal
-import ../uinput/setup.py
 
 driver = webdriver.Firefox()
-
-
-
-def write_search(keyworkd):
--> ref 64 : f6 (-> focus sur l'url)
-    #void send_a_button_default(int key)
--> keyword + len(keyword)
-	#void write_array(char array[], int size);
-
-
 
 def close_driver(v):
 	"""

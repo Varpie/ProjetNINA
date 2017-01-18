@@ -93,11 +93,11 @@ bool parse_arguments(int argc, char **argv)
 					if(!strcmp(optarg,"whitelist")){
 						logging::vout("Using whitelist");
 						dict::whitelist = true;
-						dict::whitefile = "./dictionaries/whitelist.txt";
-					}else if(!strcmp(optarg,"whitelist")){
+						dict::whitefile = "./config/dictionaries/whitelist.txt";
+					}else if(!strcmp(optarg,"blacklist")){
 						logging::vout("Using blacklist");
 						dict::blacklist = true;
-						dict::blackfile = "./dictionaries/blacklist.txt";
+						dict::blackfile = "./config/dictionaries/blacklist.txt";
 					}else{
 						logging::vout("Using list");
 						dict::other = true;
@@ -143,10 +143,10 @@ int main(int argc, char **argv)
 	parse_config();
 	if(!parse_arguments(argc, argv))
 		return 0;
-	setup_uinput_device();
+	// setup_uinput_device();
 	Intelligence intel(url);
 	intel.roam();
-	destroy_uinput_device();
+	// destroy_uinput_device();
 	logging::vout("Program finished");
 	return 0;
 }
