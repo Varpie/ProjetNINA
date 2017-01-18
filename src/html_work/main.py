@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-import sys
+# import sys
 from selenium import webdriver
 # realtive url !!!
-sys.path.append('/home/etienne/ProjetNINA/src/uinput')
+# sys.path.append('/home/etienne/ProjetNINA/src/uinput')
 import uinput_wrapping_module
 import random
 import lxml.html.clean
@@ -25,29 +25,18 @@ def write_search(keyword):
     driver.implicitly_wait(0.5)
     return driver.current_url
 
-def end_python(v):
+def end_python():
     """
-    Close driver when navigation is over
-
-    @type v: string
-    @param v: Unused
-
-    @rtype: string
-    @return: returns unused
+    Close driver and destroy keyboad when navigation is over
     """
     uinput_wrapping_module.destroy_uinput_device_func()
     driver.quit()
-    # print "end"
-    return "True"
 
-def get_body_html(v):
+def get_body_html():
 	"""
 	Get body html of a page, and strips it from its Styles and Scripts
 	It does so, with webdriver.
 	Cleaning it does with lxml.html.clean dependance
-
-	@type v: string
-	@param v: Unused
 
 	@rtype: string
 	@return: returns html
@@ -127,8 +116,6 @@ def nav(var_url):
 		return "failed"
 	#we return current url to keep navigate
 	return driver.current_url
-
-
 
 def runFunctionCatchExceptions(func, *args, **kwargs):
     try:

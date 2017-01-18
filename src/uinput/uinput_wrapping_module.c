@@ -8,20 +8,18 @@ static PyObject* send_a_button_default_func(PyObject* self, PyObject* args)
 {
   int value;
   if (!PyArg_ParseTuple(args, "i", &value))
-      return NULL;
+    return NULL;
   send_a_button_default(value);
   Py_RETURN_NONE;
 }
 //void write_array(char array[], int size){
 static PyObject* write_array_func(PyObject* self, PyObject* args)
 {
-  // setup_uinput_device();
   char* value;
   if (!PyArg_ParseTuple(args, "s", &value))
-      return NULL;
+    return NULL;
   write_array(value,strlen(value));
   Py_RETURN_NONE;
-  // destroy_uinput_device();
 }
 
 static PyObject* setup_uinput_device_func(PyObject* self)
@@ -44,10 +42,6 @@ static PyMethodDef UinputMethods[] =
   {"destroy_uinput_device_func",(PyCFunction)destroy_uinput_device_func,METH_NOARGS,"destroy uinput"},
   {NULL, NULL, 0, NULL}
 };
-
-
-//setup_uinput_device();
-//destroy_uinput_device();
 
 PyMODINIT_FUNC
 inituinput_wrapping_module(void)

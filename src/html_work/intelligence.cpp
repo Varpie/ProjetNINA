@@ -31,14 +31,14 @@ void Intelligence::roam()
 		logging::vout("Load list");
 		otherlist = init_otherlist(dict::otherfile);
 	}
-	std::string page_html;
+	std::string html_page;
 	std::vector<HyperLink> links;
 	HyperLink link;
 	int x = 0;
 	this->current_url = this->navigator->navigate(this->current_url);
 	do {
-		page_html = this->navigator->get_body_html();
-		this->navigator->select_hyperlinks_from_html(page_html, links);
+		html_page = this->navigator->get_body_html();
+		this->navigator->select_hyperlinks_from_html(html_page, links);
 		if(dict::whitelist)
 			this->current_url = select_whitelist(links,this->current_url,whitelist).url;
 		else if(dict::blacklist)
@@ -56,23 +56,24 @@ void Intelligence::roam()
 			// 	this->current_url = select_blacklist(links,this->current_url,blacklist).url;
 			// else
 			// 	this->current_url = select_diff_random_in_vector(links,this->current_url).url;
+			//TODO : Select Keyword
 			this->current_url = this->navigator->write_search("coucou");
 		} else {
 			this->current_url = navigate_res;
 		}
-	} while(x++ <= 50);
+	} while(x++ <= 15);
 }
 
 HyperLink select_random_in_vector(std::vector<HyperLink> &links)
 {
-		int random;
-		if(links.size() <= 1) {
-			random = 0;
-		} else {
-			random = (int)(std::rand() % links.size());
-		}
-    HyperLink link = links.at(random);
-    return link;
+	int random;
+	if(links.size() <= 1) {
+		random = 0;
+	} else {
+		random = (int)(std::rand() % links.size());
+	}
+  HyperLink link = links.at(random);
+  return link;
 }
 
 HyperLink select_diff_random_in_vector(std::vector<HyperLink> &links,std::string url)

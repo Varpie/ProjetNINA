@@ -5,7 +5,7 @@ int setup_uinput_device(){
 	int i=0;
 /* Open the input device */
 	uinp_fd = open("/dev/uinput", O_WRONLY | O_NDELAY);
-	if (fcntl(uinp_fd, F_GETFD) == -1 || errno == EBADF;)
+	if (fcntl(uinp_fd, F_GETFD) == -1)
 	{
 		printf("Unable to open /dev/uinput\n");
 		return -1;
