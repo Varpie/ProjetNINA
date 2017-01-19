@@ -27,6 +27,8 @@ void Intelligence::roam()
 	logging::vout("Program began");
 	HyperLink link;
 	int x = 0;
+	bool timer = false;
+	bool overflow = false;
 	this->current_url = this->navigator->navigate(this->current_url);
 	do {
 		time(&begin);
@@ -59,7 +61,9 @@ void Intelligence::roam()
 		if(timeout::timeout) {
 			logging::vout("Countdown : " + std::to_string(timeout));
 		}
-	} while(timeout::timeout && (timeout > 0));
+		timer = (timeout::timeout && (timeout > 0));
+		overflow = (!timeout::timeout && x++<10);
+	} while(timer || overflow);
 }
 
 void Intelligence::load_lists()
