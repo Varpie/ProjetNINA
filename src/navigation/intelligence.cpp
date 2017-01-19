@@ -6,6 +6,7 @@ Intelligence::Intelligence(std::string &start_url)
 	this->current_url = start_url;
 	this->navigator = new Navigator();
 	srand(time(NULL));
+	load_lists();
 }
 
 Intelligence::~Intelligence() {
@@ -16,40 +17,15 @@ Intelligence::~Intelligence() {
 
 void Intelligence::roam()
 {
-	std::vector<std::string> whitelist;
-	std::vector<std::string> blacklist;
-	std::vector<std::string> keywords = init_list("./config/dictionaries/whitelist.txt");
-	if(keywords.size() == 0) {
-		logging::vout("Keywords load failed");
-	}
-	tuple_list otherlist;
-	if(dict::whitelist){
-		logging::vout("Load whitelist");
-		whitelist = init_list(dict::whitefile);
-	}
-	if(dict::blacklist){
-		logging::vout("Load blacklist");
-		blacklist = init_list(dict::blackfile);
-	}
-	if(dict::other){
-		logging::vout("Load list");
-		otherlist = init_otherlist(dict::otherfile);
-	}
 	std::string html_page;
 	std::vector<HyperLink> links;
 	HyperLink link;
 	int x = 0;
-	// bool a = false;
+	history.push_back(current_url);
 	this->current_url = this->navigator->navigate(this->current_url);
 	do {
 		html_page = this->navigator->get_body_html();
 		this->navigator->select_hyperlinks_from_html(html_page, links);
-		// if(a){
-		// 	for(auto const& lin: links) {
-		// 		 std::cout << lin.url << std::endl;
-		// 	 }
-		// 	 break;
-		// }
 		if(dict::whitelist)
 			this->current_url = select_whitelist(links,this->current_url,whitelist).url;
 		else if(dict::blacklist)
@@ -68,14 +44,35 @@ void Intelligence::roam()
 			// else
 			// 	this->current_url = select_diff_random_in_vector(links,this->current_url).url;
 			//TODO : Select Keyword
-			std::string kw = select_keyword(keywords);
-			this->current_url = this->navigator->write_search(kw);
-			//a = true;
+			this->current_url = this->navigator->write_search(select_keyword(keywords));
 		} else {
 			this->current_url = navigate_res;
 		}
+		history.push_back(current_url);
 	} while(x++ <= 150);
 }
+
+void Intelligence::load_lists()
+{
+	this->history.push_back(this->current_url);
+	this->keywords = init_list("./config/dictionaries/whitelist.txt");
+	if(keywords.size() == 0) {
+		logging::vout("Keywords load failed");
+	}
+	if(dict::whitelist){
+		logging::vout("Load whitelist");
+		this->whitelist = init_list(dict::whitefile);
+	}
+	if(dict::blacklist){
+		logging::vout("Load blacklist");
+		this->blacklist = init_list(dict::blackfile);
+	}
+	if(dict::other){
+		logging::vout("Load list");
+		this->otherlist = init_otherlist(dict::otherfile);
+	}
+}
+
 HyperLink select_random_in_vector(std::vector<HyperLink> &links)
 {
 	int random;
@@ -168,6 +165,7 @@ HyperLink select_otherlist(std::vector<HyperLink> &links,std::string url, tuple_
 		link.url = url;
 	return link;
 }
+
 
 std::vector<std::string> init_list(std::string name) {
 	std::string line;
