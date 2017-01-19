@@ -21,6 +21,27 @@ void print_help()
 	printf("Yet to be done\n");
 }
 
+static void daemonize()
+{
+    pid_t pid;
+
+    /* Fork off the parent process */
+    pid = fork();
+	logging::vout("forked");
+    /* An error occurred */
+    if (pid < 0)
+        exit(EXIT_FAILURE);
+
+    /* Success: Let the parent terminate */
+    if (pid > 0)
+        exit(EXIT_SUCCESS);
+
+    /* On success: The child process becomes session leader */
+    if (setsid() < 0)
+        exit(EXIT_FAILURE);
+	logging::vout("succeded");
+}
+
 void parse_config()
 {
 	std::ifstream configFile("config.conf");
@@ -65,11 +86,12 @@ bool parse_arguments(int argc, char **argv)
 			{"timedkey", no_argument,0,'k'},
 			{"verbose", no_argument, 0, 0},
 			{"dict", required_argument, 0, 0},
+			{"daemonize", no_argument, 0, 'd'},
 			/* That last line is necessary, but useless. */
 			{0,0,0,0}
 		};
 
-		character = getopt_long(argc, argv, "hk", long_options, &option_index);
+		character = getopt_long(argc, argv, "hkd", long_options, &option_index);
 		if(character == -1){
 			return true;
 		}
@@ -103,6 +125,9 @@ bool parse_arguments(int argc, char **argv)
 						dict::other = true;
 						dict::otherfile = optarg;
 					}
+				} else if(long_options[option_index].name == "daemonize") {
+					daemonize();
+					logging::vout("process daemonized.");
 				}
 				break;
 			case 'h':
@@ -118,6 +143,9 @@ bool parse_arguments(int argc, char **argv)
 				flag = false;
 				break;
 			}
+			case 'd':
+				daemonize();
+				break;
 			case '?':
 				/* character not in the optstring.
 				(3rd arg of getopt_long, where we put short options) */
