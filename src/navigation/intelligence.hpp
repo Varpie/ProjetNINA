@@ -45,6 +45,7 @@ class Intelligence
 		std::vector<std::string> blacklist;
 };
 
+std::string select_keyword(std::vector<std::string> list);
 /** Function to select a random in a vector
  * \fn HyperLink select_random_in_vector(std::vector<HyperLink> &links)
  * \param links Vector of HyperLinks

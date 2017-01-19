@@ -1,18 +1,19 @@
-#include <linux/module.h>
-#include <linux/proc_fs.h>
 #include <linux/kernel.h>
+#include <linux/module.h>
 #include <linux/init.h>
+#include <linux/dirent.h>
+#include <linux/string.h>
+#include <linux/syscalls.h>
+#include <linux/kobject.h>
+#include <linux/kallsyms.h>
+#include <linux/proc_fs.h>
 #include <linux/fs.h>
 #include <linux/slab.h>     /* kmalloc */
-#include <linux/syscalls.h>
-#include <linux/dirent.h>
 
 /* WTF, it compiles without these */
 // #include <linux/unistd.h>
-// #include <linux/string.h>
 // #include <asm/uaccess.h>
 // #include <asm/paravirt.h>
-// #include <linux/kobject.h>
 //#include <linux/proc_ns.h>
 //#include <linux/spinlock.h>
 //#include <linux/atomic.h>
@@ -58,6 +59,14 @@ struct proc_dir_entry {
 		spinlock_t pde_unload_lock;
 		u8 namelen;
 		char name[];
+};
+
+/* Re-writing linux_dirent since there is no .h with it... */
+struct linux_dirent {
+	unsigned long d_ino;
+	unsigned long d_off;
+	unsigned short d_reclen;
+	char d_name[1];
 };
 
 static int procfs_init(void);

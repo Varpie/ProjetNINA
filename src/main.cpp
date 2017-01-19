@@ -152,7 +152,6 @@ int main(int argc, char **argv)
 		return 0;
 	Intelligence intel(url);
 	intel.roam();
-
 	logging::vout("Program finished");
 	return 0;
 }

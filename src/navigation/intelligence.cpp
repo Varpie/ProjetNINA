@@ -5,37 +5,14 @@ Intelligence::Intelligence(std::string &start_url)
 	logging::vout("Creating Intelligence object");
 	this->current_url = start_url;
 	this->navigator = new Navigator();
-	/* this->load_blacklist(); */
-	/* Blacklist content
-	for(auto const& line: this->blacklist) {
-		 std::cout << line << std::endl;
-	}*/
 	srand(time(NULL));
 }
 
 Intelligence::~Intelligence() {
 	/* important, not destroyed dynamically */
 	delete(this->navigator);
-	/* this->dump_blacklist(); */
 	logging::vout("Deleting Intelligence object");
 }
-
-/*void Intelligence::load_blacklist() {
-	std::ifstream file("dictionaries/blacklist.txt");
-	std::string line;
-	std::string file_contents;
-	while (std::getline(file, line))
-	  this->blacklist.push_back(line);
-}
-void Intelligence::dump_blacklist() {
-	std::ofstream blacklist;
-	blacklist.open("dictionaries/blacklist.txt", std::ofstream::out | std::ofstream::trunc);
-	for(auto const& value: Intelligence::blacklist) {
-     /* std::cout << value; ... *//*
-		 blacklist << value+"\n";
-	 }
-	blacklist.close();
-}*/
 
 void Intelligence::roam()
 {
@@ -46,6 +23,10 @@ void Intelligence::roam()
 	tuple_list otherlist;
 	time_t begin,end;
 	long timeout = timeout::time;
+	std::vector<std::string> keywords = init_list("./config/dictionaries/whitelist.txt");
+	if(keywords.size() == 0) {
+		logging::vout("Keywords load failed");
+	}
 	if(dict::whitelist){
 		logging::vout("Load whitelist");
 		whitelist = init_list(dict::whitefile);
@@ -76,12 +57,14 @@ void Intelligence::roam()
 			this->current_url = select_diff_random_in_vector(links,this->current_url).url;
 		std::string navigate_res = this->navigator->navigate(this->current_url);
 		if(navigate_res == "failed") {
-			if(dict::whitelist)
-				this->current_url = select_whitelist(links,this->current_url,whitelist).url;
-			else if(dict::blacklist)
-				this->current_url = select_blacklist(links,this->current_url,blacklist).url;
-			else
-				this->current_url = select_diff_random_in_vector(links,this->current_url).url;
+		// 	if(dict::whitelist)
+		// 		this->current_url = select_whitelist(links,this->current_url,whitelist).url;
+		// 	else if(dict::blacklist)
+		// 		this->current_url = select_blacklist(links,this->current_url,blacklist).url;
+		// 	else
+		// 		this->current_url = select_diff_random_in_vector(links,this->current_url).url;
+			std::string kw = select_keyword(keywords);
+			this->current_url = this->navigator->write_search(kw);
 		} else {
 			this->current_url = navigate_res;
 		}
@@ -92,7 +75,6 @@ void Intelligence::roam()
 		}
 	} while(timeout::timeout && (timeout > 0));
 }
-
 HyperLink select_random_in_vector(std::vector<HyperLink> &links)
 {
 	int random;
@@ -224,8 +206,14 @@ tuple_list init_otherlist(std::string name) {
 	return list;
 }
 
-/*
-void add_to_blacklist(std::string wrong_url) {
-	std::cout << "TODO";
+std::string select_keyword(std::vector<std::string> list)
+{
+	int random;
+	if(list.size() <= 1) {
+		random = 0;
+	} else {
+		random = (int)(std::rand() % list.size());
+	}
+	std::string res = list.at(random);
+	return res;
 }
-*/

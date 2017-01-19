@@ -23,7 +23,9 @@ extern "C" {
 /* Globals */
 static int uinp_fd = -1;
 static int box_muller_v = -1;
-static const char name_conf[] = "../../config/conf";
+//realtive url !!!
+static const char name_conf[] = "/home/etienne/ProjetNINA/config/conf";
+// static const char name_conf[] = "../../config/conf";
 
 /* uInput device structure */
 struct uinput_user_dev uinp;
@@ -51,9 +53,8 @@ void release_a_button(int key);
  */
 void send_a_button(int key, int modifier);
 
-/* send press event then release event of a key
- * return 0 if success */
-int send_a_button_default(int key);
+/* send press event then release event of a key */
+void send_a_button_default(int key);
 
 /* Convert ASCII code to KEY defined in /linux/input.h */
 void cvrt_char(int *a, int c);
@@ -61,9 +62,8 @@ void cvrt_char(int *a, int c);
 /* write a character using the Uinput device */
 void write_char(char c);
 
-/* write an array using the Uinput device
-  * return 0 if success */
-int write_array(char array[], int size);
+/* write an array using the Uinput device */
+void write_array(char array[], int size);
 
 /*
  * Load the conf file containing time.
