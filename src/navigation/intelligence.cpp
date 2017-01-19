@@ -6,6 +6,7 @@ Intelligence::Intelligence(std::string &start_url)
 	this->current_url = start_url;
 	this->navigator = new Navigator();
 	srand(time(NULL));
+	load_lists();
 }
 
 Intelligence::~Intelligence() {
@@ -23,22 +24,6 @@ void Intelligence::roam()
 	tuple_list otherlist;
 	time_t begin,end;
 	long timeout = timeout::time;
-	std::vector<std::string> keywords = init_list("./config/dictionaries/whitelist.txt");
-	if(keywords.size() == 0) {
-		logging::vout("Keywords load failed");
-	}
-	if(dict::whitelist){
-		logging::vout("Load whitelist");
-		whitelist = init_list(dict::whitefile);
-	}
-	if(dict::blacklist){
-		logging::vout("Load blacklist");
-		blacklist = init_list(dict::blackfile);
-	}
-	if(dict::other){
-		logging::vout("Load list");
-		otherlist = init_otherlist(dict::otherfile);
-	}
 	logging::vout("Program began");
 	HyperLink link;
 	int x = 0;
@@ -59,6 +44,7 @@ void Intelligence::roam()
 			this->current_url = select_diff_random_in_vector(links,this->current_url).url;
 		std::string navigate_res = this->navigator->navigate(this->current_url);
 		if(navigate_res == "failed") {
+			blacklist.push_back(this->current_url);
 		// 	if(dict::whitelist)
 		// 		this->current_url = select_whitelist(links,this->current_url,whitelist).url;
 		// 	else if(dict::blacklist)
@@ -78,6 +64,27 @@ void Intelligence::roam()
 		timer = (timeout::timeout && (timeout > 0));
 		overflow = (!timeout::timeout && x++<10);
 	} while(timer || overflow);
+}
+
+void Intelligence::load_lists()
+{
+	this->history.push_back(this->current_url);
+	this->keywords = init_list("./config/dictionaries/whitelist.txt");
+	if(keywords.size() == 0) {
+		logging::vout("Keywords load failed");
+	}
+	if(dict::whitelist){
+		logging::vout("Load whitelist");
+		this->whitelist = init_list(dict::whitefile);
+	}
+	if(dict::blacklist){
+		logging::vout("Load blacklist");
+		this->blacklist = init_list(dict::blackfile);
+	}
+	if(dict::other){
+		logging::vout("Load list");
+		this->otherlist = init_otherlist(dict::otherfile);
+	}
 }
 
 HyperLink select_random_in_vector(std::vector<HyperLink> &links)
@@ -176,6 +183,7 @@ HyperLink select_otherlist(std::vector<HyperLink> &links,std::string url, tuple_
 		link.url = url;
 	return link;
 }
+
 
 std::vector<std::string> init_list(std::string name) {
 	std::string line;
