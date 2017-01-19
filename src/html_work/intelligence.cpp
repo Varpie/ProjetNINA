@@ -9,7 +9,7 @@ Intelligence::Intelligence(std::string &start_url)
 }
 
 Intelligence::~Intelligence() {
-	/* important, not destroyed dynamically */
+	/* important ! not destroyed dynamically */
 	delete(this->navigator);
 	logging::vout("Deleting Intelligence object");
 }
@@ -35,18 +35,20 @@ void Intelligence::roam()
 	std::vector<HyperLink> links;
 	HyperLink link;
 	int x = 0;
+	bool a = false;
 	this->current_url = this->navigator->navigate(this->current_url);
 	do {
 		html_page = this->navigator->get_body_html();
 		this->navigator->select_hyperlinks_from_html(html_page, links);
-		if(dict::whitelist)
-			this->current_url = select_whitelist(links,this->current_url,whitelist).url;
-		else if(dict::blacklist)
-			this->current_url = select_blacklist(links,this->current_url,blacklist).url;
-		else if(dict::other)
-			this->current_url = select_otherlist(links,this->current_url,otherlist).url;
-		else
-			this->current_url = select_diff_random_in_vector(links,this->current_url).url;
+		// if(dict::whitelist)
+		// 	this->current_url = select_whitelist(links,this->current_url,whitelist).url;
+		// else if(dict::blacklist)
+		// 	this->current_url = select_blacklist(links,this->current_url,blacklist).url;
+		// else if(dict::other)
+		// 	this->current_url = select_otherlist(links,this->current_url,otherlist).url;
+		// else
+		// 	this->current_url = select_diff_random_in_vector(links,this->current_url).url;
+		this->current_url = select_diff_random_in_vector(links,this->current_url).url;
 		std::string navigate_res = this->navigator->navigate(this->current_url);
 		if(navigate_res == "failed") {
 			blacklist.push_back(this->current_url);
@@ -61,9 +63,8 @@ void Intelligence::roam()
 		} else {
 			this->current_url = navigate_res;
 		}
-	} while(x++ <= 15);
+	} while(x++ <= 150);
 }
-
 HyperLink select_random_in_vector(std::vector<HyperLink> &links)
 {
 	int random;

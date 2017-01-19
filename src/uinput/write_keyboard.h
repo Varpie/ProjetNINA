@@ -25,6 +25,7 @@ static int uinp_fd = -1;
 static int box_muller_v = -1;
 //realtive url !!!
 static const char name_conf[] = "/home/etienne/ProjetNINA/config/conf";
+// static const char name_conf[] = "../../config/conf";
 
 /* uInput device structure */
 struct uinput_user_dev uinp;
