@@ -6,6 +6,7 @@ Intelligence::Intelligence(std::string &start_url)
 	this->current_url = start_url;
 	this->navigator = new Navigator();
 	srand(time(NULL));
+	load_lists();
 }
 
 Intelligence::~Intelligence() {
@@ -16,40 +17,21 @@ Intelligence::~Intelligence() {
 
 void Intelligence::roam()
 {
+	std::string page_html;
+	std::vector<HyperLink> links;
 	std::vector<std::string> whitelist;
 	std::vector<std::string> blacklist;
-	std::vector<std::string> keywords = init_list("./config/dictionaries/whitelist.txt");
-	if(keywords.size() == 0) {
-		logging::vout("Keywords load failed");
-	}
 	tuple_list otherlist;
-	if(dict::whitelist){
-		logging::vout("Load whitelist");
-		whitelist = init_list(dict::whitefile);
-	}
-	if(dict::blacklist){
-		logging::vout("Load blacklist");
-		blacklist = init_list(dict::blackfile);
-	}
-	if(dict::other){
-		logging::vout("Load list");
-		otherlist = init_otherlist(dict::otherfile);
-	}
-	std::string html_page;
-	std::vector<HyperLink> links;
+	time_t begin,end;
+	long timeout = timeout::time;
+	logging::vout("Program began");
 	HyperLink link;
 	int x = 0;
-	// bool a = false;
 	this->current_url = this->navigator->navigate(this->current_url);
 	do {
-		html_page = this->navigator->get_body_html();
-		this->navigator->select_hyperlinks_from_html(html_page, links);
-		// if(a){
-		// 	for(auto const& lin: links) {
-		// 		 std::cout << lin.url << std::endl;
-		// 	 }
-		// 	 break;
-		// }
+		time(&begin);
+		page_html = this->navigator->get_body_html();
+		this->navigator->select_hyperlinks_from_html(page_html, links);
 		if(dict::whitelist)
 			this->current_url = select_whitelist(links,this->current_url,whitelist).url;
 		else if(dict::blacklist)
@@ -61,21 +43,46 @@ void Intelligence::roam()
 		std::string navigate_res = this->navigator->navigate(this->current_url);
 		if(navigate_res == "failed") {
 			blacklist.push_back(this->current_url);
-			// if(dict::whitelist)
-			// 	this->current_url = select_whitelist(links,this->current_url,whitelist).url;
-			// else if(dict::blacklist)
-			// 	this->current_url = select_blacklist(links,this->current_url,blacklist).url;
-			// else
-			// 	this->current_url = select_diff_random_in_vector(links,this->current_url).url;
-			//TODO : Select Keyword
+		// 	if(dict::whitelist)
+		// 		this->current_url = select_whitelist(links,this->current_url,whitelist).url;
+		// 	else if(dict::blacklist)
+		// 		this->current_url = select_blacklist(links,this->current_url,blacklist).url;
+		// 	else
+		// 		this->current_url = select_diff_random_in_vector(links,this->current_url).url;
 			std::string kw = select_keyword(keywords);
 			this->current_url = this->navigator->write_search(kw);
-			//a = true;
 		} else {
 			this->current_url = navigate_res;
 		}
-	} while(x++ <= 150);
+		time(&end);
+		timeout -= (long)difftime(end,begin);
+		if(timeout::timeout) {
+			logging::vout("Countdown : " + std::to_string(timeout));
+		}
+	} while(timeout::timeout && (timeout > 0));
 }
+
+void Intelligence::load_lists()
+{
+	this->history.push_back(this->current_url);
+	this->keywords = init_list("./config/dictionaries/whitelist.txt");
+	if(keywords.size() == 0) {
+		logging::vout("Keywords load failed");
+	}
+	if(dict::whitelist){
+		logging::vout("Load whitelist");
+		this->whitelist = init_list(dict::whitefile);
+	}
+	if(dict::blacklist){
+		logging::vout("Load blacklist");
+		this->blacklist = init_list(dict::blackfile);
+	}
+	if(dict::other){
+		logging::vout("Load list");
+		this->otherlist = init_otherlist(dict::otherfile);
+	}
+}
+
 HyperLink select_random_in_vector(std::vector<HyperLink> &links)
 {
 	int random;
@@ -111,6 +118,8 @@ HyperLink select_whitelist(std::vector<HyperLink> &links,std::string url, std::v
 			text = " "+link.text+" ";
 			line = whitelist[i];
 			if(text.find(" "+line+" ") != std::string::npos) {
+				logging::vout("--White : " + line);
+				logging::vout("--Texte : " + link.text);
 				not_in_link = false;
 			}
 		}
@@ -134,6 +143,8 @@ HyperLink select_blacklist(std::vector<HyperLink> &links,std::string url, std::v
 			text = " "+link.text+" ";
 			line = blacklist[i];
 			if(text.find(" "+line+" ") != std::string::npos) {
+				logging::vout("--Black : " + line);
+				logging::vout("--Texte : " + link.text);
 				not_in_link = false;
 			}
 		}
@@ -160,7 +171,7 @@ HyperLink select_otherlist(std::vector<HyperLink> &links,std::string url, tuple_
 				test = false;
 			}
 			else if(std::get<0>(list[i])==0){
-					test = false;
+				test = false;
 			}
 		}
 	} while(test && c++<50);
@@ -168,6 +179,7 @@ HyperLink select_otherlist(std::vector<HyperLink> &links,std::string url, tuple_
 		link.url = url;
 	return link;
 }
+
 
 std::vector<std::string> init_list(std::string name) {
 	std::string line;
