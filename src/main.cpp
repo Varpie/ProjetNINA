@@ -7,6 +7,8 @@ bool dict::blacklist = false;
 std::string dict::blackfile;
 bool dict::other = false;
 std::string dict::otherfile;
+bool timeout::timeout = false;
+long timeout::time;
 std::string lang = "en";
 std::string layout = "en";
 std::string browser = "firefox";
@@ -65,6 +67,7 @@ bool parse_arguments(int argc, char **argv)
 			{"timedkey", no_argument,0,'k'},
 			{"verbose", no_argument, 0, 0},
 			{"dict", required_argument, 0, 0},
+			{"timeout", required_argument, 0, 0},
 			/* That last line is necessary, but useless. */
 			{0,0,0,0}
 		};
@@ -103,6 +106,10 @@ bool parse_arguments(int argc, char **argv)
 						dict::other = true;
 						dict::otherfile = optarg;
 					}
+				}else if(long_options[option_index].name == "timeout"){
+					logging::vout("Using timeout");
+					timeout::timeout = true;
+					timeout::time = std::stod(optarg);
 				}
 				break;
 			case 'h':
@@ -143,10 +150,9 @@ int main(int argc, char **argv)
 	parse_config();
 	if(!parse_arguments(argc, argv))
 		return 0;
-	// setup_uinput_device();
 	Intelligence intel(url);
 	intel.roam();
-	// destroy_uinput_device();
+
 	logging::vout("Program finished");
 	return 0;
 }

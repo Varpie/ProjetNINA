@@ -22,4 +22,9 @@ namespace dict {
     extern std::string otherfile;
 }
 
+namespace timeout {
+    extern bool timeout;
+    extern long time;
+}
+
 #endif

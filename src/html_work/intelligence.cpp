@@ -44,6 +44,8 @@ void Intelligence::roam()
 	std::vector<std::string> whitelist;
 	std::vector<std::string> blacklist;
 	tuple_list otherlist;
+	time_t begin,end;
+	long timeout = timeout::time;
 	if(dict::whitelist){
 		logging::vout("Load whitelist");
 		whitelist = init_list(dict::whitefile);
@@ -61,6 +63,7 @@ void Intelligence::roam()
 	int x = 0;
 	this->current_url = this->navigator->navigate(this->current_url);
 	do {
+		time(&begin);
 		page_html = this->navigator->get_body_html();
 		this->navigator->select_hyperlinks_from_html(page_html, links);
 		if(dict::whitelist)
@@ -82,19 +85,24 @@ void Intelligence::roam()
 		} else {
 			this->current_url = navigate_res;
 		}
-	} while(x++ <= 5);
+		time(&end);
+		timeout -= (long)difftime(end,begin);
+		if(timeout::timeout) {
+			logging::vout("Countdown : " + std::to_string(timeout));
+		}
+	} while(timeout::timeout && (timeout > 0));
 }
 
 HyperLink select_random_in_vector(std::vector<HyperLink> &links)
 {
-		int random;
-		if(links.size() <= 1) {
-			random = 0;
-		} else {
-			random = (int)(std::rand() % links.size());
-		}
-    HyperLink link = links.at(random);
-    return link;
+	int random;
+	if(links.size() <= 1) {
+		random = 0;
+	} else {
+		random = (int)(std::rand() % links.size());
+	}
+  HyperLink link = links.at(random);
+  return link;
 }
 
 HyperLink select_diff_random_in_vector(std::vector<HyperLink> &links,std::string url)
@@ -173,7 +181,7 @@ HyperLink select_otherlist(std::vector<HyperLink> &links,std::string url, tuple_
 				test = false;
 			}
 			else if(std::get<0>(list[i])==0){
-					test = false;
+				test = false;
 			}
 		}
 	} while(test && c++<50);
