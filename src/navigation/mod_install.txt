@@ -1,0 +1,27 @@
+lib python  : scrapy pour récupérer du code HTML après process js
+Autres options : Ruby Mechanize, PhantomJS
+
+
+installer python.
+sudo apt-get install python-dev
+
+installer pip/setuptools
+sudo apt-get install python-pip
+//Crypto :
+//sudo apt-get install build-essential libssl-dev libffi-dev python-dev
+
+installer lxml
+sudo apt-get install python-lxml
+
+-> compiler du c avec python.h include : cd +6
+
+tuto ember du python : http://sametmax.com/embeder-python-dans-du-c-ou-c/
+
+tuto passer des données vers l'extérieur : https://realpython.com/blog/python/web-scraping-with-scrapy-and-mongodb/
+ember du python dans du c : http://stackoverflow.com/questions/39981373/segfault-while-embedding-python-using-scrapy-in-c
+
+
+
+
+installer la lib scrapy
+pip install Scrapy
