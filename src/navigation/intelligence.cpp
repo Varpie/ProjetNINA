@@ -59,7 +59,12 @@ void Intelligence::roam()
 		if(timeout::timeout) {
 			logging::vout("Countdown : " + std::to_string(timeout));
 		}
-	} while(timeout::timeout && (timeout > 0));
+	//} while(timeout::timeout && (timeout > 0));
+		append_vector(this->history,this->current_url,50);
+		if(current_domain_occurences() > 5) {
+			std::cout << "More than 5 times on this domain" << std::endl;
+		}
+	}while(x++ <= 50);
 }
 
 void Intelligence::load_lists()
@@ -80,6 +85,28 @@ void Intelligence::load_lists()
 	if(dict::other){
 		logging::vout("Load list");
 		this->otherlist = init_otherlist(dict::otherfile);
+	}
+}
+
+int Intelligence::current_domain_occurences()
+{
+	int res = 0;
+	std::string domain = this->current_url.substr(0,this->current_url.find("/",9));
+	for(auto const& url: this->history) {
+		std::cout << url << std::endl;
+		if(url.substr(0,url.find("/",9)) == domain) {
+			res++;
+		}
+	}
+}
+
+void append_vector(std::vector<std::string> list,std::string param,int limit)
+{
+	if(list.size() < limit) {
+		list.push_back(param);
+	} else {
+		list.erase(list.begin());
+		list.push_back(param);
 	}
 }
 

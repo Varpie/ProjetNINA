@@ -37,12 +37,16 @@ class Intelligence
 		 * \fn void roam(void)
 		 */
 		void roam(void);
-		void load_blacklist();
-		void dump_blacklist();
+		void load_lists();
+		int current_domain_occurences();
 	private:
 		std::string current_url;
 		Navigator* navigator;
 		std::vector<std::string> blacklist;
+		std::vector<std::string> whitelist;
+		std::vector<std::string> keywords;
+		std::vector<std::string> history;
+		tuple_list otherlist;
 };
 
 std::string select_keyword(std::vector<std::string> list);
@@ -67,16 +71,18 @@ HyperLink select_diff_random_in_vector(std::vector<HyperLink> &links,std::string
  * \param url Url to compare
  * \return an HyperLink matching with whitelist
  */
- HyperLink select_whitelist(std::vector<HyperLink> &links,std::string url, std::vector<std::string> whitelist);
+HyperLink select_whitelist(std::vector<HyperLink> &links,std::string url, std::vector<std::string> whitelist);
 
- HyperLink select_blacklist(std::vector<HyperLink> &links,std::string url, std::vector<std::string> whitelist);
+HyperLink select_blacklist(std::vector<HyperLink> &links,std::string url, std::vector<std::string> whitelist);
 
- HyperLink select_otherlist(std::vector<HyperLink> &links,std::string url, tuple_list list);
+HyperLink select_otherlist(std::vector<HyperLink> &links,std::string url, tuple_list list);
 
- std::vector<std::string> init_list(std::string name);
+std::vector<std::string> init_list(std::string name);
 
- tuple_list init_otherlist(std::string name);
+tuple_list init_otherlist(std::string name);
 
 void add_to_blacklist(std::string wrong_url);
+
+void append_vector(std::vector<std::string> list,std::string param,int limit);
 
 #endif
