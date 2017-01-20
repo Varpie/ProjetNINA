@@ -20,7 +20,7 @@ static const int sizeText = 46;
 struct act_mean{
   double mean;
   int n;
-}
+};
 
 /*
  * Write the two parameters in a file named conf in the root of the program
