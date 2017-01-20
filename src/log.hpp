@@ -27,4 +27,9 @@ namespace timeout {
     extern long time;
 }
 
+namespace links {
+    extern bool links;
+    extern long number;
+}
+
 #endif

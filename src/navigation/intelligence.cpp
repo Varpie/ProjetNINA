@@ -24,11 +24,13 @@ void Intelligence::roam()
 	tuple_list otherlist;
 	time_t begin,end;
 	long timeout = timeout::time;
+	long number = links::number;
 	logging::vout("Program began");
 	HyperLink link;
-	int x = 0;
+	long x = 0;
 	bool timer = false;
 	bool overflow = false;
+	bool none = false;
 	this->current_url = this->navigator->navigate(this->current_url);
 	do {
 		time(&begin);
@@ -59,16 +61,18 @@ void Intelligence::roam()
 		time(&end);
 		timeout -= (long)difftime(end,begin);
 		if(timeout::timeout) {
-			logging::vout("Countdown : " + std::to_string(timeout));
+			logging::vout("Time countdown : " + std::to_string(timeout));
+		} else if (links::links) {
+			logging::vout("Links countdown : " + std::to_string(number-x));
 		}
 		timer = (timeout::timeout && (timeout > 0));
-		overflow = (!timeout::timeout && x++<10);
-		append_vector(this->history,this->current_url,50);
-		if(current_domain_occurences() > 5) {
-			std::cout << "More than 5 times on this domain" << std::endl;
-		}
-	} while(timer || overflow);
-	//	}while(x++ <= 50);
+		overflow = (links::links && (x++ < number));
+		none = (!timeout::timeout && !links::links);
+		// append_vector(this->history,this->current_url,50);
+		// if(current_domain_occurences() > 5) {
+		// 	std::cout << "More than 5 times on this domain" << std::endl;
+		// }
+	} while(timer || overflow || none);
 }
 
 void Intelligence::load_lists()
@@ -79,15 +83,15 @@ void Intelligence::load_lists()
 		logging::vout("Keywords load failed");
 	}
 	if(dict::whitelist){
-		logging::vout("Load whitelist");
+		logging::vout("Loading whitelist");
 		this->whitelist = init_list(dict::whitefile);
 	}
 	if(dict::blacklist){
-		logging::vout("Load blacklist");
+		logging::vout("Loading blacklist");
 		this->blacklist = init_list(dict::blackfile);
 	}
 	if(dict::other){
-		logging::vout("Load list");
+		logging::vout("Loading list");
 		this->otherlist = init_otherlist(dict::otherfile);
 	}
 }
@@ -149,8 +153,8 @@ HyperLink select_whitelist(std::vector<HyperLink> &links,std::string url, std::v
 			text = " "+link.text+" ";
 			line = whitelist[i];
 			if(text.find(" "+line+" ") != std::string::npos) {
-				logging::vout("--White : " + line);
-				logging::vout("--Texte : " + link.text);
+				logging::vout("--Find : " + line);
+				logging::vout("--Text : " + link.text);
 				not_in_link = false;
 			}
 		}
@@ -174,8 +178,8 @@ HyperLink select_blacklist(std::vector<HyperLink> &links,std::string url, std::v
 			text = " "+link.text+" ";
 			line = blacklist[i];
 			if(text.find(" "+line+" ") != std::string::npos) {
-				logging::vout("--Black : " + line);
-				logging::vout("--Texte : " + link.text);
+				logging::vout("--Find : " + line);
+				logging::vout("--Text : " + link.text);
 				not_in_link = false;
 			}
 		}
@@ -221,7 +225,7 @@ std::vector<std::string> init_list(std::string name) {
 			list.push_back(line);
 		}
 	} else {
-		logging::vout("Impossible d'ouvrir le fichier.");
+		logging::vout("Error : file not opened");
 	}
 	file.close();
 	return list;
@@ -240,7 +244,7 @@ tuple_list init_otherlist(std::string name) {
 			list.emplace_back(std::tuple<int,std::string> (value,word));
 		}
 	} else {
-		logging::vout("Impossible d'ouvrir le fichier.");
+		logging::vout("Error : file not opened");
 	}
 	file.close();
 	return list;
