@@ -9,6 +9,8 @@ bool dict::other = false;
 std::string dict::otherfile;
 bool timeout::timeout = false;
 long timeout::time;
+bool links::links = false;
+long links::number;
 std::string lang = "en";
 std::string layout = "en";
 std::string browser = "firefox";
@@ -90,6 +92,7 @@ bool parse_arguments(int argc, char **argv)
 			{"dict", required_argument, 0, 0},
 			{"daemonize", no_argument, 0, 'd'},
 			{"timeout", required_argument, 0, 0},
+			{"links", required_argument, 0, 0},
 			/* That last line is necessary, but useless. */
 			{0,0,0,0}
 		};
@@ -130,11 +133,15 @@ bool parse_arguments(int argc, char **argv)
 					}
 				} else if(long_options[option_index].name == "daemonize") {
 					daemonize();
-					logging::vout("process daemonized.");
+					logging::vout("Process daemonized");
 				}else if(long_options[option_index].name == "timeout"){
-					logging::vout("Using timeout");
+					logging::vout("Using time countdown");
 					timeout::timeout = true;
 					timeout::time = std::stod(optarg);
+				}else if(long_options[option_index].name == "links"){
+					logging::vout("Using links countdown");
+					links::links = true;
+					links::number = std::stod(optarg);
 				}
 				break;
 			case 'h':
