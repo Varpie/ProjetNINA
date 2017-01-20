@@ -12,6 +12,7 @@ Intelligence::Intelligence(std::string &start_url)
 Intelligence::~Intelligence() {
 	/* important, not destroyed dynamically */
 	delete(this->navigator);
+	dump_lists();
 	logging::vout("Deleting Intelligence object");
 }
 
@@ -29,11 +30,16 @@ void Intelligence::roam()
 	int x = 0;
 	bool timer = false;
 	bool overflow = false;
+	bool search = false;
 	this->current_url = this->navigator->navigate(this->current_url);
 	do {
 		time(&begin);
 		page_html = this->navigator->get_body_html();
 		this->navigator->select_hyperlinks_from_html(page_html, links);
+		if(search) {
+			remove_non_related_links(links);
+			search = false;
+		}
 		if(dict::whitelist)
 			this->current_url = select_whitelist(links,this->current_url,whitelist).url;
 		else if(dict::blacklist)
@@ -41,18 +47,16 @@ void Intelligence::roam()
 		else if(dict::other)
 			this->current_url = select_otherlist(links,this->current_url,otherlist).url;
 		else
-			this->current_url = select_diff_random_in_vector(links,this->current_url).url;
+			this->current_url = select_link(links,this->current_url).url;
 		std::string navigate_res = this->navigator->navigate(this->current_url);
-		if(navigate_res == "failed") {
-			blacklist.push_back(this->current_url);
-		// 	if(dict::whitelist)
-		// 		this->current_url = select_whitelist(links,this->current_url,whitelist).url;
-		// 	else if(dict::blacklist)
-		// 		this->current_url = select_blacklist(links,this->current_url,blacklist).url;
-		// 	else
-		// 		this->current_url = select_diff_random_in_vector(links,this->current_url).url;
+		/* we get out if we passed more than 15 links on the same domain
+		 	 or if python met an error */
+		if(navigate_res == "failed" || current_domain_occurences() > 15) {
+			append_vector(this->auto_blacklist,this->current_url,AUTO_BL_MAX);
 			std::string kw = select_keyword(keywords);
 			this->current_url = this->navigator->write_search(kw);
+			std::cout << "===================== search ======================" << std::endl;
+			search = true;
 		} else {
 			this->current_url = navigate_res;
 		}
@@ -62,19 +66,17 @@ void Intelligence::roam()
 			logging::vout("Countdown : " + std::to_string(timeout));
 		}
 		timer = (timeout::timeout && (timeout > 0));
-		overflow = (!timeout::timeout && x++<10);
-		append_vector(this->history,this->current_url,50);
-		if(current_domain_occurences() > 5) {
-			std::cout << "More than 5 times on this domain" << std::endl;
-		}
+		overflow = (!timeout::timeout && x++<60);
+		append_vector(this->history,this->current_url,HISTORY_MAX);
 	} while(timer || overflow);
-	//	}while(x++ <= 50);
 }
+
 
 void Intelligence::load_lists()
 {
 	this->history.push_back(this->current_url);
-	this->keywords = init_list("./config/dictionaries/whitelist.txt");
+	this->keywords = init_list("./config/dictionaries/keywords.txt");
+	this->auto_blacklist = init_list("./config/dictionaries/auto_blacklist.txt");
 	if(keywords.size() == 0) {
 		logging::vout("Keywords load failed");
 	}
@@ -92,27 +94,57 @@ void Intelligence::load_lists()
 	}
 }
 
+void Intelligence::dump_lists()
+{
+	std::ofstream file("./config/dictionaries/auto_blacklist.txt");
+	for(auto const& line: this->auto_blacklist){
+		file << line << "\n";
+	}
+	file.close();
+}
+
 int Intelligence::current_domain_occurences()
 {
 	int res = 0;
 	std::string domain = this->current_url.substr(0,this->current_url.find("/",9));
 	for(auto const& url: this->history) {
-		std::cout << url << std::endl;
+		// std::cout << url << std::endl;
 		if(url.substr(0,url.find("/",9)) == domain) {
 			res++;
 		}
 	}
+	return res;
 }
 
-void append_vector(std::vector<std::string> list,std::string param,int limit)
+void append_vector(std::vector<std::string> &list,std::string param,int limit)
 {
-	if(list.size() < limit) {
-		list.push_back(param);
-	} else {
-		list.erase(list.begin());
-		list.push_back(param);
+	if(std::find(list.begin(), list.end(), param)==list.end()){
+		if(list.size() < limit) {
+			list.push_back(param);
+		} else {
+			list.erase(list.begin());
+			list.push_back(param);
+		}
 	}
 }
+
+void remove_non_related_links(std::vector<HyperLink> &links)
+{
+	// for(auto const& link: links) {
+	// 	std::cout << link.url << std::endl;
+	// }
+}
+
+HyperLink Intelligence::select_link(std::vector<HyperLink> &links,std::string url)
+{
+	HyperLink link;
+	do  {
+		link = select_random_in_vector(links);
+	} while (link.url == url || std::find(this->auto_blacklist.begin()
+		, auto_blacklist.end(), link.url) != auto_blacklist.end());
+	return link;
+}
+
 
 HyperLink select_random_in_vector(std::vector<HyperLink> &links)
 {
