@@ -60,7 +60,7 @@ def write_search(keyword):
     uinput_wrapping_module.send_a_button_default_func(64)
     uinput_wrapping_module.write_array_func(keyword)
     uinput_wrapping_module.send_a_button_default_func(28)
-    time.sleep(5)
+    time.sleep(3.5)
     return driver.current_url
 
 def navigate(var_url):
