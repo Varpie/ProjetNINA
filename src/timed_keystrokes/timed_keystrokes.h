@@ -16,6 +16,12 @@ extern "C" {
 
 static const char testText[] = "this is a simple test to get your typing speed";
 static const int sizeText = 46;
+
+struct act_mean{
+  double mean;
+  int n;
+}
+
 /*
  * Write the two parameters in a file named conf in the root of the program
  */

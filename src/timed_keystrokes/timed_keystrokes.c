@@ -61,3 +61,46 @@ void ask_keystrokes(){
  double sig = std_dev(t);
  writeConfFile(m,sig);
 }
+
+void keystroke_time(int timer){
+    int fd = open("/dev/input/event0", O_RDONLY);
+    FILE *f = fopen("conf","w+");
+    struct input_event ev;
+    short k = 0;
+    double *t = calloc(2,sizeof(double));
+    printf("The program will listen %d seconds your inputs\n", timer);
+    time_t endwait = time(NULL) + timer;
+    while(time(NULL)< endwait){
+      read(fd, &ev, sizeof(struct input_event));
+         if(ev.type == EV_KEY && ev.value == 1){
+              k = ev.code;
+              t[0] = t[1];
+              t[1] = ev.time.tv_sec*1000000+ev.time.tv_usec;
+              fprintf(f,"%d;%f\n",k,t[1]-t[0]);
+           }
+    }
+    fclose(f);
+}
+
+void create_map(){
+  FILE * fp;
+  char * line = NULL;
+	char ** ptr = NULL;
+  size_t len = 0;
+  ssize_t read;
+  fp = fopen("conf", "r");
+  if (fp == NULL){
+		printf("No file found\n");
+	}else{
+		int i=0;
+    while ((read = getline(&line, &len, fp)) != -1) {
+			stat [i] = strtod(line,ptr);
+			i++;
+    }
+	}
+  fclose(fp);
+  if (line)
+      free(line);
+	if (ptr)
+			free (ptr);
+}
