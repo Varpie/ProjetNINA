@@ -107,7 +107,8 @@ class Navigator
 		 * \param links Vector to put HyperLinks once found
 		 * \brief Get href and text for each <a> tag, and put them in an HyperLink
 		 */
-		void select_hyperlinks_from_html(std::string html,std::vector<HyperLink> &links);
+    void select_hyperlinks_from_html(std::string html, std::vector<HyperLink> &links);
+		void select_hyperlinks_from_html(std::string html, std::vector<HyperLink> &links, std::vector<std::string> rubbish);
 	private:
     	PyObject *module;
 };

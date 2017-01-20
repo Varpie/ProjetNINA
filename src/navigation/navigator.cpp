@@ -115,24 +115,72 @@ std::string Navigator::write_search(std::string keyword)
   return this->call_python_function("write_search",keyword);
 }
 
-void Navigator::select_hyperlinks_from_html(std::string html,std::vector<HyperLink> &links)
+void Navigator::select_hyperlinks_from_html(std::string html, std::vector<HyperLink> &links, std::vector<std::string> rubbish)
 {
-    // Just in case it is not empty yet.
-    links.clear();
-
+  // Just in case it is not empty yet.
+  links.clear();
 	while(html.find("<a ") != std::string::npos) {
     HyperLink lk;
-
     size_t b_tag_a = html.find("<a ");
     size_t e_tag_a = html.find("</a>");
-
     std::string tag_a = html.substr(b_tag_a, e_tag_a - b_tag_a);
     html.erase(0,e_tag_a+4);
-
     size_t b_href = tag_a.find("href=\"");
     size_t e_href = tag_a.substr(b_href+6).find("\"");
     size_t b_txt_a = tag_a.find(">");
+    lk.url = tag_a.substr(b_href+6,e_href);
+    lk.text = tag_a.substr(b_txt_a+1);
+    while(lk.text.find("</") != std::string::npos) {
+      size_t b_close = lk.text.find("</");
+      size_t e_close = lk.text.find(">",b_close);
+      std::string type_tag = lk.text.substr(b_close+2,e_close - 2 - b_close);
+      size_t b_open = lk.text.find("<"+type_tag);
+      size_t e_open = lk.text.find(">",b_open);
+      lk.text = lk.text.erase(b_close,e_close - b_close +1);
+      lk.text = lk.text.erase(b_open,e_open - b_open +1);
+      std::string::size_type i = 0;
+      /* remove \n */
+      while(i < lk.text.length()) {
+        i = lk.text.find('\n',i);
+        if(i == std::string::npos) {
+            break;
+        }
+        lk.text.erase(i);
+      }
+    }
+    /* remove links like the ones in rubbish list */
+    if(!rubbish.empty()){
+      for(auto const& rub: rubbish) {
+        if(lk.url.find(rub) != std::string::npos){
+          std::cout << lk.url << std::endl;
+          continue;
+        }
+      }
+    }
+    /* remove urls with extensions other than .php or .html such as .pdf, .png and so on... */
+    if(lk.url.length()>5){
+      std::string ext = lk.url.substr(lk.url.length()-6);
+      if((ext.find('.') != std::string::npos && (lk.url.substr(lk.url.length()-4) != ".php" || lk.url.substr(lk.url.length()-5) != ".html"))){
+        continue;
+      }
+    }
+    links.push_back(lk);
+  }
+}
 
+void Navigator::select_hyperlinks_from_html(std::string html, std::vector<HyperLink> &links)
+{
+  // Just in case it is not empty yet.
+  links.clear();
+	while(html.find("<a ") != std::string::npos) {
+    HyperLink lk;
+    size_t b_tag_a = html.find("<a ");
+    size_t e_tag_a = html.find("</a>");
+    std::string tag_a = html.substr(b_tag_a, e_tag_a - b_tag_a);
+    html.erase(0,e_tag_a+4);
+    size_t b_href = tag_a.find("href=\"");
+    size_t e_href = tag_a.substr(b_href+6).find("\"");
+    size_t b_txt_a = tag_a.find(">");
     lk.url = tag_a.substr(b_href+6,e_href);
     lk.text = tag_a.substr(b_txt_a+1);
     while(lk.text.find("</") != std::string::npos) {
@@ -161,5 +209,5 @@ void Navigator::select_hyperlinks_from_html(std::string html,std::vector<HyperLi
       }
     }
     links.push_back(lk);
-    }
+  }
 }

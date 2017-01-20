@@ -28,6 +28,7 @@ void Intelligence::roam()
 	long number = links::number;
 	logging::vout("Program began");
 	HyperLink link;
+	std::string navigate_res = "";
 	long x = 0;
 	bool timer = false;
 	bool overflow = false;
@@ -37,27 +38,25 @@ void Intelligence::roam()
 	do {
 		time(&begin);
 		page_html = this->navigator->get_body_html();
-		this->navigator->select_hyperlinks_from_html(page_html, links);
-		if(search) {
-			remove_non_related_links(links);
+		if(!search) {
+			this->navigator->select_hyperlinks_from_html(page_html, links);
+		} else {
+			this->navigator->select_hyperlinks_from_html(page_html, links, this->rubbish_links);
+			for(auto const& lk: links){
+				std::cout << lk.url << std::endl;
+			}
 			search = false;
 		}
-		if(dict::whitelist)
-			this->current_url = select_whitelist(links,this->current_url,whitelist).url;
-		else if(dict::blacklist)
-			this->current_url = select_blacklist(links,this->current_url,blacklist).url;
-		else if(dict::other)
-			this->current_url = select_otherlist(links,this->current_url,otherlist).url;
-		else
-			this->current_url = select_link(links,this->current_url).url;
-		std::string navigate_res = this->navigator->navigate(this->current_url);
+		if(links.size() != 0){
+			select_link(links);
+			navigate_res = this->navigator->navigate(this->current_url);
+		} else {
+			search_keyword();
+		}
 		/* we get out if we passed more than 15 links on the same domain
 		 	 or if python met an error */
 		if(navigate_res == "failed" || current_domain_occurences() > 15) {
-			append_vector(this->auto_blacklist,this->current_url,AUTO_BL_MAX);
-			std::string kw = select_keyword(keywords);
-			this->current_url = this->navigator->write_search(kw);
-			std::cout << "===================== search ======================" << std::endl;
+			search_keyword();
 			search = true;
 		} else {
 			this->current_url = navigate_res;
@@ -76,14 +75,36 @@ void Intelligence::roam()
 	} while(timer || overflow || none);
 }
 
+void Intelligence::select_link(std::vector<HyperLink> &links)
+{
+	if(dict::whitelist)
+		this->current_url = select_whitelist(links,this->current_url,whitelist).url;
+	else if(dict::blacklist)
+		this->current_url = select_blacklist(links,this->current_url,blacklist).url;
+	else if(dict::other)
+		this->current_url = select_otherlist(links,this->current_url,otherlist).url;
+	else
+		this->current_url = select_link(links,this->current_url).url;
+}
+
+void Intelligence::search_keyword()
+{
+	append_vector(this->auto_blacklist,this->current_url,AUTO_BL_MAX);
+	std::string kw = select_keyword(keywords);
+	this->current_url = this->navigator->write_search(kw);
+}
 
 void Intelligence::load_lists()
 {
 	this->history.push_back(this->current_url);
 	this->keywords = init_list("./config/dictionaries/keywords.txt");
+	this->rubbish_links = init_list("./config/dictionaries/rubbish_links.txt");
 	this->auto_blacklist = init_list("./config/dictionaries/auto_blacklist.txt");
 	if(keywords.size() == 0) {
 		logging::vout("Keywords load failed");
+	}
+	if(rubbish_links.size() == 0) {
+		logging::vout("Rubbish Links load failed");
 	}
 	if(dict::whitelist){
 		logging::vout("Loading whitelist");
@@ -133,13 +154,6 @@ void append_vector(std::vector<std::string> &list,std::string param,int limit)
 	}
 }
 
-void remove_non_related_links(std::vector<HyperLink> &links)
-{
-	// for(auto const& link: links) {
-	// 	std::cout << link.url << std::endl;
-	// }
-}
-
 HyperLink Intelligence::select_link(std::vector<HyperLink> &links,std::string url)
 {
 	HyperLink link;
@@ -154,12 +168,8 @@ HyperLink Intelligence::select_link(std::vector<HyperLink> &links,std::string ur
 HyperLink select_random_in_vector(std::vector<HyperLink> &links)
 {
 	int random;
-	if(links.size() <= 1) {
-		random = 0;
-	} else {
-		random = (int)(std::rand() % links.size());
-	}
-  HyperLink link = links.at(random);
+	random = (int)(std::rand() % links.size());
+	HyperLink link = links.at(random);
   return link;
 }
 

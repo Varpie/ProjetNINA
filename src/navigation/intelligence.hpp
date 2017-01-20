@@ -26,7 +26,6 @@ class Intelligence
 		/** Intelligence class constructor
 		 * \param start_url a String that define start_url of browse
 		 */
-
 		Intelligence(std::string &start_url);
 		Intelligence(const Intelligence& obj){std::cout << "Intelligence Copy constructor" << std::endl;}
 		Intelligence& operator=(const Intelligence& obj){std::cout << "Intelligence assignment " << std::endl;}
@@ -42,6 +41,8 @@ class Intelligence
 		int current_domain_occurences();
 		void dump_lists();
 		HyperLink select_link(std::vector<HyperLink> &links,std::string url);
+		void select_link(std::vector<HyperLink> &links);
+		void search_keyword();
 	private:
 		std::string current_url;
 		Navigator* navigator;
@@ -50,6 +51,7 @@ class Intelligence
 		std::vector<std::string> keywords;
 		std::vector<std::string> history;
 		std::vector<std::string> auto_blacklist;
+		std::vector<std::string> rubbish_links;
 		tuple_list otherlist;
 		int const static AUTO_BL_MAX = 2500;
 		int const static HISTORY_MAX = 50;
@@ -88,7 +90,5 @@ tuple_list init_otherlist(std::string name);
 void add_to_blacklist(std::string wrong_url);
 
 void append_vector(std::vector<std::string> &list,std::string param,int limit);
-
-void remove_non_related_links(std::vector<HyperLink> &links);
 
 #endif
