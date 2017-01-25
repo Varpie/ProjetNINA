@@ -81,26 +81,3 @@ void keystroke_time(int timer){
     }
     fclose(f);
 }
-
-void create_map(){
-  FILE * fp;
-  char * line = NULL;
-	char ** ptr = NULL;
-  size_t len = 0;
-  ssize_t read;
-  fp = fopen("conf", "r");
-  if (fp == NULL){
-		printf("No file found\n");
-	}else{
-		int i=0;
-    while ((read = getline(&line, &len, fp)) != -1) {
-			stat [i] = strtod(line,ptr);
-			i++;
-    }
-	}
-  fclose(fp);
-  if (line)
-      free(line);
-	if (ptr)
-			free (ptr);
-}
