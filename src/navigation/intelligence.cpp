@@ -73,9 +73,8 @@ void Intelligence::roam()
 	// } while(timer || overflow || none);
 		timer = (timeout::timeout && (timeout <= 0));
 		overflow = (links::links && (x++ >= number));
-		none = !(timeout::timeout || links::links);
 		append_vector(this->history,this->current_url,HISTORY_MAX);
-	} while( !( timer || overflow ) || none );
+	} while( !( timer || overflow ));
 }
 
 void Intelligence::select_link(std::vector<HyperLink> &links)
