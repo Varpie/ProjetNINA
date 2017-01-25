@@ -42,9 +42,6 @@ void Intelligence::roam()
 			this->navigator->select_hyperlinks_from_html(page_html, links);
 		} else {
 			this->navigator->select_hyperlinks_from_html(page_html, links, this->rubbish_links);
-			for(auto const& lk: links){
-				std::cout << lk.url << std::endl;
-			}
 			search = false;
 		}
 		if(links.size() != 0){
@@ -65,14 +62,20 @@ void Intelligence::roam()
 		timeout -= (long)difftime(end,begin);
 		if(timeout::timeout) {
 			logging::vout("Time countdown : " + std::to_string(timeout));
-		} else if (links::links) {
+		}
+		if (links::links) {
 			logging::vout("Links countdown : " + std::to_string(number-x));
 		}
-		timer = (timeout::timeout && (timeout > 0));
-		overflow = (links::links && (x++ < number));
-		none = (!timeout::timeout && !links::links);
+	// 	timer = (timeout::timeout && (timeout > 0));
+	// 	overflow = (links::links && (x++ < number));
+	// 	none = (!timeout::timeout && !links::links);
+	// 	append_vector(this->history,this->current_url,HISTORY_MAX);
+	// } while(timer || overflow || none);
+		timer = (timeout::timeout && (timeout <= 0));
+		overflow = (links::links && (x++ >= number));
+		none = !(timeout::timeout || links::links);
 		append_vector(this->history,this->current_url,HISTORY_MAX);
-	} while(timer || overflow || none);
+	} while( !( timer || overflow ) || none );
 }
 
 void Intelligence::select_link(std::vector<HyperLink> &links)
