@@ -10,18 +10,28 @@ extern "C" {
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 #include <time.h>
 #include <math.h>
 
 static const char testText[] = "this is a simple test to get your typing speed";
 static const int sizeText = 46;
+static const double time_limit = 2000000.0;
+static const char *delimiter = ";";
 
-struct act_mean{
+typedef struct act_mean{
   double mean;
   int n;
-};
-
+}act_mean;
+/*
+static act_mean **map = (act_mean **)calloc(256,sizeof(act_mean*));
+int i =0;
+for(i = 0; i < 256; i++)
+    map[i] = (act_mean*)calloc(256,sizeof(act_mean));
+*/
+static act_mean map[256][256];
 /*
  * Write the two parameters in a file named conf in the root of the program
  */
