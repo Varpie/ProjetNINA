@@ -58,14 +58,14 @@ Python :
   ```
 
 C++:
-  
+
   ```
   /** my_function description
    * \fn returntype my_function(argtype arg)
    * \param arg argtype utility
    * \return returntype what is returned
    * \brief brief description -> this is optional
-   * 
+   *
    * More description, and even even
    * even even even even
    * even More -> this is optional
@@ -73,13 +73,13 @@ C++:
   returntype my_function(argtype arg);
 
 
-  /** 
-   * description 
+  /**
+   * description
    * \class classname header.h(pp)
    */
   class Classname{};
   ```
-  
+
 ## Python installation
 
 - Install python:
@@ -91,3 +91,9 @@ C++:
     ```
     sudo apt-get install python-pip
     ```
+
+- Homemade module installation:
+  ProjetNINA/src/uintput/ python setup.py install
+  PATH : /usr/local/lib/python2.7/dist-packages
+
+  works for import main.py in navigator.cpp too

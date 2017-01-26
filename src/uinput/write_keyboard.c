@@ -199,7 +199,7 @@ void cvrt_char(int *a, int c){
 			a[1] = 0;
 			break;
 			case 113:
-			a[0] = 31;
+			a[0] = 30;
 			a[1] = 0;
 			break;
 			case 114:
