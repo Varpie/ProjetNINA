@@ -72,8 +72,10 @@ def navigate(var_url):
 
     @rtype: string
     @return: returns nav result OR 'failed' if killed
+
+    ! 40 replaced by 15 for test purpose
     """
-    ret = runFunctionWithTimeout(nav, (var_url,), timeout_duration=40)
+    ret = runFunctionWithTimeout(nav, (var_url,), timeout_duration=15)
     if(ret is not None):
         if(len(ret) != 0):
             return ret

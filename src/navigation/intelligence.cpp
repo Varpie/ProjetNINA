@@ -45,6 +45,7 @@ void Intelligence::roam()
 			search = false;
 			// for(auto const& lk: links){
 			// 	std::cout << lk.url << std::endl;
+			// }
 		}
 		if(links.size() != 0){
 			select_link(links);

@@ -109,6 +109,7 @@ class Navigator
 		 */
     void select_hyperlinks_from_html(std::string html, std::vector<HyperLink> &links);
 		void select_hyperlinks_from_html(std::string html, std::vector<HyperLink> &links, std::vector<std::string> rubbish);
+    int parse_tag_a(HyperLink &lk,std::string &tag_a);
 	private:
     	PyObject *module;
 };
