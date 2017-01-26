@@ -5,6 +5,8 @@ Navigator::Navigator(void)
   logging::vout("Creating Navigator object");
   Py_Initialize();
   logging::vout("Python initialized");
+  /* we'll remove this action later and place main.py directly in the path */
+  /* PATH : /usr/local/lib/python2.7/dist-packages */
   if(PyRun_SimpleString("import sys;sys.path.insert(0, './src/navigation/')")) {
     logging::verr("path expansion failed");
   }
@@ -124,7 +126,10 @@ void Navigator::select_hyperlinks_from_html(std::string html, std::vector<HyperL
     size_t b_tag_a = html.find("<a ");
     size_t e_tag_a = html.find("</a>");
     std::string tag_a = html.substr(b_tag_a, e_tag_a - b_tag_a);
-    html.erase(0,e_tag_a+4);
+    if((e_tag_a+4) <= html.size())
+      html.erase(0,e_tag_a+4);
+    else
+      break;
     size_t b_href = tag_a.find("href=\"");
     size_t e_href = tag_a.substr(b_href+6).find("\"");
     size_t b_txt_a = tag_a.find(">");
@@ -136,8 +141,14 @@ void Navigator::select_hyperlinks_from_html(std::string html, std::vector<HyperL
       std::string type_tag = lk.text.substr(b_close+2,e_close - 2 - b_close);
       size_t b_open = lk.text.find("<"+type_tag);
       size_t e_open = lk.text.find(">",b_open);
-      lk.text = lk.text.erase(b_close,e_close - b_close +1);
-      lk.text = lk.text.erase(b_open,e_open - b_open +1);
+      if((e_close - b_close +1) <= lk.text.size())
+        lk.text = lk.text.erase(b_close,e_close - b_close +1);
+      else
+        break;
+      if((e_open - b_open +1) <= lk.text.size())
+        lk.text = lk.text.erase(b_open,e_open - b_open +1);
+      else
+        break;
       std::string::size_type i = 0;
       /* remove \n */
       while(i < lk.text.length()) {
@@ -150,12 +161,14 @@ void Navigator::select_hyperlinks_from_html(std::string html, std::vector<HyperL
     }
     /* remove links like the ones in rubbish list */
     if(!rubbish.empty()){
+      bool insert = true;
       for(auto const& rub: rubbish) {
         if(lk.url.find(rub) != std::string::npos){
-          std::cout << lk.url << std::endl;
-          continue;
+          insert = false;
         }
       }
+      if(!insert)
+        continue;
     }
     /* remove urls with extensions other than .php or .html such as .pdf, .png and so on... */
     if(lk.url.length()>5){
@@ -177,7 +190,10 @@ void Navigator::select_hyperlinks_from_html(std::string html, std::vector<HyperL
     size_t b_tag_a = html.find("<a ");
     size_t e_tag_a = html.find("</a>");
     std::string tag_a = html.substr(b_tag_a, e_tag_a - b_tag_a);
-    html.erase(0,e_tag_a+4);
+    if((e_tag_a+4) <= html.size())
+      html.erase(0,e_tag_a+4);
+    else
+      break;
     size_t b_href = tag_a.find("href=\"");
     size_t e_href = tag_a.substr(b_href+6).find("\"");
     size_t b_txt_a = tag_a.find(">");
@@ -189,8 +205,14 @@ void Navigator::select_hyperlinks_from_html(std::string html, std::vector<HyperL
       std::string type_tag = lk.text.substr(b_close+2,e_close - 2 - b_close);
       size_t b_open = lk.text.find("<"+type_tag);
       size_t e_open = lk.text.find(">",b_open);
-      lk.text = lk.text.erase(b_close,e_close - b_close +1);
-      lk.text = lk.text.erase(b_open,e_open - b_open +1);
+      if((e_close - b_close +1) <= lk.text.size())
+        lk.text = lk.text.erase(b_close,e_close - b_close +1);
+      else
+        break;
+      if((e_open - b_open +1) <= lk.text.size())
+        lk.text = lk.text.erase(b_open,e_open - b_open +1);
+      else
+        break;
       std::string::size_type i = 0;
       /* remove \n */
       while(i < lk.text.length()) {

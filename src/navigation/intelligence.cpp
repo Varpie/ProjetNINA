@@ -43,6 +43,8 @@ void Intelligence::roam()
 		} else {
 			this->navigator->select_hyperlinks_from_html(page_html, links, this->rubbish_links);
 			search = false;
+			// for(auto const& lk: links){
+			// 	std::cout << lk.url << std::endl;
 		}
 		if(links.size() != 0){
 			select_link(links);
@@ -66,11 +68,6 @@ void Intelligence::roam()
 		if (links::links) {
 			logging::vout("Links countdown : " + std::to_string(number-x));
 		}
-	// 	timer = (timeout::timeout && (timeout > 0));
-	// 	overflow = (links::links && (x++ < number));
-	// 	none = (!timeout::timeout && !links::links);
-	// 	append_vector(this->history,this->current_url,HISTORY_MAX);
-	// } while(timer || overflow || none);
 		timer = (timeout::timeout && (timeout <= 0));
 		overflow = (links::links && (x++ >= number));
 		append_vector(this->history,this->current_url,HISTORY_MAX);
@@ -136,7 +133,6 @@ int Intelligence::current_domain_occurences()
 	int res = 0;
 	std::string domain = this->current_url.substr(0,this->current_url.find("/",9));
 	for(auto const& url: this->history) {
-		// std::cout << url << std::endl;
 		if(url.substr(0,url.find("/",9)) == domain) {
 			res++;
 		}
