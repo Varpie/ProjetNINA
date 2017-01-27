@@ -16,6 +16,11 @@
 #include "timed_keystrokes/timed_keystrokes.h"
 #include "uinput/write_keyboard.h"
 
+#include <linux/input.h>
+#include <fcntl.h>
+#include <X11/Xlib.h>
+#define MOUSEFILE "/dev/input/event7"
+
 void print_help();
 void parse_config();
 
