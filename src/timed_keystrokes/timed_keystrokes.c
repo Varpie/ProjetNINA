@@ -127,9 +127,3 @@ void create_map() {
         if (ptr)
                 free(ptr);
 }
-
-int main(int argc, char *argv[]) {
-        keystroke_time(10);
-        create_mapconf();
-        return 0;
-}
