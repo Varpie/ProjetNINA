@@ -121,37 +121,6 @@ std::string Navigator::write_search(std::string keyword)
   return this->call_python_function("write_search",keyword);
 }
 
-void Navigator::select_hyperlinks_from_html(std::string html, std::vector<HyperLink> &links, std::vector<std::string> rubbish)
-{
-  // Just in case it is not empty yet.
-  links.clear();
-	while(html.find("<a ") != std::string::npos) {
-    HyperLink lk;
-    size_t b_tag_a = html.find("<a ");
-    size_t e_tag_a = html.find("</a>");
-    if(b_tag_a == std::string::npos || e_tag_a == std::string::npos ||
-      ((html.size()-b_tag_a) < (e_tag_a - b_tag_a)) || (html.size() < (e_tag_a+4))) {
-        break;
-    }
-    std::string tag_a = html.substr(b_tag_a, e_tag_a - b_tag_a);
-    html.erase(0,e_tag_a+4);
-    int a = parse_tag_a(lk,tag_a);
-    if(a == 1)
-      break;
-    else if(a == 2)
-      continue;
-    /* remove links like the ones in rubbish list */
-    if(!rubbish.empty()){
-      for(auto const& rub: rubbish) {
-        if(lk.url.find(rub) != std::string::npos){
-          // std::cout << lk.url << std::endl;
-          continue;
-        }
-      }
-    }
-    links.push_back(lk);
-  }
-}
 
 void Navigator::select_hyperlinks_from_html(std::string html, std::vector<HyperLink> &links)
 {
@@ -170,6 +139,36 @@ void Navigator::select_hyperlinks_from_html(std::string html, std::vector<HyperL
     int a = parse_tag_a(lk,tag_a);
     if(a == 1)
       continue;
+    links.push_back(lk);
+  }
+}
+
+void Navigator::select_hyperlinks_from_html(std::string html, std::vector<HyperLink> &links, std::vector<std::string> rubbish)
+{
+  // Just in case it is not empty yet.
+  links.clear();
+	while(html.find("<a ") != std::string::npos) {
+    HyperLink lk;
+    bool pass = false;
+    size_t b_tag_a = html.find("<a ");
+    size_t e_tag_a = html.find("</a>");
+    if(b_tag_a == std::string::npos || e_tag_a == std::string::npos ||
+      ((html.size()-b_tag_a) < (e_tag_a - b_tag_a)) || (html.size() < (e_tag_a+4))) {
+      break;
+    }
+    std::string tag_a = html.substr(b_tag_a, e_tag_a - b_tag_a);
+    html.erase(0,e_tag_a+4);
+    int a = parse_tag_a(lk,tag_a);
+    if(a == 1)
+      continue;
+    for(auto const& rub: rubbish) {
+      if(lk.url.find(rub) != std::string::npos || lk.url == "#" || lk.url == "="){
+        pass = true;
+      }
+    }
+    if(pass){
+      continue;
+    }
     links.push_back(lk);
   }
 }

@@ -42,10 +42,10 @@ void Intelligence::roam()
 			this->navigator->select_hyperlinks_from_html(page_html, links);
 		} else {
 			this->navigator->select_hyperlinks_from_html(page_html, links, this->rubbish_links);
+			for(auto const& rub: links) {
+				std::cout << rub.url << std::endl;
+			}
 			search = false;
-			// for(auto const& lk: links){
-			// 	std::cout << lk.url << std::endl;
-			// }
 		}
 		if(links.size() != 0){
 			select_link(links);
@@ -55,7 +55,7 @@ void Intelligence::roam()
 		}
 		/* we get out if we passed more than 15 links on the same domain
 		 	 or if python met an error */
-		if(navigate_res == "failed" || current_domain_occurences() > 15) {
+		if(navigate_res == "failed" || current_domain_occurences() > 5) {
 			search_keyword();
 			search = true;
 		} else {
@@ -264,7 +264,8 @@ std::vector<std::string> init_list(std::string name) {
 	std::vector<std::string> list;
 	if(file) {
 		while(std::getline(file, line)) {
-			list.push_back(line);
+			if(!line.empty())
+				list.push_back(line);
 		}
 	} else {
 		logging::vout("Error : file not opened");
