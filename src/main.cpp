@@ -1,5 +1,6 @@
 #include "main.hpp"
-
+bool flag = true;
+static int forked_pid = 0;
 bool logging::verbose = false;
 bool dict::whitelist = false;
 std::string dict::whitefile;
@@ -25,7 +26,7 @@ void print_help()
 	printf("Yet to be done\n");
 }
 
-static void daemonize()
+void daemonize()
 {
     pid_t pid;
 
@@ -44,6 +45,38 @@ static void daemonize()
     if (setsid() < 0)
         exit(EXIT_FAILURE);
 	logging::vout("succeded");
+	forked_pid = (int)getpid();
+	std::string pid_str = std::to_string(forked_pid);
+	logging::vout(pid_str);
+	pid_str = std::to_string((int)pid);
+	logging::vout(pid_str);
+}
+
+void stop_daemon() {
+	int fd;
+	struct input_event ie;
+	Display *dpy;
+	Window root, child;
+	int rootX, rootY, winX, winY;
+	unsigned int mask;
+
+	dpy = XOpenDisplay(NULL);
+	XQueryPointer(dpy,DefaultRootWindow(dpy),&root,&child,
+	          &rootX,&rootY,&winX,&winY,&mask);
+
+	if((fd = open(MOUSEFILE, O_RDONLY)) == -1) {
+		perror("opening device");
+		exit(EXIT_FAILURE);
+	}
+
+	while(read(fd, &ie, sizeof(struct input_event))) {
+		if (ie.type == EV_ABS) {
+			XQueryPointer(dpy,DefaultRootWindow(dpy),&root,&child,
+					&rootX,&rootY,&winX,&winY,&mask);
+			  printf("time %ld.%06ld\tx %d\ty %d\n",
+			     	ie.time.tv_sec, ie.time.tv_usec, rootX, rootY);
+		}
+	}
 }
 
 void parse_config()
@@ -77,7 +110,6 @@ void parse_config()
 bool parse_arguments(int argc, char **argv)
 {
 	int character;
-	bool flag = true;
 	while(1) {
 		int option_index = 0;
 		/* Listing options */
@@ -91,13 +123,14 @@ bool parse_arguments(int argc, char **argv)
 			{"verbose", no_argument, 0, 0},
 			{"dict", required_argument, 0, 0},
 			{"daemonize", no_argument, 0, 'd'},
+			{"stop", no_argument, 0, 's'},
 			{"timeout", required_argument, 0, 0},
 			{"links", required_argument, 0, 0},
 			/* That last line is necessary, but useless. */
 			{0,0,0,0}
 		};
 
-		character = getopt_long(argc, argv, "hkd", long_options, &option_index);
+		character = getopt_long(argc, argv, "hkds", long_options, &option_index);
 		if(character == -1){
 			return true;
 		}
@@ -134,6 +167,9 @@ bool parse_arguments(int argc, char **argv)
 				} else if(long_options[option_index].name == "daemonize") {
 					daemonize();
 					logging::vout("Process daemonized");
+				} else if(long_options[option_index].name == "stop") {
+					stop_daemon();
+					flag = false;
 				}else if(long_options[option_index].name == "timeout"){
 					logging::vout("Using time countdown");
 					timeout::timeout = true;
@@ -159,6 +195,10 @@ bool parse_arguments(int argc, char **argv)
 			}
 			case 'd':
 				daemonize();
+				break;
+			case 's':
+				stop_daemon();
+				flag = false;
 				break;
 			case '?':
 				/* character not in the optstring.
