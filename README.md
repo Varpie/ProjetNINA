@@ -92,6 +92,11 @@ C++:
     sudo apt-get install python-pip
     ```
 
+- Install selenium:
+    ```
+    pip install selenium
+    ```
+
 - Homemade module installation:
   ProjetNINA/src/uintput/ python setup.py install
   PATH : /usr/local/lib/python2.7/dist-packages
