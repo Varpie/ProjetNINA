@@ -56,11 +56,11 @@ void ask_keystrokes() {
         double m = esperance(t);
         double sig = std_dev(t);
         writeConfFile(m, sig);
+        close(fd);
 }
 
 void keystroke_time(int timer) {
         int fd = open("/dev/input/event0", O_RDONLY);
-        //FILE *f = fopen("conf", "w+");
         struct input_event ev;
         short *k = calloc(2, sizeof(short));
         double *t = calloc(2, sizeof(double));
@@ -76,22 +76,34 @@ void keystroke_time(int timer) {
                         if (t[1] - t[0] < time_limit) {
                                 map[k[1]][k[0]].n +=1;
                                 map[k[1]][k[0]].mean = ((map[k[1]][k[0]].mean * map[k[1]][k[0]].n - 1)*(t[1]-t[0]) / map[k[1]][k[0]].n);
-                                //fprintf(f, "%d;%d;%f\n", k[1], k[0], t[1] - t[0]);
                         }
                 }
         }
-        //fclose(f);
+        close(fd);
 }
 void create_mapconf(){
         int i,j;
         FILE *f = fopen("conf", "w+");
         for(i=0;i<256;i++){
             for(j=0;j<256;j++){
-                fprintf(f, "%d;%d;%f\n", i,j,map[i][j].mean);
+                fprintf(f, "%d;%d;%f;%d\n", i,j,100000.0,1);
             }
         }
+        fclose(f);
 }
-void create_map() {
+
+void update_mapconf(){
+  int i,j;
+  FILE *f = fopen("conf", "w+");
+  for(i=0;i<256;i++){
+      for(j=0;j<256;j++){
+          fprintf(f, "%d;%d;%f;%d\n", i,j,map[i][j].mean,map[i][j].n);
+      }
+  }
+  fclose(f);
+}
+
+void load_map() {
         FILE *fp;
         char *line = NULL;
         char **ptr = NULL;
@@ -99,31 +111,40 @@ void create_map() {
         ssize_t read;
         int actkey = 0;
         int prevkey = 0;
+        double diff_time = 0.0;
+        int n = 0;
         fp = fopen("conf", "r");
         if (fp == NULL) {
-                printf("No file found\n");
-        } else {
-                while ((read = getline(&line, &len, fp)) != -1) {
-                        char *token;
-                        token = strtok(line, delimiter);
-                        /* Read the actual keycode */
-                        prevkey = strtol(token, ptr, 10);
-                        token = strtok(NULL, delimiter);
-                        actkey = strtol(token, ptr, 10);
-                        token = strtok(NULL, delimiter);
-                        /* Add 1 to the number of terms of the mean */
-                        map[actkey][prevkey].n += 1;
-                        /* Recompute the mean */
-                        map[actkey][prevkey].mean = (((map[actkey][prevkey].mean * (map[actkey][prevkey].n - 1)) + strtod(token, ptr)) / map[actkey][prevkey].n);
-                        if (map[actkey][prevkey].mean != 0) {
-                                printf("%d\n", map[actkey][prevkey].n);
-                                printf("%g\n", map[actkey][prevkey].mean);
-                        }
-                }
+              create_mapconf();
         }
+        while ((read = getline(&line, &len, fp)) != -1) {
+                char *token;
+                token = strtok(line, delimiter);
+                /* Read the actual keycode */
+                prevkey = strtol(token, ptr, 10);
+                token = strtok(NULL, delimiter);
+                actkey = strtol(token, ptr, 10);
+                token = strtok(NULL, delimiter);
+                diff_time = strtod(token, ptr);
+                token = strtok(NULL, delimiter);
+                n = strtol(token, ptr, 10);
+                printf("%d;%d; m:%f n:%d\n",actkey,prevkey,diff_time,n);
+                /* Add 1 to the number of terms of the mean */
+
+                //map[actkey][prevkey].n += 1;
+                /* Recompute the mean */
+                /*
+                map[actkey][prevkey].mean = (((map[actkey][prevkey].mean * (map[actkey][prevkey].n - 1)) + ) / map[actkey][prevkey].n);
+                if (map[actkey][prevkey].mean != 0) {
+                        printf("%d\n", map[actkey][prevkey].n);
+                        printf("%g\n", map[actkey][prevkey].mean);
+                }
+                */
+            }
+
         fclose(fp);
         if (line)
-                free(line);
+            free(line);
         if (ptr)
-                free(ptr);
+            free(ptr);
 }
