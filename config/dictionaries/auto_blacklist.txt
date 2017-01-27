@@ -22,7 +22,6 @@ features.html#storage
 ../../policies/technologies/product-privacy/
 ../../policies/
 ass=
-
 http://webcache.googleusercontent.com/reservation-hotel/hotel-paysbas/
 ../../policies/terms/
 https://wikimediafoundation.org/wiki/Privacy_policy
