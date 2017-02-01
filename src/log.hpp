@@ -22,12 +22,9 @@ namespace dict {
     extern std::string otherfile;
 }
 
-namespace timeout {
+namespace countdown {
     extern bool timeout;
     extern long time;
-}
-
-namespace links {
     extern bool links;
     extern long number;
 }

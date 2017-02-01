@@ -24,8 +24,6 @@ void Intelligence::roam()
 	std::vector<std::string> blacklist;
 	tuple_list otherlist;
 	time_t begin,end;
-	long timeout = timeout::time;
-	long number = links::number;
 	logging::vout("Program began");
 	HyperLink link;
 	std::string navigate_res = "";
@@ -41,15 +39,9 @@ void Intelligence::roam()
 			this->navigator->select_hyperlinks_from_html(page_html, links);
 		} else {
 			this->navigator->select_hyperlinks_from_html(page_html, links, this->rubbish_links);
-			for(auto const& rub: links) {
-				std::cout << rub.url << std::endl;
-			}
 			search = false;
-<<<<<<< HEAD
 			// for(auto const& lk: links){
 			// 	std::cout << lk.url << std::endl;
-=======
->>>>>>> 0b88378ce22c24e08e7adaa0ede2bbcd97a557fd
 		}
 		if(links.size() != 0){
 			select_link(links);
@@ -57,28 +49,24 @@ void Intelligence::roam()
 		} else {
 			search_keyword();
 		}
-		/* we get out if we passed more than 15 links on the same domain
+		/* we get out if we passed more than 10 links on the same domain
 		 	 or if python met an error */
-<<<<<<< HEAD
 		if(navigate_res == "failed" || current_domain_occurences() > 10) {
-=======
-		if(navigate_res == "failed" || current_domain_occurences() > 5) {
->>>>>>> 0b88378ce22c24e08e7adaa0ede2bbcd97a557fd
 			search_keyword();
 			search = true;
 		} else {
 			this->current_url = navigate_res;
 		}
 		time(&end);
-		timeout -= (long)difftime(end,begin);
-		if(timeout::timeout) {
-			logging::vout("Time countdown : " + std::to_string(timeout));
+		countdown::time -= (long)difftime(end,begin);
+		if(countdown::timeout) {
+			logging::vout("Time countdown : " + std::to_string(countdown::time));
 		}
-		if (links::links) {
-			logging::vout("Links countdown : " + std::to_string(number-x));
+		if (countdown::links) {
+			logging::vout("Links countdown : " + std::to_string(countdown::number-x));
 		}
-		timer = (timeout::timeout && (timeout <= 0));
-		overflow = (links::links && (x++ >= number));
+		timer = (countdown::timeout && (countdown::time <= 0));
+		overflow = (countdown::links && (x++ >= countdown::number));
 		append_vector(this->history,this->current_url,HISTORY_MAX);
 	} while( !( timer || overflow ));
 }

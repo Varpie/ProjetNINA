@@ -8,10 +8,10 @@ bool dict::blacklist = false;
 std::string dict::blackfile;
 bool dict::other = false;
 std::string dict::otherfile;
-bool timeout::timeout = false;
-long timeout::time;
-bool links::links = false;
-long links::number;
+bool countdown::timeout = false;
+long countdown::time;
+bool countdown::links = false;
+long countdown::number;
 std::string lang = "en";
 std::string layout = "en";
 std::string browser = "firefox";
@@ -100,6 +100,12 @@ void parse_config()
 				layout = value;
 			} else if(var == "browser") {
 				browser = value;
+			} else if(var == "links") {
+				countdown::links = true;
+				countdown::number = std::stod(value);
+			} else if(var == "timeout") {
+				countdown::timeout = true;
+				countdown::time = std::stod(value);
 			} else {
 			 	std::cout << "Mistake on line " << i << ": " << line << std::endl;
 			}
@@ -121,7 +127,8 @@ bool parse_arguments(int argc, char **argv)
 			{"url", required_argument, 0, 0},
 			{"timedkey", no_argument,0,'k'},
 			{"verbose", no_argument, 0, 0},
-			{"dict", required_argument, 0, 0},
+			{"whitelist", no_argument, 0, 0},
+			{"blacklist", no_argument, 0, 0},
 			{"daemonize", no_argument, 0, 'd'},
 			{"stop", no_argument, 0, 's'},
 			{"timeout", required_argument, 0, 0},
@@ -150,20 +157,14 @@ bool parse_arguments(int argc, char **argv)
 				}else if(long_options[option_index].name == "verbose"){
 					logging::verbose = true;
 					logging::vout("Verbose is active");
-				}else if(long_options[option_index].name == "dict"){
-					if(!strcmp(optarg,"whitelist")){
+				}else if(long_options[option_index].name == "whitelist"){
 						logging::vout("Using whitelist");
 						dict::whitelist = true;
 						dict::whitefile = "./config/dictionaries/whitelist.txt";
-					}else if(!strcmp(optarg,"blacklist")){
+				}else if(long_options[option_index].name == "blacklist"){
 						logging::vout("Using blacklist");
 						dict::blacklist = true;
 						dict::blackfile = "./config/dictionaries/blacklist.txt";
-					}else{
-						logging::vout("Using list");
-						dict::other = true;
-						dict::otherfile = optarg;
-					}
 				} else if(long_options[option_index].name == "daemonize") {
 					daemonize();
 					logging::vout("Process daemonized");
@@ -171,13 +172,13 @@ bool parse_arguments(int argc, char **argv)
 					stop_daemon();
 					flag = false;
 				}else if(long_options[option_index].name == "timeout"){
-					logging::vout("Using time countdown");
-					timeout::timeout = true;
-					timeout::time = std::stod(optarg);
+					countdown::timeout = true;
+					countdown::time = std::stod(optarg);
+					logging::vout("Using " + std::to_string(countdown::time) + " sec time countdown");
 				}else if(long_options[option_index].name == "links"){
-					logging::vout("Using links countdown");
-					links::links = true;
-					links::number = std::stod(optarg);
+					countdown::links = true;
+					countdown::number = std::stod(optarg);
+					logging::vout("Using " + std::to_string(countdown::number) + " links countdown");
 				}
 				break;
 			case 'h':
