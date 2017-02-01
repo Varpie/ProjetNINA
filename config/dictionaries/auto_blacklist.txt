@@ -32,3 +32,9 @@ https://wikimediafoundation.org/wiki/Privacy_policy
 #cite_note-rdt-2
 #Commons_policy_follows_the_WMF_position
 #A_posi.C3.A7.C3.A3o_da_Wikimedia_Foundation
+https://en.wikipedia.org/wiki/en:gratis
+#cite_note-10
+#CITEREFHandel2008
+#How_to_make_a_nomination
+#core-navigation
+../../policies/privacy/

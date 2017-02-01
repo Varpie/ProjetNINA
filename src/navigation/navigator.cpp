@@ -26,7 +26,7 @@ Navigator::~Navigator(void)
 
 void Navigator::call_python_function_void_nargs(std::string function)
 {
-  logging::vout(2,"Enter : Call python function void nargs");
+  logging::vout(2,"Entering Navigator::call_python_function_void_nargs : "+function);
   PyObject *fonction;
   fonction = PyObject_GetAttrString(module, function.c_str());
   if(fonction == NULL) {
@@ -35,12 +35,12 @@ void Navigator::call_python_function_void_nargs(std::string function)
   }
   PyEval_CallObject(fonction,NULL);
   Py_DECREF(fonction);
-  logging::vout(2,"Out : Call python function void nargs");
+  logging::vout(2,"Leaving Navigator::call_python_function_void_nargs : "+function);
 }
 
 std::string Navigator::call_python_function_nargs(std::string function)
 {
-  logging::vout(2,"Enter : Call python function nargs");
+  logging::vout(2,"Entering Navigator::call_python_function_nargs : "+function);
   char *resultat;
   PyObject *fonction, *retour;
   fonction = PyObject_GetAttrString(module, function.c_str());
@@ -58,14 +58,14 @@ std::string Navigator::call_python_function_nargs(std::string function)
 
   std::string cpp_str = resultat;
   Py_DECREF(retour);
-  logging::vout(2,"Out : Call python function nargs");
+  logging::vout(2,"Leaving Navigator::call_python_function_nargs : "+function);
   return cpp_str;
 }
 
 
 std::string Navigator::call_python_function(std::string function,std::string arg)
 {
-  logging::vout(2,"Enter : Call python function");
+  logging::vout(2,"Entering Navigator::call_python_function : "+function);
   char *resultat;
   PyObject *retour, *fonction, *arguments;
 
@@ -97,7 +97,7 @@ std::string Navigator::call_python_function(std::string function,std::string arg
 
   std::string cpp_str = resultat;
   Py_DECREF(retour);
-  logging::vout(2,"Out : Call python function");
+  logging::vout(2,"Leaving Navigator::call_python_function : "+function);
   return cpp_str;
 }
 
@@ -124,6 +124,7 @@ std::string Navigator::write_search(std::string keyword)
 
 void Navigator::select_hyperlinks_from_html(std::string html, std::vector<HyperLink> &links)
 {
+  logging::vout(2,"Entering Navigator::select_hyperlinks_from_html no rubbish");
   // Just in case it is not empty yet.
   links.clear();
 	while(html.find("<a ") != std::string::npos) {
@@ -141,10 +142,12 @@ void Navigator::select_hyperlinks_from_html(std::string html, std::vector<HyperL
       continue;
     links.push_back(lk);
   }
+  logging::vout(2,"Leaving Navigator::select_hyperlinks_from_html no rubbish");
 }
 
 void Navigator::select_hyperlinks_from_html(std::string html, std::vector<HyperLink> &links, std::vector<std::string> rubbish)
 {
+  logging::vout(2,"Entering Navigator::select_hyperlinks_from_html rubbish");
   // Just in case it is not empty yet.
   links.clear();
 	while(html.find("<a ") != std::string::npos) {
@@ -171,9 +174,11 @@ void Navigator::select_hyperlinks_from_html(std::string html, std::vector<HyperL
     }
     links.push_back(lk);
   }
+  logging::vout(2,"Leaving Navigator::select_hyperlinks_from_html rubbish");
 }
 
 int Navigator::parse_tag_a(HyperLink &lk,std::string &tag_a) {
+  logging::vout(3,"Entering Navigator::parse_tag_a");
   /* nothing = 0 continue = 1 */
   try {
     size_t b_href = tag_a.find("href=\"");
@@ -211,4 +216,5 @@ int Navigator::parse_tag_a(HyperLink &lk,std::string &tag_a) {
     logging::vout("Error : " + (std::string)e.what());
     return 1;
   }
+  logging::vout(3,"Leaving Navigator::parse_tag_a");
 }
