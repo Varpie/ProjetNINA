@@ -1,7 +1,7 @@
 #include "main.hpp"
 bool flag = true;
 static int forked_pid = 0;
-int logging::verbose = 0;
+bool logging::verbose = false;
 bool dict::whitelist = false;
 std::string dict::whitefile;
 bool dict::blacklist = false;
@@ -126,14 +126,9 @@ bool parse_arguments(int argc, char **argv)
 			{"language", required_argument, 0, 0},
 			{"url", required_argument, 0, 0},
 			{"timedkey", no_argument,0,'k'},
-<<<<<<< HEAD
 			{"verbose", no_argument, 0, 0},
 			{"whitelist", no_argument, 0, 0},
 			{"blacklist", no_argument, 0, 0},
-=======
-			{"verbose", required_argument, 0, 0},
-			{"dict", required_argument, 0, 0},
->>>>>>> 292e461f1387f32ff9b54a32ded54a270b0004c6
 			{"daemonize", no_argument, 0, 'd'},
 			{"stop", no_argument, 0, 's'},
 			{"timeout", required_argument, 0, 0},
@@ -160,16 +155,16 @@ bool parse_arguments(int argc, char **argv)
 					ask_keystrokes();
 					flag = false;
 				}else if(long_options[option_index].name == "verbose"){
-					logging::verbose = std::stod(optarg);
+					logging::verbose = true;
 					logging::vout("Verbose is active");
 				}else if(long_options[option_index].name == "whitelist"){
-						logging::vout("Using whitelist");
-						dict::whitelist = true;
-						dict::whitefile = "./config/dictionaries/whitelist.txt";
+					logging::vout("Using whitelist");
+					dict::whitelist = true;
+					dict::whitefile = "./config/dictionaries/whitelist.txt";
 				}else if(long_options[option_index].name == "blacklist"){
-						logging::vout("Using blacklist");
-						dict::blacklist = true;
-						dict::blackfile = "./config/dictionaries/blacklist.txt";
+					logging::vout("Using blacklist");
+					dict::blacklist = true;
+					dict::blackfile = "./config/dictionaries/blacklist.txt";
 				} else if(long_options[option_index].name == "daemonize") {
 					daemonize();
 					logging::vout("Process daemonized");
