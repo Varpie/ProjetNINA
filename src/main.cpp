@@ -1,7 +1,7 @@
 #include "main.hpp"
 bool flag = true;
 static int forked_pid = 0;
-bool logging::verbose = false;
+int logging::verbose = 0;
 bool dict::whitelist = false;
 std::string dict::whitefile;
 bool dict::blacklist = false;
@@ -128,7 +128,7 @@ bool parse_arguments(int argc, char **argv)
 			{"language", required_argument, 0, 0},
 			{"url", required_argument, 0, 0},
 			{"timedkey", no_argument,0,'k'},
-			{"verbose", no_argument, 0, 0},
+			{"verbose", required_argument, 0, 0},
 			{"dict", required_argument, 0, 0},
 			{"daemonize", no_argument, 0, 'd'},
 			{"stop", no_argument, 0, 's'},
@@ -156,7 +156,7 @@ bool parse_arguments(int argc, char **argv)
 					ask_keystrokes();
 					flag = false;
 				}else if(long_options[option_index].name == "verbose"){
-					logging::verbose = true;
+					logging::verbose = std::stod(optarg);
 					logging::vout("Verbose is active");
 				}else if(long_options[option_index].name == "dict"){
 					if(!strcmp(optarg,"whitelist")){
