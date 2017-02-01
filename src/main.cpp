@@ -57,12 +57,14 @@ void stop_daemon() {
 	struct input_event ie;
 	Display *dpy;
 	Window root, child;
-	int rootX, rootY, winX, winY;
+	int rootX, rootY, winX, winY, dispX, dispY;
 	unsigned int mask;
 
 	dpy = XOpenDisplay(NULL);
 	XQueryPointer(dpy,DefaultRootWindow(dpy),&root,&child,
 	          &rootX,&rootY,&winX,&winY,&mask);
+	dispY = DefaultScreenOfDisplay(dpy)->height;
+	dispX = DefaultScreenOfDisplay(dpy)->width;
 
 	if((fd = open(MOUSEFILE, O_RDONLY)) == -1) {
 		perror("opening device");
@@ -73,8 +75,14 @@ void stop_daemon() {
 		if (ie.type == EV_ABS) {
 			XQueryPointer(dpy,DefaultRootWindow(dpy),&root,&child,
 					&rootX,&rootY,&winX,&winY,&mask);
-			  printf("time %ld.%06ld\tx %d\ty %d\n",
-			     	ie.time.tv_sec, ie.time.tv_usec, rootX, rootY);
+			if(rootX == 0 && rootY == 0)
+				std::cout << "Top left corner" << std::endl;
+			else if(rootX == 0 && rootY == dispY -1)
+				std::cout << "Bottom left corner" << std::endl;
+			else if(rootX == dispX - 1 && rootY == 0)
+				std::cout << "Top right corner" << std::endl;
+			else if(rootX == dispX-1 && rootY == dispY-1)
+				std::cout << "Bottom right corner" << std::endl;
 		}
 	}
 }
