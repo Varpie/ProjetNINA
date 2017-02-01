@@ -157,7 +157,7 @@ bool parse_arguments(int argc, char **argv)
 					ask_keystrokes();
 					flag = false;
 				}else if(long_options[option_index].name == "verbose"){
-					logging::verbose = std::stod(optarg);
+					logging::verbose = std::stoi(optarg);
 					logging::vout("Verbose is active");
 				} else if(long_options[option_index].name == "whitelist"){
 					logging::vout("Using whitelist");
