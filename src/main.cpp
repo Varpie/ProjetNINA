@@ -8,10 +8,10 @@ bool dict::blacklist = false;
 std::string dict::blackfile;
 bool dict::other = false;
 std::string dict::otherfile;
-bool timeout::timeout = false;
-long timeout::time;
-bool links::links = false;
-long links::number;
+bool countdown::timeout = false;
+long countdown::time;
+bool countdown::links = false;
+long countdown::number;
 std::string lang = "en";
 std::string layout = "en";
 std::string browser = "firefox";
@@ -57,12 +57,14 @@ void stop_daemon() {
 	struct input_event ie;
 	Display *dpy;
 	Window root, child;
-	int rootX, rootY, winX, winY;
+	int rootX, rootY, winX, winY, dispX, dispY;
 	unsigned int mask;
 
 	dpy = XOpenDisplay(NULL);
 	XQueryPointer(dpy,DefaultRootWindow(dpy),&root,&child,
 	          &rootX,&rootY,&winX,&winY,&mask);
+	dispY = DefaultScreenOfDisplay(dpy)->height;
+	dispX = DefaultScreenOfDisplay(dpy)->width;
 
 	if((fd = open(MOUSEFILE, O_RDONLY)) == -1) {
 		perror("opening device");
@@ -73,8 +75,14 @@ void stop_daemon() {
 		if (ie.type == EV_ABS) {
 			XQueryPointer(dpy,DefaultRootWindow(dpy),&root,&child,
 					&rootX,&rootY,&winX,&winY,&mask);
-			  printf("time %ld.%06ld\tx %d\ty %d\n",
-			     	ie.time.tv_sec, ie.time.tv_usec, rootX, rootY);
+			if(rootX == 0 && rootY == 0)
+				std::cout << "Top left corner" << std::endl;
+			else if(rootX == 0 && rootY == dispY -1)
+				std::cout << "Bottom left corner" << std::endl;
+			else if(rootX == dispX - 1 && rootY == 0)
+				std::cout << "Top right corner" << std::endl;
+			else if(rootX == dispX-1 && rootY == dispY-1)
+				std::cout << "Bottom right corner" << std::endl;
 		}
 	}
 }
@@ -101,7 +109,7 @@ void parse_config()
 			} else if(var == "browser") {
 				browser = value;
 			} else {
-			 	std::cout << "Mistake on line " << i << ": " << line << std::endl;
+			 	std::cout << "Mistake on line " << i << ": " << line << std::endl;
 			}
 		}
 	}
@@ -121,7 +129,8 @@ bool parse_arguments(int argc, char **argv)
 			{"url", required_argument, 0, 0},
 			{"timedkey", no_argument,0,'k'},
 			{"verbose", required_argument, 0, 0},
-			{"dict", required_argument, 0, 0},
+			{"whitelist", no_argument, 0, 0},
+			{"blacklist", no_argument, 0, 0},
 			{"daemonize", no_argument, 0, 'd'},
 			{"stop", no_argument, 0, 's'},
 			{"timeout", required_argument, 0, 0},
@@ -148,22 +157,16 @@ bool parse_arguments(int argc, char **argv)
 					ask_keystrokes();
 					flag = false;
 				}else if(long_options[option_index].name == "verbose"){
-					logging::verbose = std::stod(optarg);
+					logging::verbose = std::stoi(optarg);
 					logging::vout("Verbose is active");
-				}else if(long_options[option_index].name == "dict"){
-					if(!strcmp(optarg,"whitelist")){
-						logging::vout("Using whitelist");
-						dict::whitelist = true;
-						dict::whitefile = "./config/dictionaries/whitelist.txt";
-					}else if(!strcmp(optarg,"blacklist")){
-						logging::vout("Using blacklist");
-						dict::blacklist = true;
-						dict::blackfile = "./config/dictionaries/blacklist.txt";
-					}else{
-						logging::vout("Using list");
-						dict::other = true;
-						dict::otherfile = optarg;
-					}
+				} else if(long_options[option_index].name == "whitelist"){
+					logging::vout("Using whitelist");
+					dict::whitelist = true;
+					dict::whitefile = "./config/dictionaries/whitelist.txt";
+				} else if(long_options[option_index].name == "blacklist"){
+					logging::vout("Using blacklist");
+					dict::blacklist = true;
+					dict::blackfile = "./config/dictionaries/blacklist.txt";
 				} else if(long_options[option_index].name == "daemonize") {
 					daemonize();
 					logging::vout("Process daemonized");
@@ -172,12 +175,12 @@ bool parse_arguments(int argc, char **argv)
 					flag = false;
 				}else if(long_options[option_index].name == "timeout"){
 					logging::vout("Using time countdown");
-					timeout::timeout = true;
-					timeout::time = std::stod(optarg);
+					countdown::timeout = true;
+					countdown::time = std::stod(optarg);
 				}else if(long_options[option_index].name == "links"){
 					logging::vout("Using links countdown");
-					links::links = true;
-					links::number = std::stod(optarg);
+					countdown::links = true;
+					countdown::number = std::stod(optarg);
 				}
 				break;
 			case 'h':

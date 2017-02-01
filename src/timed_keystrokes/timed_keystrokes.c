@@ -10,40 +10,33 @@ void writeConfFile(double m, double sig) {
 double esperance(double t[]) {
         int i;
         double sum = 0;
-        for (i = 0; i < sizeText - 1; i++) {
+        for (i = 0; i < size_text - 1; i++) {
                 sum += t[i + 1] - t[i];
         }
-        return sum / (double)sizeText;
+        return sum / (double)size_text;
 }
 
 double std_dev(double t[]) {
         double sum = 0;
         double sq_sum = 0;
-        for (int i = 0; i < sizeText - 1; ++i) {
+        for (int i = 0; i < size_text - 1; ++i) {
                 sum += t[i + 1] - t[i];
                 sq_sum += (t[i + 1] - t[i]) * (t[i + 1] - t[i]);
         }
-        double mean = sum / (double)sizeText;
+        double mean = sum / (double)size_text;
 
-        double variance = (sq_sum / (double)sizeText) - (mean * mean);
+        double variance = (sq_sum / (double)size_text) - (mean * mean);
         /* printf("m:%f\nsq:%f\nv:%f\n", mean, sq_sum, variance); */
         return sqrt(variance);
-}
-
-void clean_stdin(void) {
-        int c;
-        do {
-                c = getchar();
-        } while (c != '\n' && c != EOF);
 }
 
 void ask_keystrokes() {
         int fd = open("/dev/input/event0", O_RDONLY);
         struct input_event ev;
-        double t[sizeText];
+        double t[size_text];
         int i = 0;
-        printf("Please write the following text : \n%s\n", testText);
-        while (i < sizeText) {
+        printf("Please write the following text : \n%s\n", test_text);
+        while (i < size_text) {
                 read(fd, &ev, sizeof(struct input_event));
                 if (ev.type == EV_KEY && ev.value == 1) {
                         t[i] = ev.time.tv_sec * 1000000 + ev.time.tv_usec;
@@ -75,7 +68,7 @@ void keystroke_time(int timer) {
                         t[1] = ev.time.tv_sec * 1000000 + ev.time.tv_usec;
                         if (t[1] - t[0] < time_limit) {
                                 map[k[1]][k[0]].n +=1;
-                                map[k[1]][k[0]].mean = ((map[k[1]][k[0]].mean * map[k[1]][k[0]].n - 1)*(t[1]-t[0]) / map[k[1]][k[0]].n);
+                                map[k[1]][k[0]].mean = (((map[k[1]][k[0]].mean * (map[k[1]][k[0]].n - 1))+(t[1]-t[0])) / map[k[1]][k[0]].n);
                         }
                 }
         }
@@ -84,9 +77,9 @@ void keystroke_time(int timer) {
 void create_mapconf(){
         int i,j;
         FILE *f = fopen("conf", "w+");
-        for(i=0;i<256;i++){
-            for(j=0;j<256;j++){
-                fprintf(f, "%d;%d;%f;%d\n", i,j,100000.0,1);
+        for(i=0;i<size_map;i++){
+            for(j=0;j<size_map;j++){
+                fprintf(f, "%d;%d;%f;%d\n", i,j,base_time,base_n);
             }
         }
         fclose(f);
@@ -95,13 +88,14 @@ void create_mapconf(){
 void update_mapconf(){
   int i,j;
   FILE *f = fopen("conf", "w+");
-  for(i=0;i<256;i++){
-      for(j=0;j<256;j++){
+  for(i=0;i<size_map;i++){
+      for(j=0;j<size_map;j++){
           fprintf(f, "%d;%d;%f;%d\n", i,j,map[i][j].mean,map[i][j].n);
       }
   }
   fclose(f);
 }
+
 
 void load_map() {
         FILE *fp;
@@ -111,37 +105,22 @@ void load_map() {
         ssize_t read;
         int actkey = 0;
         int prevkey = 0;
-        double diff_time = 0.0;
-        int n = 0;
         fp = fopen("conf", "r");
         if (fp == NULL) {
               create_mapconf();
+              fp = fopen("conf", "r");
         }
         while ((read = getline(&line, &len, fp)) != -1) {
                 char *token;
                 token = strtok(line, delimiter);
-                /* Read the actual keycode */
                 prevkey = strtol(token, ptr, 10);
                 token = strtok(NULL, delimiter);
                 actkey = strtol(token, ptr, 10);
                 token = strtok(NULL, delimiter);
-                diff_time = strtod(token, ptr);
+                map[actkey][prevkey].mean = strtod(token, ptr);
                 token = strtok(NULL, delimiter);
-                n = strtol(token, ptr, 10);
-                printf("%d;%d; m:%f n:%d\n",actkey,prevkey,diff_time,n);
-                /* Add 1 to the number of terms of the mean */
-
-                //map[actkey][prevkey].n += 1;
-                /* Recompute the mean */
-                /*
-                map[actkey][prevkey].mean = (((map[actkey][prevkey].mean * (map[actkey][prevkey].n - 1)) + ) / map[actkey][prevkey].n);
-                if (map[actkey][prevkey].mean != 0) {
-                        printf("%d\n", map[actkey][prevkey].n);
-                        printf("%g\n", map[actkey][prevkey].mean);
-                }
-                */
-            }
-
+                map[actkey][prevkey].n = strtol(token, ptr, 10);
+        }
         fclose(fp);
         if (line)
             free(line);

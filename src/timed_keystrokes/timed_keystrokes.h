@@ -16,10 +16,13 @@ extern "C" {
 #include <time.h>
 #include <math.h>
 
-static const char testText[] = "this is a simple test to get your typing speed";
-static const int sizeText = 46;
+static const char test_text[] = "this is a simple test to get your typing speed";
+static const int size_text = 46;
 static const double time_limit = 2000000.0;
+static const double base_time = 100000.0;
+static const int base_n = 1;
 static const char *delimiter = ";";
+#define size_map 256
 
 typedef struct act_mean{
   double mean;
@@ -31,7 +34,7 @@ int i =0;
 for(i = 0; i < 256; i++)
     map[i] = (act_mean*)calloc(256,sizeof(act_mean));
 */
-static act_mean map[256][256];
+static act_mean map[size_map][size_map];
 /*
  * Write the two parameters in a file named conf in the root of the program
  */
@@ -45,15 +48,29 @@ double esperance(double t[]);
  */
 double std_dev(double t[]);
 /*
- * Clean the buffer
- */
-void clean_stdin();
-/*
  * Ask the user to type a phrase. Log the time of the input and calculate
  * the difference between each time
  */
 void ask_keystrokes();
-
+/*
+ * Load the conf file and store it in the map
+ */
+void load_map();
+/*
+ * Write the map into the conf file
+ */
+void update_mapconf();
+/*
+ * Create a conf file from the standard map (mean and n define by base_time and base_n)
+ */
+void create_mapconf();
+/*
+ * Listen the input of /dev/event0 during @timer seconds and store the difference
+ * bewteen the time of the previous key and the time of the actual key pressed
+ * in a map
+ * @timer : number of seconds the program will listen /dev/event0
+ */
+void keystroke_time(int time)
 #ifdef __cplusplus
  } /* extern C */
 #endif
