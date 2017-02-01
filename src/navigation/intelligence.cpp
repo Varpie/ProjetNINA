@@ -39,6 +39,12 @@ void Intelligence::roam()
 			this->navigator->select_hyperlinks_from_html(page_html, links);
 		} else {
 			this->navigator->select_hyperlinks_from_html(page_html, links, this->rubbish_links);
+<<<<<<< HEAD
+=======
+			// for(auto const& rub: links) {
+			// 	std::cout << rub.url << std::endl;
+			// }
+>>>>>>> 292e461f1387f32ff9b54a32ded54a270b0004c6
 			search = false;
 			// for(auto const& lk: links){
 			// 	std::cout << lk.url << std::endl;
@@ -51,7 +57,11 @@ void Intelligence::roam()
 		}
 		/* we get out if we passed more than 10 links on the same domain
 		 	 or if python met an error */
+<<<<<<< HEAD
 		if(navigate_res == "failed" || current_domain_occurences() > 10) {
+=======
+		if(navigate_res == "failed" || current_domain_occurences() > 4) {
+>>>>>>> 292e461f1387f32ff9b54a32ded54a270b0004c6
 			search_keyword();
 			search = true;
 		} else {

@@ -2,14 +2,20 @@
 #define LOG_HPP_
 
 namespace logging {
-    extern bool verbose;
+    extern int verbose;
+    inline void vout(int level, std::string msg) {
+      if(verbose >= level)
+      std::cout << msg << std::endl;
+    }
     inline void vout(std::string msg) {
-        if(verbose)
-            std::cout << msg << std::endl;
+      vout(1,msg);
+    }
+    inline void verr(int level,std::string msg) {
+      if(verbose >= level)
+      std::cerr << msg << std::endl;
     }
     inline void verr(std::string msg) {
-        if(verbose)
-            std::cerr << msg << std::endl;
+      verr(1,msg);
     }
 }
 

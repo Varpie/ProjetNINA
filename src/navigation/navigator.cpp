@@ -26,7 +26,7 @@ Navigator::~Navigator(void)
 
 void Navigator::call_python_function_void_nargs(std::string function)
 {
-  //logging::vout("Enter : Call python function void nargs");
+  logging::vout(2,"Enter : Call python function void nargs");
   PyObject *fonction;
   fonction = PyObject_GetAttrString(module, function.c_str());
   if(fonction == NULL) {
@@ -35,12 +35,12 @@ void Navigator::call_python_function_void_nargs(std::string function)
   }
   PyEval_CallObject(fonction,NULL);
   Py_DECREF(fonction);
-  //logging::vout("Out : Call python function void nargs");
+  logging::vout(2,"Out : Call python function void nargs");
 }
 
 std::string Navigator::call_python_function_nargs(std::string function)
 {
-  //logging::vout("Enter : Call python function nargs");
+  logging::vout(2,"Enter : Call python function nargs");
   char *resultat;
   PyObject *fonction, *retour;
   fonction = PyObject_GetAttrString(module, function.c_str());
@@ -58,14 +58,14 @@ std::string Navigator::call_python_function_nargs(std::string function)
 
   std::string cpp_str = resultat;
   Py_DECREF(retour);
-  //logging::vout("Out : Call python function nargs");
+  logging::vout(2,"Out : Call python function nargs");
   return cpp_str;
 }
 
 
 std::string Navigator::call_python_function(std::string function,std::string arg)
 {
-  //logging::vout("Enter : Call python function");
+  logging::vout(2,"Enter : Call python function");
   char *resultat;
   PyObject *retour, *fonction, *arguments;
 
@@ -97,7 +97,7 @@ std::string Navigator::call_python_function(std::string function,std::string arg
 
   std::string cpp_str = resultat;
   Py_DECREF(retour);
-  //logging::vout("Out : Call python function");
+  logging::vout(2,"Out : Call python function");
   return cpp_str;
 }
 

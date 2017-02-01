@@ -102,3 +102,12 @@ C++:
   PATH : /usr/local/lib/python2.7/dist-packages
 
   works for import main.py in navigator.cpp too
+
+
+## Dependancies
+- python
+  lxml
+
+- C
+  libx11-dev
+  python-dev
