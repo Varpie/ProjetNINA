@@ -1,7 +1,7 @@
 #include "main.hpp"
 bool flag = true;
 static int forked_pid = 0;
-bool logging::verbose = false;
+int logging::verbose = 0;
 bool dict::whitelist = false;
 std::string dict::whitefile;
 bool dict::blacklist = false;
@@ -108,14 +108,8 @@ void parse_config()
 				layout = value;
 			} else if(var == "browser") {
 				browser = value;
-			} else if(var == "links") {
-				countdown::links = true;
-				countdown::number = std::stod(value);
-			} else if(var == "timeout") {
-				countdown::timeout = true;
-				countdown::time = std::stod(value);
 			} else {
-			 	std::cout << "Mistake on line " << i << ": " << line << std::endl;
+			 	std::cout << "Mistake on line " << i << ": " << line << std::endl;
 			}
 		}
 	}
@@ -134,7 +128,7 @@ bool parse_arguments(int argc, char **argv)
 			{"language", required_argument, 0, 0},
 			{"url", required_argument, 0, 0},
 			{"timedkey", no_argument,0,'k'},
-			{"verbose", no_argument, 0, 0},
+			{"verbose", required_argument, 0, 0},
 			{"whitelist", no_argument, 0, 0},
 			{"blacklist", no_argument, 0, 0},
 			{"daemonize", no_argument, 0, 'd'},
@@ -163,13 +157,13 @@ bool parse_arguments(int argc, char **argv)
 					ask_keystrokes();
 					flag = false;
 				}else if(long_options[option_index].name == "verbose"){
-					logging::verbose = true;
+					logging::verbose = std::stod(optarg);
 					logging::vout("Verbose is active");
-				}else if(long_options[option_index].name == "whitelist"){
+				} else if(long_options[option_index].name == "whitelist"){
 					logging::vout("Using whitelist");
 					dict::whitelist = true;
 					dict::whitefile = "./config/dictionaries/whitelist.txt";
-				}else if(long_options[option_index].name == "blacklist"){
+				} else if(long_options[option_index].name == "blacklist"){
 					logging::vout("Using blacklist");
 					dict::blacklist = true;
 					dict::blackfile = "./config/dictionaries/blacklist.txt";
@@ -180,13 +174,13 @@ bool parse_arguments(int argc, char **argv)
 					stop_daemon();
 					flag = false;
 				}else if(long_options[option_index].name == "timeout"){
+					logging::vout("Using time countdown");
 					countdown::timeout = true;
 					countdown::time = std::stod(optarg);
-					logging::vout("Using " + std::to_string(countdown::time) + " sec time countdown");
 				}else if(long_options[option_index].name == "links"){
+					logging::vout("Using links countdown");
 					countdown::links = true;
 					countdown::number = std::stod(optarg);
-					logging::vout("Using " + std::to_string(countdown::number) + " links countdown");
 				}
 				break;
 			case 'h':
