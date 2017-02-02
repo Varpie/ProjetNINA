@@ -40,8 +40,8 @@ class Intelligence
 		void load_lists();
 		int current_domain_occurences();
 		void dump_lists();
-		HyperLink select_link(std::vector<HyperLink> &links,std::string url);
 		void select_link(std::vector<HyperLink> &links);
+		HyperLink select_autobl(std::vector<HyperLink> &links,std::string url);
 		void search_keyword();
 	private:
 		std::string current_url;
