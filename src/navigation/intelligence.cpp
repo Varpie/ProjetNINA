@@ -79,7 +79,7 @@ void Intelligence::roam()
 		overflow = (countdown::links && (x++ >= countdown::number));
 		logging::vout(3,"Add current url to the history");
 		append_vector(this->history,this->current_url,HISTORY_MAX);
-	} while( !( timer || overflow ));
+	} while( !( timer || overflow || !threading::running ));
 	logging::vout(2,"Leaving Intelligence::roam");
 }
 
