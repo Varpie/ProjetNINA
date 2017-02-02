@@ -32,27 +32,35 @@ void Intelligence::roam()
 	bool timer = false;
 	bool overflow = false;
 	bool search = false;
+	logging::vout(3,"Get current url");
 	this->current_url = this->navigator->navigate(this->current_url);
 	do {
 		time(&begin);
+		logging::vout(3,"Get page's html");
 		page_html = this->navigator->get_body_html();
 		if(!search) {
+			logging::vout(3,"Get page's links");
 			this->navigator->select_hyperlinks_from_html(page_html, links);
 		} else {
+		logging::vout(3,"Add current url to the automatic blacklist");
 			this->navigator->select_hyperlinks_from_html(page_html, links, this->rubbish_links);
 			search = false;
 			// for(auto const& lk: links){
 			// 	std::cout << lk.url << std::endl;
 		}
 		if(links.size() != 0){
+			logging::vout(3,"Select link");
 			select_link(links);
+			logging::vout(3,"Navigate to the link's url");
 			navigate_res = this->navigator->navigate(this->current_url);
 		} else {
+			logging::vout(3,"Search keyword in the adress bar");
 			search_keyword();
 		}
 		/* we get out if we passed more than 10 links on the same domain
 		 	 or if python met an error */
 		if(navigate_res == "failed" || current_domain_occurences() > 10) {
+			logging::vout(3,"Search keyword in the adress bar");
 			search_keyword();
 			search = true;
 		} else {
@@ -68,97 +76,53 @@ void Intelligence::roam()
 		}
 		timer = (countdown::timeout && (countdown::time <= 0));
 		overflow = (countdown::links && (x++ >= countdown::number));
+		logging::vout(3,"Add current url to the history");
 		append_vector(this->history,this->current_url,HISTORY_MAX);
 	} while( !( timer || overflow ));
 	logging::vout(2,"Leaving Intelligence::roam");
 }
 
-void Intelligence::select_link(std::vector<HyperLink> &links)
+/*=================================KEYWORDS===================================*/
+
+std::string select_keyword(std::vector<std::string> list)
 {
-	logging::vout(2,"Entering Intelligence::select_link");
-	if(dict::whitelist)
-		this->current_url = select_whitelist(links,this->current_url,whitelist).url;
-	else if(dict::blacklist)
-		this->current_url = select_blacklist(links,this->current_url,blacklist).url;
-	else if(dict::other)
-		this->current_url = select_otherlist(links,this->current_url,otherlist).url;
-	else
-		this->current_url = select_link(links,this->current_url).url;
-	logging::vout(2,"Leaving Intelligence::select_link");
+	logging::vout(2,"Entering select_keyword");
+	int random;
+	if(list.size() <= 1) {
+		random = 0;
+	} else {
+		random = (int)(std::rand() % list.size());
+	}
+	std::string res = list.at(random);
+	logging::vout(2,"Leaving select_keyword");
+	return res;
 }
 
 void Intelligence::search_keyword()
 {
 	logging::vout(2,"Entering Intelligence::search_keyword");
+	logging::vout(3,"Add current url to automatic blacklist");
 	append_vector(this->auto_blacklist,this->current_url,AUTO_BL_MAX);
+	logging::vout(3,"Select keyword");
 	std::string kw = select_keyword(keywords);
+	logging::vout(3,"Write keyword in the adress bar");
 	this->current_url = this->navigator->write_search(kw);
 	logging::vout(2,"Leaving Intelligence::search_keyword");
-}
-
-void Intelligence::load_lists()
-{
-	logging::vout(2,"Entering Intelligence::load_lists");
-	this->history.push_back(this->current_url);
-	this->keywords = init_list("./config/dictionaries/keywords.txt");
-	this->rubbish_links = init_list("./config/dictionaries/rubbish_links.txt");
-	this->auto_blacklist = init_list("./config/dictionaries/auto_blacklist.txt");
-	if(keywords.size() == 0) {
-		logging::vout("Keywords load failed");
-	}
-	if(rubbish_links.size() == 0) {
-		logging::vout("Rubbish Links load failed");
-	}
-	if(dict::whitelist){
-		logging::vout("Loading whitelist");
-		this->whitelist = init_list(dict::whitefile);
-	}
-	if(dict::blacklist){
-		logging::vout("Loading blacklist");
-		this->blacklist = init_list(dict::blackfile);
-	}
-	if(dict::other){
-		logging::vout("Loading list");
-		this->otherlist = init_otherlist(dict::otherfile);
-	}
-	logging::vout(2,"Leaving Intelligence::load_lists");
-}
-
-void Intelligence::dump_lists()
-{
-	logging::vout(2,"Entering Intelligence::dump_lists");
-	std::ofstream file("./config/dictionaries/auto_blacklist.txt");
-	for(auto const& line: this->auto_blacklist){
-		file << line << "\n";
-	}
-	file.close();
-	logging::vout(2,"Leaving Intelligence::dump_lists");
 }
 
 int Intelligence::current_domain_occurences()
 {
 	logging::vout(2,"Entering Intelligence::current_domain_occurences");
 	int res = 0;
+	logging::vout(3,"Get current domain");
 	std::string domain = this->current_url.substr(0,this->current_url.find("/",9));
 	for(auto const& url: this->history) {
 		if(url.substr(0,url.find("/",9)) == domain) {
 			res++;
 		}
 	}
-	return res;
 	logging::vout(2,"Leaving Intelligence::current_domain_occurences");
-}
-
-HyperLink Intelligence::select_link(std::vector<HyperLink> &links,std::string url)
-{
-	logging::vout(2,"Entering Intelligence::select_link");
-	HyperLink link;
-	do  {
-		link = select_random_in_vector(links);
-	} while (link.url == url || std::find(this->auto_blacklist.begin()
-		, auto_blacklist.end(), link.url) != auto_blacklist.end());
-	return link;
-	logging::vout(2,"Leaving Intelligence::select_link");
+	return res;
 }
 
 void append_vector(std::vector<std::string> &list,std::string param,int limit)
@@ -175,14 +139,45 @@ void append_vector(std::vector<std::string> &list,std::string param,int limit)
 	logging::vout(2,"Leaving append_vector");
 }
 
+/*==================================SELECT====================================*/
+
+void Intelligence::select_link(std::vector<HyperLink> &links)
+{
+	logging::vout(2,"Entering Intelligence::select_link");
+	if(dict::whitelist) {
+		logging::vout(3,"Select link with whitelist");
+		this->current_url = select_whitelist(links,this->current_url,whitelist).url;
+	} else if(dict::blacklist) {
+		logging::vout(3,"Select link with whitelist");
+		this->current_url = select_blacklist(links,this->current_url,blacklist).url;
+	} else {
+		logging::vout(3,"Select link without list");
+		this->current_url = select_autobl(links,this->current_url).url;
+	}
+	logging::vout(2,"Leaving Intelligence::select_link");
+}
+
+HyperLink Intelligence::select_autobl(std::vector<HyperLink> &links,std::string url)
+{
+	logging::vout(2,"Entering Intelligence::select_autobl");
+	HyperLink link;
+	do  {
+		logging::vout(3,"Select a random link");
+		link = select_random_in_vector(links);
+	} while (link.url == url || std::find(this->auto_blacklist.begin()
+		, auto_blacklist.end(), link.url) != auto_blacklist.end());
+	logging::vout(2,"Leaving Intelligence::select_autoblautobl");
+	return link;
+}
+
 HyperLink select_random_in_vector(std::vector<HyperLink> &links)
 {
 	logging::vout(2,"Entering select_random_in_vector");
 	int random;
 	random = (int)(std::rand() % links.size());
 	HyperLink link = links.at(random);
-  return link;
 	logging::vout(2,"Leaving select_random_in_vector");
+  return link;
 }
 
 HyperLink select_diff_random_in_vector(std::vector<HyperLink> &links,std::string url)
@@ -192,8 +187,8 @@ HyperLink select_diff_random_in_vector(std::vector<HyperLink> &links,std::string
 	do  {
 		link = select_random_in_vector(links);
 	} while (link.url == url);
-	return link;
 	logging::vout(2,"Leaving select_diff_random_in_vector");
+	return link;
 }
 
 HyperLink select_whitelist(std::vector<HyperLink> &links,std::string url, std::vector<std::string> whitelist)
@@ -219,8 +214,8 @@ HyperLink select_whitelist(std::vector<HyperLink> &links,std::string url, std::v
 	} while(not_in_link && c++<50);
 	if(c==50)
 		link.url = url;
-	return link;
 	logging::vout(2,"Leaving select_whitelist");
+	return link;
 }
 
 HyperLink select_blacklist(std::vector<HyperLink> &links,std::string url, std::vector<std::string> blacklist)
@@ -246,8 +241,8 @@ HyperLink select_blacklist(std::vector<HyperLink> &links,std::string url, std::v
 	} while(not_in_link && c++<50);
 	if(c==50)
 		link.url = url;
-	return link;
 	logging::vout(2,"Leaving select_blacklist");
+	return link;
 }
 
 HyperLink select_otherlist(std::vector<HyperLink> &links,std::string url, tuple_list list)
@@ -274,10 +269,48 @@ HyperLink select_otherlist(std::vector<HyperLink> &links,std::string url, tuple_
 	} while(test && c++<50);
 	if(c==50)
 		link.url = url;
-	return link;
 	logging::vout(2,"Leaving select_otherlist");
+	return link;
 }
 
+/*==================================LIST======================================*/
+
+void Intelligence::load_lists()
+{
+	logging::vout(2,"Entering Intelligence::load_lists");
+	logging::vout(3,"Add current url to history");
+	this->history.push_back(this->current_url);
+	logging::vout(3,"Initialize keywords, rubbish list and automatic blacklist");
+	this->keywords = init_list("./config/dictionaries/keywords.txt");
+	this->rubbish_links = init_list("./config/dictionaries/rubbish_links.txt");
+	this->auto_blacklist = init_list("./config/dictionaries/auto_blacklist.txt");
+	if(keywords.size() == 0) {
+		logging::vout("Keywords load failed");
+	}
+	if(rubbish_links.size() == 0) {
+		logging::vout("Rubbish Links load failed");
+	}
+	if(dict::whitelist){
+		logging::vout("Loading whitelist");
+		this->whitelist = init_list(dict::whitefile);
+	}
+	if(dict::blacklist){
+		logging::vout("Loading blacklist");
+		this->blacklist = init_list(dict::blackfile);
+	}
+	logging::vout(2,"Leaving Intelligence::load_lists");
+}
+
+void Intelligence::dump_lists()
+{
+	logging::vout(2,"Entering Intelligence::dump_lists");
+	std::ofstream file("./config/dictionaries/auto_blacklist.txt");
+	for(auto const& line: this->auto_blacklist){
+		file << line << "\n";
+	}
+	file.close();
+	logging::vout(2,"Leaving Intelligence::dump_lists");
+}
 
 std::vector<std::string> init_list(std::string name) {
 	logging::vout(2,"Entering init_list");
@@ -293,8 +326,8 @@ std::vector<std::string> init_list(std::string name) {
 		logging::vout("Error : file not opened");
 	}
 	file.close();
-	return list;
 	logging::vout(2,"Leaving init_list");
+	return list;
 }
 
 tuple_list init_otherlist(std::string name) {
@@ -314,20 +347,6 @@ tuple_list init_otherlist(std::string name) {
 		logging::vout("Error : file not opened");
 	}
 	file.close();
-	return list;
 	logging::vout(2,"Leaving init_otherlist");
-}
-
-std::string select_keyword(std::vector<std::string> list)
-{
-	logging::vout(2,"Entering select_keyword");
-	int random;
-	if(list.size() <= 1) {
-		random = 0;
-	} else {
-		random = (int)(std::rand() % list.size());
-	}
-	std::string res = list.at(random);
-	return res;
-	logging::vout(2,"Leaving select_keyword");
+	return list;
 }
