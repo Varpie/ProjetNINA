@@ -70,7 +70,7 @@ void create_mapconf();
  * in a map
  * @timer : number of seconds the program will listen /dev/event0
  */
-void keystroke_time(int time)
+void keystroke_time(int time);
 #ifdef __cplusplus
  } /* extern C */
 #endif
