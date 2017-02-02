@@ -9,7 +9,8 @@ Intelligence::Intelligence(std::string &start_url)
 	load_lists();
 }
 
-Intelligence::~Intelligence() {
+Intelligence::~Intelligence()
+{
 	/* important, not destroyed dynamically */
 	delete(this->navigator);
 	dump_lists();
@@ -157,19 +158,6 @@ void Intelligence::select_link(std::vector<HyperLink> &links)
 	logging::vout(2,"Leaving Intelligence::select_link");
 }
 
-HyperLink Intelligence::select_autobl(std::vector<HyperLink> &links,std::string url)
-{
-	logging::vout(2,"Entering Intelligence::select_autobl");
-	HyperLink link;
-	do  {
-		logging::vout(3,"Select a random link");
-		link = select_random_in_vector(links);
-	} while (link.url == url || std::find(this->auto_blacklist.begin()
-		, auto_blacklist.end(), link.url) != auto_blacklist.end());
-	logging::vout(2,"Leaving Intelligence::select_autoblautobl");
-	return link;
-}
-
 HyperLink select_random_in_vector(std::vector<HyperLink> &links)
 {
 	logging::vout(2,"Entering select_random_in_vector");
@@ -188,6 +176,19 @@ HyperLink select_diff_random_in_vector(std::vector<HyperLink> &links,std::string
 		link = select_random_in_vector(links);
 	} while (link.url == url);
 	logging::vout(2,"Leaving select_diff_random_in_vector");
+	return link;
+}
+
+HyperLink Intelligence::select_autobl(std::vector<HyperLink> &links,std::string url)
+{
+	logging::vout(2,"Entering Intelligence::select_autobl");
+	HyperLink link;
+	do  {
+		logging::vout(3,"Select a random link");
+		link = select_random_in_vector(links);
+	} while (link.url == url || std::find(this->auto_blacklist.begin()
+		, auto_blacklist.end(), link.url) != auto_blacklist.end());
+	logging::vout(2,"Leaving Intelligence::select_autoblautobl");
 	return link;
 }
 
@@ -212,8 +213,10 @@ HyperLink select_whitelist(std::vector<HyperLink> &links,std::string url, std::v
 			}
 		}
 	} while(not_in_link && c++<50);
-	if(c==50)
+	if(c==50) {
+		logging::vout("--No word found");
 		link.url = url;
+	}
 	logging::vout(2,"Leaving select_whitelist");
 	return link;
 }
@@ -312,7 +315,8 @@ void Intelligence::dump_lists()
 	logging::vout(2,"Leaving Intelligence::dump_lists");
 }
 
-std::vector<std::string> init_list(std::string name) {
+std::vector<std::string> init_list(std::string name)
+{
 	logging::vout(2,"Entering init_list");
 	std::string line;
 	std::ifstream file(name);
@@ -330,7 +334,8 @@ std::vector<std::string> init_list(std::string name) {
 	return list;
 }
 
-tuple_list init_otherlist(std::string name) {
+tuple_list init_otherlist(std::string name)
+{
 	logging::vout(2,"Entering init_otherlist");
 	std::string line;
 	int value;
