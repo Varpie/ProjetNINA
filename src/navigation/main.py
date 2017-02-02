@@ -126,7 +126,8 @@ def nav(var_url):
             driver.execute_script("document.body.querySelector('a[href=\""+var_url+"\"]').click()");
             return driver.current_url
         except Exception, e:
-            print e
+            #print e
+            print " "
     # absolute url
     if(var_url[:4] == "http"):
         css_selector = "a[href*='"+var_url+"']"

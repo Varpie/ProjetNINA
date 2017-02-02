@@ -19,6 +19,7 @@ std::string browser = "firefox";
 //std::string url = "http://arstechnica.com/";
 //std::string url = "http://dahunicorn.xyz/";
 std::string url = "http://www.wikipedia.org/wiki/Special:Random";
+std::atomic<bool> threading::running(true);
 
 
 void print_help()
@@ -53,7 +54,12 @@ void daemonize()
 }
 
 void stop_daemon() {
+	
+}
+
+void stopping_detection() {
 	int fd;
+	char pos = 0;
 	struct input_event ie;
 	Display *dpy;
 	Window root, child;
@@ -71,18 +77,23 @@ void stop_daemon() {
 		exit(EXIT_FAILURE);
 	}
 
-	while(read(fd, &ie, sizeof(struct input_event))) {
+	while(read(fd, &ie, sizeof(struct input_event)) && threading::running) {
 		if (ie.type == EV_ABS) {
 			XQueryPointer(dpy,DefaultRootWindow(dpy),&root,&child,
 					&rootX,&rootY,&winX,&winY,&mask);
-			if(rootX == 0 && rootY == 0)
-				std::cout << "Top left corner" << std::endl;
-			else if(rootX == 0 && rootY == dispY -1)
-				std::cout << "Bottom left corner" << std::endl;
-			else if(rootX == dispX - 1 && rootY == 0)
-				std::cout << "Top right corner" << std::endl;
-			else if(rootX == dispX-1 && rootY == dispY-1)
-				std::cout << "Bottom right corner" << std::endl;
+			if(pos == 1 && rootX == 0 && rootY == 0) {
+				logging::vout(2,"Top left corner");
+				pos++;
+			} else if(pos == 2 && rootX == 0 && rootY == dispY -1) {
+				pos++;
+				logging::vout(2,"Bottom left corner");
+			} else if(pos == 0 && rootX == dispX - 1 && rootY == 0) {
+				pos++;
+				logging::vout(2,"Top right corner");
+			} else if(pos == 3 && rootX == dispX-1 && rootY == dispY-1) {
+				logging::vout(2,"Bottom right corner");
+				threading::running = false;
+			}
 		}
 	}
 }
@@ -229,7 +240,11 @@ int main(int argc, char **argv)
 	if(!parse_arguments(argc, argv))
 		return 0;
 	Intelligence intel(url);
-	intel.roam();
+	std::thread t1(stopping_detection);
+	std::thread t2(&Intelligence::roam, &intel);
+	//intel.roam();
+	t1.join();
+	t2.join();
 	logging::vout("Program finished");
 	return 0;
 }

@@ -19,6 +19,8 @@
 #include <linux/input.h>
 #include <fcntl.h>
 #include <X11/Xlib.h>
+#include <thread>
+#include <atomic>
 #define MOUSEFILE "/dev/input/event7"
 
 void print_help();

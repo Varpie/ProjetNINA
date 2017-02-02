@@ -1,3 +1,4 @@
+#include "../timedkesytrokes/timed_keystrokes.h"
 #include "write_keyboard.h"
 
 int setup_uinput_device(){
@@ -123,6 +124,11 @@ void send_a_button(int key, int modifier){
 }
 void send_a_button_default(int key){
 	send_a_button(key,0);
+}
+
+void send_a_button_delay(int actkey, int prevkey){
+	send_a_button_default(actkey);
+	nanosleep((const struct timespec[]){{0, (int)(1000*map[actkey][prevkey].mean)}}, NULL);
 }
 
 

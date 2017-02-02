@@ -178,7 +178,7 @@ void Navigator::select_hyperlinks_from_html(std::string html, std::vector<HyperL
 }
 
 int Navigator::parse_tag_a(HyperLink &lk,std::string &tag_a) {
-  logging::vout(3,"Entering Navigator::parse_tag_a");
+  logging::vout(4,"Entering Navigator::parse_tag_a");
   /* nothing = 0 continue = 1 */
   try {
     size_t b_href = tag_a.find("href=\"");
@@ -216,5 +216,5 @@ int Navigator::parse_tag_a(HyperLink &lk,std::string &tag_a) {
     logging::vout("Error : " + (std::string)e.what());
     return 1;
   }
-  logging::vout(3,"Leaving Navigator::parse_tag_a");
+  logging::vout(4,"Leaving Navigator::parse_tag_a");
 }
