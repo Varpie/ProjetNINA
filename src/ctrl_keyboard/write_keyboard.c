@@ -1,4 +1,4 @@
-#include "../timedkesytrokes/timed_keystrokes.h"
+#include "timed_keystrokes.h"
 #include "write_keyboard.h"
 
 int setup_uinput_device(){
