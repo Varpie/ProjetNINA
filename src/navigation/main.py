@@ -11,6 +11,12 @@ import signal
 driver = webdriver.Firefox()
 uinput_wrapping_module.setup_uinput_device_func()
 
+def handle_frames():
+    if(len(driver.window_handles) > 1):
+        for handle in driver.window_handles:
+            print handle
+#driver.switch_to_window(handle)
+
 def end_python():
     """
     Close driver and destroy virtual keyboad when navigation is over
@@ -75,6 +81,7 @@ def navigate(var_url):
 
     ! 40 replaced by 15 for test purpose
     """
+    handle_frames()
     ret = runFunctionWithTimeout(nav, (var_url,), timeout_duration=15)
     if(ret is not None):
         if(len(ret) != 0):
