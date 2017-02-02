@@ -1,6 +1,8 @@
 #ifndef LOG_HPP_
 #define LOG_HPP_
 
+#include <atomic>
+
 namespace logging {
     extern int verbose;
     inline void vout(int level, std::string msg) {
@@ -33,6 +35,10 @@ namespace countdown {
     extern long time;
     extern bool links;
     extern long number;
+}
+
+namespace threading {
+    extern std::atomic<bool> running;
 }
 
 #endif

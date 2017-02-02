@@ -6,4 +6,4 @@ nina_SOURCES = \
     src/navigation/intelligence.cpp \
     src/timed_keystrokes/timed_keystrokes.c \
     src/uinput/write_keyboard.c
-AM_LDFLAGS=-lpython2.7 -lX11
+AM_LDFLAGS=-lpython2.7 -lX11 -lpthread
