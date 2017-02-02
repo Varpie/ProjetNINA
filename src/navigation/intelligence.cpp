@@ -69,7 +69,7 @@ void Intelligence::roam()
 		timer = (countdown::timeout && (countdown::time <= 0));
 		overflow = (countdown::links && (x++ >= countdown::number));
 		append_vector(this->history,this->current_url,HISTORY_MAX);
-	} while( !( timer || overflow ));
+	} while( !( timer || overflow || !threading::running ));
 	logging::vout(2,"Leaving Intelligence::roam");
 }
 
