@@ -34,7 +34,7 @@ int i =0;
 for(i = 0; i < 256; i++)
     map[i] = (act_mean*)calloc(256,sizeof(act_mean));
 */
-static act_mean map[size_map][size_map];
+extern act_mean map[size_map][size_map];
 /*
  * Write the two parameters in a file named conf in the root of the program
  */
