@@ -1,5 +1,5 @@
 #include "timed_keystrokes.h"
-
+act_mean map[size_map][size_map];
 void writeConfFile(double m, double sig) {
         FILE *f = fopen("conf", "w+");
         fprintf(f, "%f\n", m);

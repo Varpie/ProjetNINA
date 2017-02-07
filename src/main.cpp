@@ -54,7 +54,12 @@ void daemonize()
 }
 
 void stop_daemon() {
+	
+}
+
+void stopping_detection() {
 	int fd;
+	char pos = 0;
 	struct input_event ie;
 	Display *dpy;
 	Window root, child;
@@ -76,13 +81,16 @@ void stop_daemon() {
 		if (ie.type == EV_ABS) {
 			XQueryPointer(dpy,DefaultRootWindow(dpy),&root,&child,
 					&rootX,&rootY,&winX,&winY,&mask);
-			if(rootX == 0 && rootY == 0)
+			if(pos == 1 && rootX == 0 && rootY == 0) {
 				logging::vout(2,"Top left corner");
-			else if(rootX == 0 && rootY == dispY -1)
+				pos++;
+			} else if(pos == 2 && rootX == 0 && rootY == dispY -1) {
+				pos++;
 				logging::vout(2,"Bottom left corner");
-			else if(rootX == dispX - 1 && rootY == 0) {
+			} else if(pos == 0 && rootX == dispX - 1 && rootY == 0) {
+				pos++;
 				logging::vout(2,"Top right corner");
-			} else if(rootX == dispX-1 && rootY == dispY-1) {
+			} else if(pos == 3 && rootX == dispX-1 && rootY == dispY-1) {
 				logging::vout(2,"Bottom right corner");
 				threading::running = false;
 			}
@@ -232,7 +240,7 @@ int main(int argc, char **argv)
 	if(!parse_arguments(argc, argv))
 		return 0;
 	Intelligence intel(url);
-	std::thread t1(stop_daemon);
+	std::thread t1(stopping_detection);
 	std::thread t2(&Intelligence::roam, &intel);
 	//intel.roam();
 	t1.join();
