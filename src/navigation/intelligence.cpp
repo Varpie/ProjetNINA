@@ -9,7 +9,8 @@ Intelligence::Intelligence(std::string &start_url)
 	load_lists();
 }
 
-Intelligence::~Intelligence() {
+Intelligence::~Intelligence()
+{
 	/* important, not destroyed dynamically */
 	delete(this->navigator);
 	dump_lists();
@@ -152,26 +153,29 @@ HyperLink Intelligence::select_link(std::vector<HyperLink> &links,std::string ur
 {
 	logging::vout(2,"Entering Intelligence::select_link");
 	HyperLink link;
+	if(links.size() == 1){
+		logging::vout(2,"Leaving Intelligence::select_link");
+		return links.at(0);
+	}
 	bool res;
 	bool found = true;
 	if(dict::whitelist) {
 	  found = false;
+		std::vector<HyperLink> wlfound_list;
 		for(auto const& lk: links){
 			std::string text = " "+lk.text+" ";
 			for(auto const& wl: this->whitelist){
 				if(text.find(" "+wl+" ") != std::string::npos){
 					res = Intelligence::test_link(link,url);
 					if(res){
-						link = lk;
+						wlfound_list.push_back(lk);
 						found = true;
-						logging::vout("--Find : " + wl);
-						logging::vout("--Text : " + link.text);
-						break;
 					}
 				}
 			}
-			if(found)
-				break;
+		}
+		if(found){
+			link = select_random_in_vector(wlfound_list);
 		}
 	}
 	if( !dict::whitelist || !found ){
@@ -179,7 +183,7 @@ HyperLink Intelligence::select_link(std::vector<HyperLink> &links,std::string ur
 	  do {
 	    link = select_random_in_vector(links);
 	    res = Intelligence::test_link(link,url);
-	  } while (!res|| cpt++<50);
+	  } while (!res || cpt++<50);
 		if(cpt == 50){
 			logging::vout("--No link found");
 			//TODO : Do something to handle
@@ -189,20 +193,24 @@ HyperLink Intelligence::select_link(std::vector<HyperLink> &links,std::string ur
 	return link;
 }
 
-bool Intelligence::test_link(HyperLink &link,std::string &url){
+bool Intelligence::test_link(HyperLink &link,std::string &url)
+{
 	/* return 2 : continue, return 1 : passed the test*/
 	std::string text = " "+link.text+" ";
 	if(dict::blacklist){
 		for(auto const& bl: this->blacklist){
 			if(text.find(" "+bl+" ") != std::string::npos){
+				logging::vout(4,"Leaving test_link");
 				return false;
 			}
 		}
 	}
 	if(link.url == url || std::find(this->auto_blacklist.begin()
 	, auto_blacklist.end(), link.url) != auto_blacklist.end()){
+		logging::vout(4,"Leaving test_link");
 		return false;
 	}
+	logging::vout(4,"Leaving test_link");
 	return true;
 }
 
@@ -245,7 +253,8 @@ void Intelligence::dump_lists()
 	logging::vout(2,"Leaving Intelligence::dump_lists");
 }
 
-std::vector<std::string> init_list(std::string name) {
+std::vector<std::string> init_list(std::string name)
+{
 	logging::vout(2,"Entering init_list");
 	std::string line;
 	std::ifstream file(name);
@@ -263,7 +272,8 @@ std::vector<std::string> init_list(std::string name) {
 	return list;
 }
 
-tuple_list init_otherlist(std::string name) {
+tuple_list init_otherlist(std::string name)
+{
 	logging::vout(2,"Entering init_otherlist");
 	std::string line;
 	int value;
