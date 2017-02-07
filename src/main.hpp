@@ -13,8 +13,8 @@
 #include <unistd.h>
 #include "log.hpp"
 #include "navigation/intelligence.hpp"
-#include "timed_keystrokes/timed_keystrokes.h"
-#include "uinput/write_keyboard.h"
+#include "ctrl_keyboard/timed_keystrokes.h"
+#include "ctrl_keyboard/write_keyboard.h"
 
 #include <linux/input.h>
 #include <fcntl.h>

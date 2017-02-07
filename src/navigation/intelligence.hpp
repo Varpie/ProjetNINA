@@ -37,12 +37,19 @@ class Intelligence
 		 * \fn void roam(void)
 		 */
 		void roam(void);
+		/** Function that selects a random in a vector with a different url than the one passed
+		 * \fn HyperLink select_diff_random_in_vector(std::vector<HyperLink> &links,std::string url)
+		 * \param links Vector of HyperLinks
+		 * \param url Url to compare
+		 * \return an HyperLink with different url than the one passed
+		 */
 		void load_lists();
 		int current_domain_occurences();
 		void dump_lists();
-		void select_link(std::vector<HyperLink> &links);
-		HyperLink select_autobl(std::vector<HyperLink> &links,std::string url);
+		HyperLink select_link(std::vector<HyperLink> &links,std::string url);
 		void search_keyword();
+		bool test_link(HyperLink &link,std::string &url);
+		// HyperLink select_otherlist(std::vector<HyperLink> &links,std::string url, tuple_list list);
 	private:
 		std::string current_url;
 		Navigator* navigator;
@@ -56,13 +63,7 @@ class Intelligence
 		int const static AUTO_BL_MAX = 2500;
 		int const static HISTORY_MAX = 50;
 };
-/** Function that selects a random in a vector with a different url than the one passed
- * \fn HyperLink select_diff_random_in_vector(std::vector<HyperLink> &links,std::string url)
- * \param links Vector of HyperLinks
- * \param url Url to compare
- * \return an HyperLink with different url than the one passed
- */
-HyperLink select_diff_random_in_vector(std::vector<HyperLink> &links,std::string url);
+
 std::string select_keyword(std::vector<std::string> list);
 /** Function to select a random in a vector
  * \fn HyperLink select_random_in_vector(std::vector<HyperLink> &links)
@@ -77,11 +78,6 @@ HyperLink select_random_in_vector(std::vector<HyperLink> &links);
  * \param url Url to compare
  * \return an HyperLink matching with whitelist
  */
-HyperLink select_whitelist(std::vector<HyperLink> &links,std::string url, std::vector<std::string> whitelist);
-
-HyperLink select_blacklist(std::vector<HyperLink> &links,std::string url, std::vector<std::string> whitelist);
-
-HyperLink select_otherlist(std::vector<HyperLink> &links,std::string url, tuple_list list);
 
 std::vector<std::string> init_list(std::string name);
 

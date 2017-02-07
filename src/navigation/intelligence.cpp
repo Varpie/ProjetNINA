@@ -18,14 +18,13 @@ Intelligence::~Intelligence() {
 
 void Intelligence::roam()
 {
+	// for(auto const& lk: links){
+	// 	std::cout << lk.url << std::endl;
 	logging::vout(2,"Entering Intelligence::roam");
+	logging::vout("Program began");
 	std::string page_html;
 	std::vector<HyperLink> links;
-	std::vector<std::string> whitelist;
-	std::vector<std::string> blacklist;
-	tuple_list otherlist;
 	time_t begin,end;
-	logging::vout("Program began");
 	HyperLink link;
 	std::string navigate_res = "";
 	long x = 0;
@@ -45,12 +44,10 @@ void Intelligence::roam()
 		logging::vout(3,"Add current url to the automatic blacklist");
 			this->navigator->select_hyperlinks_from_html(page_html, links, this->rubbish_links);
 			search = false;
-			// for(auto const& lk: links){
-			// 	std::cout << lk.url << std::endl;
 		}
 		if(links.size() != 0){
 			logging::vout(3,"Select link");
-			select_link(links);
+			current_url = select_link(links,this->current_url).url;
 			logging::vout(3,"Navigate to the link's url");
 			navigate_res = this->navigator->navigate(this->current_url);
 		} else {
@@ -141,136 +138,72 @@ void append_vector(std::vector<std::string> &list,std::string param,int limit)
 
 /*==================================SELECT====================================*/
 
-void Intelligence::select_link(std::vector<HyperLink> &links)
-{
-	logging::vout(2,"Entering Intelligence::select_link");
-	if(dict::whitelist) {
-		logging::vout(3,"Select link with whitelist");
-		this->current_url = select_whitelist(links,this->current_url,whitelist).url;
-	} else if(dict::blacklist) {
-		logging::vout(3,"Select link with whitelist");
-		this->current_url = select_blacklist(links,this->current_url,blacklist).url;
-	} else {
-		logging::vout(3,"Select link without list");
-		this->current_url = select_autobl(links,this->current_url).url;
-	}
-	logging::vout(2,"Leaving Intelligence::select_link");
-}
-
-HyperLink Intelligence::select_autobl(std::vector<HyperLink> &links,std::string url)
-{
-	logging::vout(2,"Entering Intelligence::select_autobl");
-	HyperLink link;
-	do  {
-		logging::vout(3,"Select a random link");
-		link = select_random_in_vector(links);
-	} while (link.url == url || std::find(this->auto_blacklist.begin()
-		, auto_blacklist.end(), link.url) != auto_blacklist.end());
-	logging::vout(2,"Leaving Intelligence::select_autoblautobl");
-	return link;
-}
-
 HyperLink select_random_in_vector(std::vector<HyperLink> &links)
 {
-	logging::vout(2,"Entering select_random_in_vector");
+	logging::vout(3,"Entering select_random_in_vector");
 	int random;
 	random = (int)(std::rand() % links.size());
 	HyperLink link = links.at(random);
-	logging::vout(2,"Leaving select_random_in_vector");
+	logging::vout(3,"Leaving select_random_in_vector");
   return link;
 }
 
-HyperLink select_diff_random_in_vector(std::vector<HyperLink> &links,std::string url)
+HyperLink Intelligence::select_link(std::vector<HyperLink> &links,std::string url)
 {
-	logging::vout(2,"Entering select_diff_random_in_vector");
+	logging::vout(2,"Entering Intelligence::select_link");
 	HyperLink link;
-	do  {
-		link = select_random_in_vector(links);
-	} while (link.url == url);
-	logging::vout(2,"Leaving select_diff_random_in_vector");
+	bool res;
+	bool found = true;
+	if(dict::whitelist) {
+	  found = false;
+		for(auto const& lk: links){
+			std::string text = " "+lk.text+" ";
+			for(auto const& wl: this->whitelist){
+				if(text.find(" "+wl+" ") != std::string::npos){
+					res = Intelligence::test_link(link,url);
+					if(res){
+						link = lk;
+						found = true;
+						logging::vout("--Find : " + wl);
+						logging::vout("--Text : " + link.text);
+						break;
+					}
+				}
+			}
+			if(found)
+				break;
+		}
+	}
+	if( !dict::whitelist || !found ){
+		int cpt=0;
+	  do {
+	    link = select_random_in_vector(links);
+	    res = Intelligence::test_link(link,url);
+	  } while (!res|| cpt++<50);
+		if(cpt == 50){
+			logging::vout("--No link found");
+			//TODO : Do something to handle
+		}
+	}
+	logging::vout(2,"Leaving Intelligence::select_link");
 	return link;
 }
 
-HyperLink select_whitelist(std::vector<HyperLink> &links,std::string url, std::vector<std::string> whitelist)
-{
-	logging::vout(2,"Entering select_whitelist");
-	HyperLink link;
-	std::string line;
-	std::string text;
-	bool not_in_link = true;
-	int c = 0;
-	link = select_random_in_vector(links);
-	do {
-		link = select_diff_random_in_vector(links, link.url);
-		for(int i=0; i<whitelist.size(); i++) {
-			text = " "+link.text+" ";
-			line = whitelist[i];
-			if(text.find(" "+line+" ") != std::string::npos) {
-				logging::vout("--Find : " + line);
-				logging::vout("--Text : " + link.text);
-				not_in_link = false;
+bool Intelligence::test_link(HyperLink &link,std::string &url){
+	/* return 2 : continue, return 1 : passed the test*/
+	std::string text = " "+link.text+" ";
+	if(dict::blacklist){
+		for(auto const& bl: this->blacklist){
+			if(text.find(" "+bl+" ") != std::string::npos){
+				return false;
 			}
 		}
-	} while(not_in_link && c++<50);
-	if(c==50)
-		link.url = url;
-	logging::vout(2,"Leaving select_whitelist");
-	return link;
-}
-
-HyperLink select_blacklist(std::vector<HyperLink> &links,std::string url, std::vector<std::string> blacklist)
-{
-	logging::vout(2,"Entering select_blacklist");
-	HyperLink link;
-	std::string line;
-	std::string text;
-	bool not_in_link = true;
-	int c = 0;
-	link = select_random_in_vector(links);
-	do {
-		link = select_diff_random_in_vector(links, link.url);
-		for(int i=0; i<blacklist.size(); i++) {
-			text = " "+link.text+" ";
-			line = blacklist[i];
-			if(text.find(" "+line+" ") != std::string::npos) {
-				logging::vout("--Find : " + line);
-				logging::vout("--Text : " + link.text);
-				not_in_link = false;
-			}
-		}
-	} while(not_in_link && c++<50);
-	if(c==50)
-		link.url = url;
-	logging::vout(2,"Leaving select_blacklist");
-	return link;
-}
-
-HyperLink select_otherlist(std::vector<HyperLink> &links,std::string url, tuple_list list)
-{
-	logging::vout(2,"Entering select_otherlist");
-	HyperLink link;
-	std::string line;
-	std::string text;
-	bool test = true;
-	int c = 0;
-	link = select_random_in_vector(links);
-	do {
-		link = select_diff_random_in_vector(links, link.url);
-		for(int i=0; i<list.size(); i++) {
-			text = " "+link.text+" ";
-			line = std::get<1>(list[i]);
-			if((text.find(" "+line+" ")!=std::string::npos)&&(std::get<0>(list[i])==1)) {
-				test = false;
-			}
-			else if(std::get<0>(list[i])==0){
-				test = false;
-			}
-		}
-	} while(test && c++<50);
-	if(c==50)
-		link.url = url;
-	logging::vout(2,"Leaving select_otherlist");
-	return link;
+	}
+	if(link.url == url || std::find(this->auto_blacklist.begin()
+	, auto_blacklist.end(), link.url) != auto_blacklist.end()){
+		return false;
+	}
+	return true;
 }
 
 /*==================================LIST======================================*/
