@@ -151,6 +151,7 @@ HyperLink select_random_in_vector(std::vector<HyperLink> &links)
 
 HyperLink Intelligence::select_link(std::vector<HyperLink> &links,std::string url)
 {
+	logging::vout(1,"COUCOU, ceci est du debug");
 	logging::vout(2,"Entering Intelligence::select_link");
 	HyperLink link;
 	if(links.size() == 1){
