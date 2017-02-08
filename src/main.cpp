@@ -54,7 +54,7 @@ void daemonize()
 }
 
 void stop_daemon() {
-	
+
 }
 
 void stopping_detection() {
@@ -77,7 +77,7 @@ void stopping_detection() {
 		exit(EXIT_FAILURE);
 	}
 
-	while(read(fd, &ie, sizeof(struct input_event)) && threading::running) {
+	while(threading::running && read(fd, &ie, sizeof(struct input_event))) {
 		if (ie.type == EV_ABS) {
 			XQueryPointer(dpy,DefaultRootWindow(dpy),&root,&child,
 					&rootX,&rootY,&winX,&winY,&mask);
@@ -169,7 +169,7 @@ bool parse_arguments(int argc, char **argv)
 					flag = false;
 				}else if(long_options[option_index].name == "verbose"){
 					logging::verbose = std::stoi(optarg);
-					logging::vout("Verbose is active");
+					logging::vout(1,"Verbose is active. Level : " + std::string(optarg));
 				} else if(long_options[option_index].name == "whitelist"){
 					logging::vout("Using whitelist");
 					dict::whitelist = true;

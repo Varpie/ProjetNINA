@@ -35,6 +35,12 @@ void Intelligence::roam()
 	logging::vout(3,"Get current url");
 	this->current_url = this->navigator->navigate(this->current_url);
 	do {
+		if (countdown::links) {
+			logging::vout("Links countdown : " + std::to_string(countdown::number-x));
+		}
+		if(countdown::timeout) {
+			logging::vout("Time countdown : " + std::to_string(countdown::time));
+		}
 		time(&begin);
 		logging::vout(3,"Get page's html");
 		page_html = this->navigator->get_body_html();
@@ -66,18 +72,13 @@ void Intelligence::roam()
 		}
 		time(&end);
 		countdown::time -= (long)difftime(end,begin);
-		if(countdown::timeout) {
-			logging::vout("Time countdown : " + std::to_string(countdown::time));
-		}
-		if (countdown::links) {
-			logging::vout("Links countdown : " + std::to_string(countdown::number-x));
-		}
 		timer = (countdown::timeout && (countdown::time <= 0));
 		overflow = (countdown::links && (x++ >= countdown::number));
 		logging::vout(3,"Add current url to the history");
 		append_vector(this->history,this->current_url,HISTORY_MAX);
 	} while( !( timer || overflow || !threading::running ));
 	logging::vout(2,"Leaving Intelligence::roam");
+	threading::running = false;
 }
 
 /*=================================KEYWORDS===================================*/
@@ -151,7 +152,6 @@ HyperLink select_random_in_vector(std::vector<HyperLink> &links)
 
 HyperLink Intelligence::select_link(std::vector<HyperLink> &links,std::string url)
 {
-	logging::vout(1,"COUCOU, ceci est du debug");
 	logging::vout(2,"Entering Intelligence::select_link");
 	HyperLink link;
 	if(links.size() == 1){
@@ -171,11 +171,14 @@ HyperLink Intelligence::select_link(std::vector<HyperLink> &links,std::string ur
 					if(res){
 						wlfound_list.push_back(lk);
 						found = true;
+						logging::vout(3,"--Find wl : " + wl);
+						logging::vout(3,"--In text :" + text);
 					}
 				}
 			}
 		}
 		if(found){
+
 			link = select_random_in_vector(wlfound_list);
 		}
 	}
@@ -191,6 +194,8 @@ HyperLink Intelligence::select_link(std::vector<HyperLink> &links,std::string ur
 		}
 	}
 	logging::vout(2,"Leaving Intelligence::select_link");
+	logging::vout(1,"--Chosen link : " + link.text);
+	logging::vout(1,"          url : " + link.url);
 	return link;
 }
 

@@ -1,8 +1,8 @@
 Jquery
 weather
-amazon.com
+amazon
 music
-stackoverflow.com
+stackoverflow
 recipes
 food
 call of duty
