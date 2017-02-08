@@ -47,14 +47,22 @@ void daemonize()
         exit(EXIT_FAILURE);
 	logging::vout("succeded");
 	forked_pid = (int)getpid();
+
 	std::string pid_str = std::to_string(forked_pid);
-	logging::vout(pid_str);
-	pid_str = std::to_string((int)pid);
+	std::ofstream file("/proc/ninartk");
+	if (!file.is_open())
+	    throw std::runtime_error("Could not open the file");
+	file << forked_pid;
+	file.close();
 	logging::vout(pid_str);
 }
 
 void stop_daemon() {
-	
+	std::ofstream file("/proc/ninartk");
+	if (!file.is_open())
+	    throw std::runtime_error("Could not open the file");
+	file << "kill";
+	file.close();
 }
 
 void stopping_detection() {
@@ -240,9 +248,11 @@ int main(int argc, char **argv)
 	if(!parse_arguments(argc, argv))
 		return 0;
 	Intelligence intel(url);
+	// Creating thread to detect mouse and stop program
 	std::thread t1(stopping_detection);
+	// Creating thread calling intel.roam()
 	std::thread t2(&Intelligence::roam, &intel);
-	//intel.roam();
+
 	t1.join();
 	t2.join();
 	logging::vout("Program finished");
