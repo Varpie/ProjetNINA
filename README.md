@@ -111,3 +111,8 @@ C++:
 - C
   libx11-dev
   python-dev
+
+
+## Uinput driver
+- get keys codes
+  sudo showkey

@@ -83,7 +83,7 @@ std::string Navigator::call_python_function(std::string function,std::string arg
     return error;
   }
   retour = PyEval_CallObject(fonction, arguments);
-  // note: need to release arguments
+  /* note: need to release arguments */
   Py_DECREF(arguments);
   Py_DECREF(fonction);
 
@@ -125,7 +125,7 @@ std::string Navigator::write_search(std::string keyword)
 void Navigator::select_hyperlinks_from_html(std::string html, std::vector<HyperLink> &links)
 {
   logging::vout(2,"Entering Navigator::select_hyperlinks_from_html no rubbish");
-  // Just in case it is not empty yet.
+  /* Just in case it is not empty yet. */
   links.clear();
 	while(html.find("<a ") != std::string::npos) {
     HyperLink lk;
@@ -137,8 +137,8 @@ void Navigator::select_hyperlinks_from_html(std::string html, std::vector<HyperL
     }
     std::string tag_a = html.substr(b_tag_a, e_tag_a - b_tag_a);
     html.erase(0,e_tag_a+4);
-    int a = parse_tag_a(lk,tag_a);
-    if(a == 1)
+    bool a = parse_tag_a(lk,tag_a);
+    if(!a)
       continue;
     links.push_back(lk);
   }
@@ -148,7 +148,7 @@ void Navigator::select_hyperlinks_from_html(std::string html, std::vector<HyperL
 void Navigator::select_hyperlinks_from_html(std::string html, std::vector<HyperLink> &links, std::vector<std::string> rubbish)
 {
   logging::vout(2,"Entering Navigator::select_hyperlinks_from_html rubbish");
-  // Just in case it is not empty yet.
+  /* Just in case it is not empty yet. */
   links.clear();
 	while(html.find("<a ") != std::string::npos) {
     HyperLink lk;
@@ -161,8 +161,8 @@ void Navigator::select_hyperlinks_from_html(std::string html, std::vector<HyperL
     }
     std::string tag_a = html.substr(b_tag_a, e_tag_a - b_tag_a);
     html.erase(0,e_tag_a+4);
-    int a = parse_tag_a(lk,tag_a);
-    if(a == 1)
+    bool a = parse_tag_a(lk,tag_a);
+    if(!a)
       continue;
     for(auto const& rub: rubbish) {
       if(lk.url.find(rub) != std::string::npos || lk.url == "#" || lk.url == "="){
@@ -177,9 +177,8 @@ void Navigator::select_hyperlinks_from_html(std::string html, std::vector<HyperL
   logging::vout(2,"Leaving Navigator::select_hyperlinks_from_html rubbish");
 }
 
-int Navigator::parse_tag_a(HyperLink &lk,std::string &tag_a) {
+bool Navigator::parse_tag_a(HyperLink &lk,std::string &tag_a) {
   logging::vout(4,"Entering Navigator::parse_tag_a");
-  /* nothing = 0 continue = 1 */
   try {
     size_t b_href = tag_a.find("href=\"");
     size_t e_href = tag_a.substr(b_href+6).find("\"");
@@ -208,13 +207,13 @@ int Navigator::parse_tag_a(HyperLink &lk,std::string &tag_a) {
     if(lk.url.length()>5){
       std::string ext = lk.url.substr(lk.url.length()-6);
       if((ext.find('.') != std::string::npos && (lk.url.substr(lk.url.length()-4) != ".php" || lk.url.substr(lk.url.length()-5) != ".html"))){
-        return 1;
+        return false;
       }
     }
-    return 0;
+    return true;
   } catch (const std::out_of_range &e) {
     logging::vout("Error : " + (std::string)e.what());
-    return 1;
+    return false;
   }
   logging::vout(4,"Leaving Navigator::parse_tag_a");
 }

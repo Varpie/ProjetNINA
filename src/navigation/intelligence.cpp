@@ -19,8 +19,6 @@ Intelligence::~Intelligence()
 
 void Intelligence::roam()
 {
-	// for(auto const& lk: links){
-	// 	std::cout << lk.url << std::endl;
 	logging::vout(2,"Entering Intelligence::roam");
 	logging::vout("Program began");
 	std::string page_html;
@@ -109,6 +107,13 @@ void Intelligence::search_keyword()
 	logging::vout(2,"Leaving Intelligence::search_keyword");
 }
 
+std::string Intelligence::search_keyword_handle(){
+	logging::vout(2,"Entering Intelligence::search_keyword_handle");
+	std::string kw = select_keyword(keywords);
+	return this->navigator->write_search(kw);
+	logging::vout(2,"Leaving Intelligence::search_keyword_handle");
+}
+
 int Intelligence::current_domain_occurences()
 {
 	logging::vout(2,"Entering Intelligence::current_domain_occurences");
@@ -159,38 +164,42 @@ HyperLink Intelligence::select_link(std::vector<HyperLink> &links,std::string ur
 		return links.at(0);
 	}
 	bool res;
+	bool whitelisted;
 	bool found = true;
 	if(dict::whitelist) {
 	  found = false;
 		std::vector<HyperLink> wlfound_list;
 		for(auto const& lk: links){
+			whitelisted = false;
 			std::string text = " "+lk.text+" ";
 			for(auto const& wl: this->whitelist){
 				if(text.find(" "+wl+" ") != std::string::npos){
 					res = Intelligence::test_link(link,url);
 					if(res){
-						wlfound_list.push_back(lk);
+						whitelisted = true;
 						found = true;
 						logging::vout(3,"--Find wl : " + wl);
 						logging::vout(3,"--In text :" + text);
 					}
 				}
 			}
+			if(whitelisted)
+				wlfound_list.push_back(lk);
 		}
 		if(found){
-
 			link = select_random_in_vector(wlfound_list);
 		}
 	}
 	if( !dict::whitelist || !found ){
-		int cpt=0;
+		int x=0;
 	  do {
 	    link = select_random_in_vector(links);
 	    res = Intelligence::test_link(link,url);
-	  } while (!res || cpt++<50);
-		if(cpt == 50){
+	  } while (!res && x++<20);
+		if(x == 20){
 			logging::vout("--No link found");
-			//TODO : Do something to handle
+			link.url = Intelligence::search_keyword_handle();
+			link.text = "";
 		}
 	}
 	logging::vout(2,"Leaving Intelligence::select_link");
@@ -259,11 +268,11 @@ void Intelligence::dump_lists()
 	logging::vout(2,"Leaving Intelligence::dump_lists");
 }
 
-std::vector<std::string> init_list(std::string name)
+std::vector<std::string> init_list(std::string path)
 {
 	logging::vout(2,"Entering init_list");
 	std::string line;
-	std::ifstream file(name);
+	std::ifstream file(path);
 	std::vector<std::string> list;
 	if(file) {
 		while(std::getline(file, line)) {
