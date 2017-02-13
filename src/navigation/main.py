@@ -12,20 +12,20 @@ driver = webdriver.Firefox()
 uinput_wrapping_module.setup_uinput_device_func()
 
 def end_python():
-    """
+    """!
     Close driver and destroy virtual keyboad when navigation is over
     """
     uinput_wrapping_module.destroy_uinput_device_func()
     driver.quit()
 
 def get_body_html():
-    """
+    """!
     Get body html of a page, and strips it from its Styles and Scripts
     It does so, with webdriver.
     Cleaning it does with lxml.html.clean dependance
 
-    @rtype: string
     @return: returns html
+    @rtype: string
     """
     try:
         #get 1st link of page to test if there is at least one
@@ -43,14 +43,14 @@ def get_body_html():
         return get_body_html()
 
 def write_search(keyword):
-    """
+    """!
     Focus to urlbar of the browser and types a keyword
 
     @type keyword: string
     @param keyword: Keyword to be searched
 
-    @rtype: string
     @return: returns current url
+    @rtype: string
     """
     # f6 -> 64 | entrée -> 28
     # driver.get("https://www.google.com")
@@ -71,14 +71,14 @@ def handle_frames():
         return False
 
 def navigate(var_url):
-    """
+    """!
     Thread nav() function and kill it if it takes more than 40 seconds.
 
     @type var_url: string
     @param var_url: parameter for nav() function
 
-    @rtype: string
     @return: returns nav result OR 'failed' if killed
+    @rtype: string
 
     ! 40 replaced by 15 for test purpose
     """
@@ -95,15 +95,15 @@ def navigate(var_url):
         return "failed"
 
 def nav(var_url):
-    """
+    """!
     Browse to the indicated page
 
     @type var_url: string
     @param var_url: Destination url to browse
 
-    @rtype: string
     @return: returns current url (to avoid redirections errors)
     OR returns failed if url wasn't valid
+    @rtype: string
     """
     #print("entered") #debug
     #print("entree : "+var_url) #debug
@@ -156,7 +156,7 @@ def nav(var_url):
     return driver.current_url
 
 def runFunctionWithTimeout(func, args=(), kwargs={}, timeout_duration=10, default=None):
-    """
+    """!
     Thread a function and kill it if execution time exceed timeout_duration
 
     @type func: function
@@ -165,8 +165,8 @@ def runFunctionWithTimeout(func, args=(), kwargs={}, timeout_duration=10, defaul
     @type timeout_duration: int
     @param timeout_duration: Number of seconds given to the function
 
-    @rtype: mixed
     @return: returns function result OR exception raised by it
+    @rtype: mixed
 
     """
     class InterruptableThread(threading.Thread):
@@ -185,14 +185,14 @@ def runFunctionWithTimeout(func, args=(), kwargs={}, timeout_duration=10, defaul
     return it.result[1]
 
 def runFunctionCatchExceptions(func, *args, **kwargs):
-    """
+    """!
     Exception raiser for runFunctionWithTimeout function
 
     @type func: function
     @param func: Function to be executed
 
-    @rtype: mixed
     @return: returns function result OR exception raised by it
+    @rtype: mixed
     """
     try:
         result = func(*args, **kwargs)
