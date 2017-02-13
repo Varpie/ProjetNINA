@@ -27,29 +27,62 @@ class Intelligence
 		 * \param start_url a String that define start_url of browse
 		 */
 		Intelligence(std::string &start_url);
+		/**
+		 * Intelligence copy constructor
+		 * \brief informs that copy constructor was called
+		 *
+		 * It's good to keep an eye on this to know if we're handelling a deep or a
+		 * shallow copy.
+		 */
 		Intelligence(const Intelligence& obj){std::cout << "Intelligence Copy constructor" << std::endl;}
+		/**
+		 * Intelligence assignment
+		 * \brief informs that assignment was called
+		 */
 		Intelligence& operator=(const Intelligence& obj){std::cout << "Intelligence assignment " << std::endl;}
-
 		/** Intelligence class destructor
 		 */
 		~Intelligence();
-		/** Roam function, just roam randomly on internet
+		/** Roam function. Actual processing that roam on internet
 		 * \fn void roam(void)
 		 */
 		void roam(void);
-		/** Function that selects a random in a vector with a different url than the one passed
-		 * \fn HyperLink select_diff_random_in_vector(std::vector<HyperLink> &links,std::string url)
-		 * \param links Vector of HyperLinks
-		 * \param url Url to compare
-		 * \return an HyperLink with different url than the one passed
+		/** Function that load all class lists such as blacklist & whitelists
+		 * \fn void load_lists()
+		 * Called in class constructor
 		 */
 		void load_lists();
+		/** Counts the number of times AI passed by the current domain
+		 * \fn int current_domain_occurences()
+		 * Seek in history list and counts. Allows us to change domain if
+		 * we passed too many times
+		 */
 		int current_domain_occurences();
+		/** Function that dump autolists in text files
+		 * \fn void dump_lists();
+		 * \return int number of occurences
+		 * Called in class destructor
+		 */
 		void dump_lists();
+		/** Function that select a link with all the parameters
+		 * \fn HyperLink select_link(std::vector<HyperLink> &links,std::string url)
+		 * \param links vector<HyperLink> List of hyperLink to select one
+		 * \param url string url Except this url in selection
+		 * \return HyperLink link selected
+		 */
 		HyperLink select_link(std::vector<HyperLink> &links,std::string url);
+		/** Function that test a link with all needed parameters (blacklist,whitelist...)
+		 * \fn bool test_link(HyperLink &link,std::string &url)
+		 * \return bool True : link valid, False : link not valid
+		 * Called in select_link
+		 */
+		bool test_link(HyperLink &link,std::string &url);
+		/** Google search a keyword
+		 * \fn void search_keyword()
+		 * Go on urltab, type keyword calling uinput and enter search
+		 */
 		void search_keyword();
 		std::string search_keyword_handle();
-		bool test_link(HyperLink &link,std::string &url);
 		// HyperLink select_otherlist(std::vector<HyperLink> &links,std::string url, tuple_list list);
 	private:
 		std::string current_url;
