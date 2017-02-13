@@ -152,7 +152,6 @@ operating
 operatingsystem
 option
 output
-page
 password
 paste
 path
@@ -199,6 +198,7 @@ shareware
 shell
 shift
 shiftkey
+site
 snapshot
 socialnetworking
 software

@@ -159,26 +159,29 @@ HyperLink Intelligence::select_link(std::vector<HyperLink> &links,std::string ur
 		return links.at(0);
 	}
 	bool res;
+	bool whitelisted;
 	bool found = true;
 	if(dict::whitelist) {
 	  found = false;
 		std::vector<HyperLink> wlfound_list;
 		for(auto const& lk: links){
+			whitelisted = false;
 			std::string text = " "+lk.text+" ";
 			for(auto const& wl: this->whitelist){
 				if(text.find(" "+wl+" ") != std::string::npos){
 					res = Intelligence::test_link(link,url);
 					if(res){
-						wlfound_list.push_back(lk);
+						whitelisted = true;
 						found = true;
 						logging::vout(3,"--Find wl : " + wl);
 						logging::vout(3,"--In text :" + text);
 					}
 				}
 			}
+			if(whitelisted)
+				wlfound_list.push_back(lk);
 		}
 		if(found){
-
 			link = select_random_in_vector(wlfound_list);
 		}
 	}
