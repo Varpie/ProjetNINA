@@ -40,12 +40,12 @@ class Navigator
      * It's good to keep an eye on this to know if we're handelling a deep or a
      * shallow copy.
      */
-    Navigator(const Navigator& obj){std::cout << "Navigator Copy constructor" << std::endl;}
+    Navigator(const Navigator& obj){logging::vout(1,"Navigator Copy constructor");}
     /**
      * Navigator assignment
      * \brief informs that assignment was called
      */
-    Navigator& operator=(const Navigator& obj){std::cout << "Navigator assignment " << std::endl;}
+    Navigator& operator=(const Navigator& obj){logging::vout(1,"Navigator assignment");}
     /** Navigator class destructor
      * \brief Closes python connexion
      */
@@ -108,10 +108,27 @@ class Navigator
 		 * \brief Get href and text for each <a> tag, and put them in an HyperLink
 		 */
     void select_hyperlinks_from_html(std::string html, std::vector<HyperLink> &links);
+    /** select_hyperlinks_from_html slightly modified to include additional processes
+     * \fn void select_hyperlinks_from_html(std::string html, std::vector<HyperLink> &links, std::vector<std::string> rubbish)
+     * \param html Raw html
+		 * \param links Vector to put HyperLinks once found
+     * \param rubbish std::vector<std::string> list of rubbish links
+     * Include rubbish_links in it's selection process
+     */
 		void select_hyperlinks_from_html(std::string html, std::vector<HyperLink> &links, std::vector<std::string> rubbish);
-    int parse_tag_a(HyperLink &lk,std::string &tag_a);
+    /** Parses a raw <a> html tag to fit HyperLink class pattern
+     * \fn bool parse_tag_a(HyperLink &lk,std::string &tag_a)
+     * \param lk HyperLink link to be filled with link url & text
+     * \param tag_a std;;string raw <a> html tag
+     * \return True if link is good, False otherwise
+     * \brief Take href and text between tag and instanciate lk with it
+     */
+    bool parse_tag_a(HyperLink &lk,std::string &tag_a);
 	private:
-    	PyObject *module;
+    /**
+     * Python module that handle selenium api
+     * Foundable at /usr/local/lib/python2.7/dist-packages/main.py
+     */
+    PyObject *module;
 };
-
 #endif

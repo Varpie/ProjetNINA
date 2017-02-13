@@ -19,8 +19,6 @@ Intelligence::~Intelligence()
 
 void Intelligence::roam()
 {
-	// for(auto const& lk: links){
-	// 	std::cout << lk.url << std::endl;
 	logging::vout(2,"Entering Intelligence::roam");
 	logging::vout("Program began");
 	std::string page_html;
@@ -270,11 +268,11 @@ void Intelligence::dump_lists()
 	logging::vout(2,"Leaving Intelligence::dump_lists");
 }
 
-std::vector<std::string> init_list(std::string name)
+std::vector<std::string> init_list(std::string path)
 {
 	logging::vout(2,"Entering init_list");
 	std::string line;
-	std::ifstream file(name);
+	std::ifstream file(path);
 	std::vector<std::string> list;
 	if(file) {
 		while(std::getline(file, line)) {

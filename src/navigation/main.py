@@ -7,13 +7,20 @@ import lxml.html.clean
 import time
 import signal
 
-""" init """
+"""!
+Selenium webdriver
+Marionette on Firefox browser
+"""
 driver = webdriver.Firefox()
+"""!
+Command that creates file descriptor for a user space keyboad
+ref to Uinput kernel module
+"""
 uinput_wrapping_module.setup_uinput_device_func()
 
 def end_python():
     """!
-    Close driver and destroy virtual keyboad when navigation is over
+    Close driver and destroy virtual keyboad reference when navigation is over
     """
     uinput_wrapping_module.destroy_uinput_device_func()
     driver.quit()
@@ -24,8 +31,8 @@ def get_body_html():
     It does so, with webdriver.
     Cleaning it does with lxml.html.clean dependance
 
-    @return: returns html
-    @rtype: string
+    @return returns html
+    @rtype string
     """
     try:
         #get 1st link of page to test if there is at least one
@@ -49,8 +56,8 @@ def write_search(keyword):
     @type keyword: string
     @param keyword: Keyword to be searched
 
-    @return: returns current url
-    @rtype: string
+    @return returns current url
+    @rtype string
     """
     # f6 -> 64 | entrée -> 28
     # driver.get("https://www.google.com")
@@ -62,7 +69,14 @@ def write_search(keyword):
     uinput_wrapping_module.send_a_button_default_func(28)
     time.sleep(3.5)
     return driver.current_url
+
 def handle_frames():
+    """!
+    Close browser when number is >1
+    
+    @return True if tab closed, false if no more than 2 tabs active
+    @rtype Boolean
+    """
     if(len(driver.window_handles) > 1):
         uinput_wrapping_module.send_a_button_func(44,29);
         print "=py=== Tab closed ! ===py="
@@ -77,8 +91,8 @@ def navigate(var_url):
     @type var_url: string
     @param var_url: parameter for nav() function
 
-    @return: returns nav result OR 'failed' if killed
-    @rtype: string
+    @return returns nav result OR 'failed' if killed
+    @rtype string
 
     ! 40 replaced by 15 for test purpose
     """
@@ -101,9 +115,9 @@ def nav(var_url):
     @type var_url: string
     @param var_url: Destination url to browse
 
-    @return: returns current url (to avoid redirections errors)
+    @return returns current url (to avoid redirections errors)
     OR returns failed if url wasn't valid
-    @rtype: string
+    @rtype string
     """
     #print("entered") #debug
     #print("entree : "+var_url) #debug
@@ -165,8 +179,8 @@ def runFunctionWithTimeout(func, args=(), kwargs={}, timeout_duration=10, defaul
     @type timeout_duration: int
     @param timeout_duration: Number of seconds given to the function
 
-    @return: returns function result OR exception raised by it
-    @rtype: mixed
+    @return returns function result OR exception raised by it
+    @rtype mixed
 
     """
     class InterruptableThread(threading.Thread):
@@ -191,8 +205,8 @@ def runFunctionCatchExceptions(func, *args, **kwargs):
     @type func: function
     @param func: Function to be executed
 
-    @return: returns function result OR exception raised by it
-    @rtype: mixed
+    @return returns function result OR exception raised by it
+    @rtype mixed
     """
     try:
         result = func(*args, **kwargs)
