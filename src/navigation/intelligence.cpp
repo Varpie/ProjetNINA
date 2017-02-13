@@ -109,6 +109,13 @@ void Intelligence::search_keyword()
 	logging::vout(2,"Leaving Intelligence::search_keyword");
 }
 
+std::string Intelligence::search_keyword_handle(){
+	logging::vout(2,"Entering Intelligence::search_keyword_handle");
+	std::string kw = select_keyword(keywords);
+	return this->navigator->write_search(kw);
+	logging::vout(2,"Leaving Intelligence::search_keyword_handle");
+}
+
 int Intelligence::current_domain_occurences()
 {
 	logging::vout(2,"Entering Intelligence::current_domain_occurences");
@@ -178,19 +185,19 @@ HyperLink Intelligence::select_link(std::vector<HyperLink> &links,std::string ur
 			}
 		}
 		if(found){
-
 			link = select_random_in_vector(wlfound_list);
 		}
 	}
 	if( !dict::whitelist || !found ){
-		int cpt=0;
+		int x=0;
 	  do {
 	    link = select_random_in_vector(links);
 	    res = Intelligence::test_link(link,url);
-	  } while (!res || cpt++<50);
-		if(cpt == 50){
+	  } while (!res && x++<20);
+		if(x == 20){
 			logging::vout("--No link found");
-			//TODO : Do something to handle
+			link.url = Intelligence::search_keyword_handle();
+			link.text = "";
 		}
 	}
 	logging::vout(2,"Leaving Intelligence::select_link");

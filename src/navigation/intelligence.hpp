@@ -48,6 +48,7 @@ class Intelligence
 		void dump_lists();
 		HyperLink select_link(std::vector<HyperLink> &links,std::string url);
 		void search_keyword();
+		std::string search_keyword_handle();
 		bool test_link(HyperLink &link,std::string &url);
 		// HyperLink select_otherlist(std::vector<HyperLink> &links,std::string url, tuple_list list);
 	private:

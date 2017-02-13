@@ -11,12 +11,6 @@ import signal
 driver = webdriver.Firefox()
 uinput_wrapping_module.setup_uinput_device_func()
 
-def handle_frames():
-    if(len(driver.window_handles) > 1):
-        for handle in driver.window_handles:
-            print handle
-#driver.switch_to_window(handle)
-
 def end_python():
     """
     Close driver and destroy virtual keyboad when navigation is over
@@ -68,6 +62,13 @@ def write_search(keyword):
     uinput_wrapping_module.send_a_button_default_func(28)
     time.sleep(3.5)
     return driver.current_url
+def handle_frames():
+    if(len(driver.window_handles) > 1):
+        uinput_wrapping_module.send_a_button_func(44,29);
+        print "=py=== Tab closed ! ===py="
+        return True
+    else:
+        return False
 
 def navigate(var_url):
     """
@@ -81,7 +82,9 @@ def navigate(var_url):
 
     ! 40 replaced by 15 for test purpose
     """
-    handle_frames()
+    if(handle_frames()):
+        driver.back()
+        return "failed"
     ret = runFunctionWithTimeout(nav, (var_url,), timeout_duration=15)
     if(ret is not None):
         if(len(ret) != 0):
