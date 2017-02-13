@@ -402,13 +402,9 @@ double box_muller(double mean, double sig){
 
 void write_array(char array[], int size){
 	int i;
-	double r[2];
-	load_random(r);
-	double t = 0;
 	for(i=0; i<=size; i++){
 			write_char(array[i-1]);
-			t = box_muller(r[0],r[1]);
-			nanosleep((const struct timespec[]){{0, (int)(1000*t)}}, NULL);
+			nanosleep((const struct timespec[]){{0, (int)(1000000)}}, NULL);
 	}
 }
 
@@ -418,7 +414,7 @@ int destroy_uinput_device(){
 	/* Close the UINPUT device */
 	return close(uinp_fd);
 }
-/*
+
 int main(int argc, char *argv[])
 {
 	// error if device not found.
@@ -427,14 +423,27 @@ int main(int argc, char *argv[])
 		printf("Unable to find uinput device\n");
 		return -1;
 	}
+	printf("enter sleep\n" );
+	sleep(1);
+	//write_array("ceci est un test",16);
+	char *pc;
+	KeyCode code_a;
+	Display *dpy = XOpenDisplay(NULL);
 
-
-	double r[2];
-	writeArray(argv[1], strlen(argv[1]),r);
-	int i;
-
+	for (pc = "TEST TEST TEST"; *pc != '\0'; ++pc) {
+			if (*pc >= (char)0x20) {
+					code_a = XKeysymToKeycode(dpy, (KeySym)*pc);
+					send_a_button_default((int)code_a - 8);
+			} else {
+					fprintf(stderr, "Eeek - out-of-range character 0x%x\n", (unsigned int)*pc);
+			}
+	}
+	XCloseDisplay(dpy);
+	printf("\n");
+	destroy_uinput_device();
+	return 0;
 }
-*/
+
 
 // int main() {
 // 	setup_uinput_device();
