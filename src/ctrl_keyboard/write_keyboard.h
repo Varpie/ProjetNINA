@@ -19,6 +19,7 @@ extern "C" {
 #include <unistd.h>
 #include <time.h>
 #include <math.h>
+#include <X11/Xlib.h>
 
 /* Globals */
 static int uinp_fd = -1;
@@ -83,6 +84,8 @@ double box_muller(double mean, double sig);
  * Return -1 if error, 0 if ok
  */
 int destroy_uinput_device();
+
+int convert_string(char *string);
 
 #ifdef __cplusplus
  } /* extern C */

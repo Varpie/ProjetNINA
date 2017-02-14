@@ -46,15 +46,14 @@ void daemonize()
     if (setsid() < 0)
         exit(EXIT_FAILURE);
 	logging::vout("succeded");
-	forked_pid = (int)getpid();
-	std::string pid_str = std::to_string(forked_pid);
-	logging::vout(pid_str);
-	pid_str = std::to_string((int)pid);
-	logging::vout(pid_str);
 }
 
 void stop_daemon() {
-
+	std::ofstream file("/proc/nina");
+	if (!file.is_open())
+	    throw std::runtime_error("Could not open the file");
+	file << "kill";
+	file.close();
 }
 
 void stopping_detection() {
@@ -77,7 +76,7 @@ void stopping_detection() {
 		exit(EXIT_FAILURE);
 	}
 
-	while(threading::running && read(fd, &ie, sizeof(struct input_event))) {
+	while(read(fd, &ie, sizeof(struct input_event)) && threading::running) {
 		if (ie.type == EV_ABS) {
 			XQueryPointer(dpy,DefaultRootWindow(dpy),&root,&child,
 					&rootX,&rootY,&winX,&winY,&mask);
@@ -170,7 +169,7 @@ bool parse_arguments(int argc, char **argv)
 					flag = false;
 				}else if(long_options[option_index].name == "verbose"){
 					logging::verbose = std::stoi(optarg);
-					logging::vout(1,"Verbose is active. Level : " + std::string(optarg));
+					logging::vout("Verbose is active");
 				} else if(long_options[option_index].name == "whitelist"){
 					logging::vout("Using whitelist");
 					dict::whitelist = true;
@@ -245,9 +244,11 @@ int main(int argc, char **argv)
 	if(!parse_arguments(argc, argv))
 		return 0;
 	Intelligence intel(url);
+	// Creating thread to detect mouse and stop program
 	std::thread t1(stopping_detection);
+	// Creating thread calling intel.roam()
 	std::thread t2(&Intelligence::roam, &intel);
-	//intel.roam();
+
 	t1.join();
 	t2.join();
 	logging::vout("Program finished");

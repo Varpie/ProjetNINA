@@ -111,3 +111,23 @@ C++:
 - C
   libx11-dev
   python-dev
+
+
+## Uinput driver
+- get keys codes
+  sudo showkey
+
+
+## Create .deb
+- Tarball
+  make dist
+
+- .deb
+  (if not installed) apt-get install checkinstall
+  tar -xzf nina.tar.gz
+  cd nina
+  aclocal, autoconf, and so on.....
+  sudo checkinstall
+
+- install
+  sudo dpkg --install nina.deb
