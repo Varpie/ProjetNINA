@@ -238,11 +238,16 @@ bool parse_arguments(int argc, char **argv)
 	return flag;
 }
 
+void handle_sigquit(int signum) {
+	threading::running = false;
+}
+
 int main(int argc, char **argv)
 {
 	parse_config();
 	if(!parse_arguments(argc, argv))
 		return 0;
+	signal(SIGQUIT, handle_sigquit);
 	Intelligence intel(url);
 	// Creating thread to detect mouse and stop program
 	std::thread t1(stopping_detection);
