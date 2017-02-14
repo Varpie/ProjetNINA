@@ -16,9 +16,9 @@ std::string lang = "en";
 std::string layout = "en";
 std::string browser = "firefox";
 //std::string url = "http://www.google.com";
-//std::string url = "http://arstechnica.com/";
-//std::string url = "http://dahunicorn.xyz/";
-std::string url = "http://www.wikipedia.org/wiki/Special:Random";
+std::string url = "http://arstechnica.com/";
+//std::string url = "http://fnac.com/";
+//std::string url = "http://www.wikipedia.org/wiki/Special:Random";
 std::atomic<bool> threading::running(true);
 
 
@@ -142,6 +142,7 @@ bool parse_arguments(int argc, char **argv)
 			{"verbose", required_argument, 0, 0},
 			{"whitelist", no_argument, 0, 0},
 			{"blacklist", no_argument, 0, 0},
+			{"otherlist", no_argument, 0, 0},
 			{"daemonize", no_argument, 0, 'd'},
 			{"stop", no_argument, 0, 's'},
 			{"timeout", required_argument, 0, 0},
@@ -178,6 +179,10 @@ bool parse_arguments(int argc, char **argv)
 					logging::vout("Using blacklist");
 					dict::blacklist = true;
 					dict::blackfile = "./config/dictionaries/blacklist.txt";
+				} else if(long_options[option_index].name == "otherlist"){
+					logging::vout("Using otherlist");
+					dict::other = true;
+					dict::otherfile = "./config/dictionaries/otherlist.txt";
 				} else if(long_options[option_index].name == "daemonize") {
 					daemonize();
 					logging::vout("Process daemonized");
