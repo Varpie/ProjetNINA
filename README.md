@@ -116,3 +116,18 @@ C++:
 ## Uinput driver
 - get keys codes
   sudo showkey
+
+
+## Create .deb
+- Tarball
+  make dist
+
+- .deb
+  tar -xzf nina.tar.gz
+  cd nina
+  aclocal, autoconf, and so on.....
+  apt-get install checkinstall
+  sudo checkinstall
+
+- install
+  sudo dpkg --install nina.deb
