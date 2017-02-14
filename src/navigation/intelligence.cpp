@@ -229,12 +229,12 @@ HyperLink Intelligence::select_link(std::vector<HyperLink> &links,std::string ur
 		}
 	}
 	if( (!dict::other && !dict::whitelist) || !found ){
-		int x=0;
+		int cpt=0;
 	  do {
 	    link = select_random_in_vector(links);
 	    res = Intelligence::test_link(link,url);
-	  } while (!res && x++<50);
-		if(x == 50){
+	  } while (!res && cpt++<50);
+		if(cpt == 50){
 			logging::vout("--No valid link");
 			link.url = Intelligence::search_keyword_handle();
 			link.text = "";
