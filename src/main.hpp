@@ -25,5 +25,8 @@
 
 void print_help();
 void parse_config();
+void daemonize();
+void stopping_detection();
+void handle_sigquit(int signum);
 
 #endif
