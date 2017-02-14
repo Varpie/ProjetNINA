@@ -415,7 +415,6 @@ int destroy_uinput_device(){
 	return close(uinp_fd);
 }
 
-<<<<<<< HEAD
 // int main(int argc, char *argv[])
 // {
 // 	// error if device not found.
@@ -444,7 +443,7 @@ int destroy_uinput_device(){
 // 	destroy_uinput_device();
 // 	return 0;
 // }
-=======
+
 int convert_string(char *string)
 {
 	// error if device not found.
@@ -473,7 +472,6 @@ int convert_string(char *string)
 	destroy_uinput_device();
 	return 0;
 }
->>>>>>> 2bf04445130f13822397b37dbee0b4cf4ef19847
 
 
 // int main() {
