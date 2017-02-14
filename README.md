@@ -123,10 +123,10 @@ C++:
   make dist
 
 - .deb
+  (if not installed) apt-get install checkinstall
   tar -xzf nina.tar.gz
   cd nina
   aclocal, autoconf, and so on.....
-  apt-get install checkinstall
   sudo checkinstall
 
 - install
