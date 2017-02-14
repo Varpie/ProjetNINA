@@ -415,34 +415,34 @@ int destroy_uinput_device(){
 	return close(uinp_fd);
 }
 
-int main(int argc, char *argv[])
-{
-	// error if device not found.
-	if (setup_uinput_device() < 0)
-	{
-		printf("Unable to find uinput device\n");
-		return -1;
-	}
-	printf("enter sleep\n" );
-	sleep(1);
-	//write_array("ceci est un test",16);
-	char *pc;
-	KeyCode code_a;
-	Display *dpy = XOpenDisplay(NULL);
-
-	for (pc = "TEST TEST TEST"; *pc != '\0'; ++pc) {
-			if (*pc >= (char)0x20) {
-					code_a = XKeysymToKeycode(dpy, (KeySym)*pc);
-					send_a_button_default((int)code_a - 8);
-			} else {
-					fprintf(stderr, "Eeek - out-of-range character 0x%x\n", (unsigned int)*pc);
-			}
-	}
-	XCloseDisplay(dpy);
-	printf("\n");
-	destroy_uinput_device();
-	return 0;
-}
+// int main(int argc, char *argv[])
+// {
+// 	// error if device not found.
+// 	if (setup_uinput_device() < 0)
+// 	{
+// 		printf("Unable to find uinput device\n");
+// 		return -1;
+// 	}
+// 	printf("enter sleep\n" );
+// 	sleep(1);
+// 	//write_array("ceci est un test",16);
+// 	char *pc;
+// 	KeyCode code_a;
+// 	Display *dpy = XOpenDisplay(NULL);
+//
+// 	for (pc = "TEST TEST TEST"; *pc != '\0'; ++pc) {
+// 			if (*pc >= (char)0x20) {
+// 					code_a = XKeysymToKeycode(dpy, (KeySym)*pc);
+// 					send_a_button_default((int)code_a - 8);
+// 			} else {
+// 					fprintf(stderr, "Eeek - out-of-range character 0x%x\n", (unsigned int)*pc);
+// 			}
+// 	}
+// 	XCloseDisplay(dpy);
+// 	printf("\n");
+// 	destroy_uinput_device();
+// 	return 0;
+// }
 
 
 // int main() {
