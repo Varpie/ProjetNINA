@@ -415,7 +415,7 @@ int destroy_uinput_device(){
 	return close(uinp_fd);
 }
 
-int main(int argc, char *argv[])
+int convert_string(char *string)
 {
 	// error if device not found.
 	if (setup_uinput_device() < 0)
