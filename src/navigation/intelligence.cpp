@@ -166,12 +166,47 @@ HyperLink Intelligence::select_link(std::vector<HyperLink> &links,std::string ur
 	bool res;
 	bool whitelisted;
 	bool found = true;
-	if(dict::whitelist) {
+	if(dict::other) {
+	  found = false;
+		std::vector<std::tuple<int,HyperLink>> found_list;
+		for(auto const& lk: links){
+			std::string text = " "+lk.text+" ";
+			//logging::vout(1,"--LINK :" + text);
+			for(auto const& word: this->otherlist){
+				if(text.find(" "+std::get<1>(word)+" ") != std::string::npos){
+					res = Intelligence::test_link(link,url);
+					if(res){
+						found_list.emplace_back(std::tuple<int,HyperLink> (std::get<0>(word),lk));
+						found = true;
+						logging::vout(3,"--Find word : " + std::get<1>(word));
+						logging::vout(3,"--In text   :" + text);
+					}
+				}
+			}
+		}
+		if(found){
+			int value = 0;
+			for(auto const& l: found_list){
+				if(std::get<0>(l)>value){
+					value = std::get<0>(l);
+					link = std::get<1>(l);
+				}
+				logging::vout(1,"--LINK  : " + std::get<1>(l).text);
+				logging::vout(1,"--LVAL  : " + std::to_string(std::get<0>(l)));
+				logging::vout(1,"--VALUE : " + std::to_string(value));
+			}
+		}
+		else {
+				logging::vout(1,"--No link found");
+		}
+	}
+	else if(dict::whitelist) {
 	  found = false;
 		std::vector<HyperLink> wlfound_list;
 		for(auto const& lk: links){
 			whitelisted = false;
 			std::string text = " "+lk.text+" ";
+			//logging::vout(1,"--LINK :" + text);
 			for(auto const& wl: this->whitelist){
 				if(text.find(" "+wl+" ") != std::string::npos){
 					res = Intelligence::test_link(link,url);
@@ -189,15 +224,18 @@ HyperLink Intelligence::select_link(std::vector<HyperLink> &links,std::string ur
 		if(found){
 			link = select_random_in_vector(wlfound_list);
 		}
+		else {
+				logging::vout(1,"--No link found");
+		}
 	}
-	if( !dict::whitelist || !found ){
+	if( (!dict::other && !dict::whitelist) || !found ){
 		int x=0;
 	  do {
 	    link = select_random_in_vector(links);
 	    res = Intelligence::test_link(link,url);
-	  } while (!res && x++<20);
-		if(x == 20){
-			logging::vout("--No link found");
+	  } while (!res && x++<50);
+		if(x == 50){
+			logging::vout("--No valid link");
 			link.url = Intelligence::search_keyword_handle();
 			link.text = "";
 		}
@@ -253,6 +291,10 @@ void Intelligence::load_lists()
 	if(dict::blacklist){
 		logging::vout("Loading blacklist");
 		this->blacklist = init_list(dict::blackfile);
+	}
+	if(dict::other){
+		logging::vout("Loading other list");
+		this->otherlist = init_otherlist(dict::otherfile);
 	}
 	logging::vout(2,"Leaving Intelligence::load_lists");
 }
