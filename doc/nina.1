@@ -1,0 +1,29 @@
+.\" Manpage pour le projet
+.\" <- ceci est une ligne de commentaire
+.TH NINA 1 2017-15-02 nina
+.SH NAME
+nina \- Lancer un bot utilisant le navigateur afin de se faire passer pour un utilisateur
+.SH SYNOPSIS
+# nina [OPTION]...
+.SH DESCRIPTION
+.B nina
+est un programme permettant de lancer une intelligence artificielle simulant un utilisateur naviguant sur internet. Ce programme tourne au plus bas niveau, permettant de le rendre non détectable, afin d'éviter les logiciels malveillants.
+.SH OPTIONS
+.TP
+\fB\-h, \-\-help\fR
+Affiche la page d'aide et quitte.
+.TP
+\fB\-\-config\fR CONFIG
+Ouvre le fichier de configuration dans l'éditeur de texte par défaut
+.TP
+\fB\-\-url\fR URL
+Permet de définir l'URL de départ de la navigation
+.TP
+\fB\-\-verbose\fR LVL
+Ajoute un niveau de verbose au programme. À n'utiliser que pour du débuggage.
+.TP
+\fB\-d, \-\-daemonize\fR
+Permet de détacher le programme du terminal l'ayant lancé.
+.TP
+\fB\-s, \-\-stop\fR
+Permet d'arrêter le programme.
