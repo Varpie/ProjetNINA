@@ -19,7 +19,7 @@ fi
 AC_CHECK_HEADER([X11/Xlib.h],[],[AC_MSG_ERROR([Please install libx11-dev])])
 AC_CHECK_HEADER([python2.7/Python.h],[],[AC_MSG_ERROR([Please install python-dev])])
 
-AC_CONFIG_COMMANDS_PRE([./python_dependencies.sh])
+AC_CONFIG_COMMANDS_PRE([./scripts/python_dependencies.sh])
 
 CXXFLAGS=-std=c++14
 

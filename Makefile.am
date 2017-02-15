@@ -21,6 +21,7 @@ EXTRA_DIST = \
   config/dictionaries/blacklist.txt \
   config/dictionaries/keywords.txt \
   config/dictionaries/rubbish_links.txt \
-  config/dictionaries/whitelist.txt
+  config/dictionaries/whitelist.txt \
+  scripts/python_dependencies.sh
 AM_LDFLAGS=-lpython2.7 -lX11 -lpthread
 dist_man1_MANS = doc/nina.1
