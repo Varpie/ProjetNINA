@@ -19,7 +19,9 @@ extern "C" {
 #include <unistd.h>
 #include <time.h>
 #include <math.h>
-#include <X11/Xlib.h>
+#include <locale.h>
+#include <wctype.h>
+#include <X11/XKBlib.h>
 
 /* Globals */
 static int uinp_fd = -1;
