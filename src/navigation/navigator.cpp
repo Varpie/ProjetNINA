@@ -9,7 +9,7 @@ Navigator::Navigator(void)
     logging::verr("path expansion failed");
   }
 
-  module = PyImport_ImportModule("main");
+  module = PyImport_ImportModule("nina");
   if(module == NULL) {
     logging::verr("import failed");
     PyErr_Print();
