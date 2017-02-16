@@ -12,15 +12,29 @@ AC_PROG_MAKE_SET
 AC_PROG_RANLIB
 
 
-AC_CHECK_PROG(PIP_CHECK,pip,yes)
-if test x"$PIP_CHECK" != x"yes" ; then
-    AC_MSG_ERROR([Please install python-pip])
+AC_CHECK_PROG([PIP_CHECK],[pip],[yes])
+AC_CHECK_HEADER([X11/Xlib.h],[X11_CHECK=yes],[X11_CHECK=no])
+AC_CHECK_HEADER([python2.7/Python.h],[PYDEV_CHECK=yes],[PYDEC_CHECK=no])
+message="Missing package(s) :"
+flag=0
+if test x"$X11_CHECK" != x"yes" ; then
+  message+=" libx11-dev"
+  flag=1
 fi
-AC_CHECK_HEADER([X11/Xlib.h],[],[AC_MSG_ERROR([Please install libx11-dev])])
-AC_CHECK_HEADER([python2.7/Python.h],[],[AC_MSG_ERROR([Please install python-dev])])
+if test x"$PYDEV_CHECK" != x"yes" ; then
+  message+=" python-dev"
+  flag=1
+fi
+if test x"$PIP_CHECK" != x"yes" ; then
+  message+=" python-pip"
+  flag=1
+fi
+if test x"$flag" == x"1" ; then
+  AC_MSG_ERROR(["$message"])
+fi
 
-AC_CONFIG_COMMANDS_PRE([./scripts/python_dependencies.sh])
-AC_CONFIG_COMMANDS_PRE([./scripts/setup_python.sh])
+AC_CONFIG_COMMANDS_PRE([sudo ./scripts/python_dependencies.sh])
+AC_CONFIG_COMMANDS_PRE([sudo ./scripts/setup_python.sh])
 
 CXXFLAGS=-std=c++14
 
