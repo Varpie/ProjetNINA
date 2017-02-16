@@ -20,6 +20,10 @@ class HyperLink
   public:
     std::string text;
     std::string url;
+
+  friend bool operator==(const HyperLink &h1, const HyperLink &h2) {
+    return ((h1.text == h2.text) && (h1.url == h2.url));
+  }
 };
 
 /**

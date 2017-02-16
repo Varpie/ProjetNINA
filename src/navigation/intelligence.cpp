@@ -46,13 +46,14 @@ void Intelligence::roam()
 			logging::vout(3,"Get page's links");
 			this->navigator->select_hyperlinks_from_html(page_html, links);
 		} else {
-		logging::vout(3,"Add current url to the automatic blacklist");
+			logging::vout(3,"Add current url to the automatic blacklist");
 			this->navigator->select_hyperlinks_from_html(page_html, links, this->rubbish_links);
 			search = false;
 		}
 		if(links.size() != 0){
 			logging::vout(3,"Select link");
-			current_url = select_link(links,this->current_url).url;
+			last_link = select_link(links,this->current_url);
+			current_url = last_link.url;
 			logging::vout(3,"Navigate to the link's url");
 			navigate_res = this->navigator->navigate(this->current_url);
 		} else {
@@ -119,7 +120,7 @@ int Intelligence::current_domain_occurences()
 	logging::vout(2,"Entering Intelligence::current_domain_occurences");
 	int res = 0;
 	logging::vout(3,"Get current domain");
-	std::string domain = this->current_url.substr(0,this->current_url.find("/",9));
+	std::string dommain = this->current_url.substr(0,this->current_url.find("/",9));
 	for(auto const& url: this->history) {
 		if(url.substr(0,url.find("/",9)) == domain) {
 			res++;
@@ -171,10 +172,12 @@ HyperLink Intelligence::select_link(std::vector<HyperLink> &links,std::string ur
 		std::vector<std::tuple<int,HyperLink>> found_list;
 		for(auto const& lk: links){
 			std::string text = " "+lk.text+" ";
-			//logging::vout(1,"--LINK :" + text);
+			//logging::vout(14,"--LINK :" + text);
 			for(auto const& word: this->otherlist){
 				if(text.find(" "+std::get<1>(word)+" ") != std::string::npos){
 					res = Intelligence::test_link(link,url);
+					// logging::vout(1,"__LINK.TEXT : " + lk.text);
+					// logging::vout(1,"__LINK.URL  : " + lk.url);
 					if(res){
 						found_list.emplace_back(std::tuple<int,HyperLink> (std::get<0>(word),lk));
 						found = true;
@@ -191,13 +194,13 @@ HyperLink Intelligence::select_link(std::vector<HyperLink> &links,std::string ur
 					value = std::get<0>(l);
 					link = std::get<1>(l);
 				}
-				logging::vout(1,"--LINK  : " + std::get<1>(l).text);
-				logging::vout(1,"--LVAL  : " + std::to_string(std::get<0>(l)));
-				logging::vout(1,"--VALUE : " + std::to_string(value));
+				// logging::vout(14,"--LINK  : " + std::get<1>(l).text);
+				// logging::vout(14,"--LVAL  : " + std::to_string(std::get<0>(l)));
+				// logging::vout(14,"--VALUE : " + std::to_string(value));
 			}
 		}
 		else {
-				logging::vout(1,"--No link found");
+			logging::vout(1,"--No link found");
 		}
 	}
 	else if(dict::whitelist) {
@@ -211,15 +214,13 @@ HyperLink Intelligence::select_link(std::vector<HyperLink> &links,std::string ur
 				if(text.find(" "+wl+" ") != std::string::npos){
 					res = Intelligence::test_link(link,url);
 					if(res){
-						whitelisted = true;
 						found = true;
+						wlfound_list.push_back(lk);
 						logging::vout(3,"--Find wl : " + wl);
 						logging::vout(3,"--In text :" + text);
 					}
 				}
 			}
-			if(whitelisted)
-				wlfound_list.push_back(lk);
 		}
 		if(found){
 			link = select_random_in_vector(wlfound_list);
@@ -235,7 +236,7 @@ HyperLink Intelligence::select_link(std::vector<HyperLink> &links,std::string ur
 	    res = Intelligence::test_link(link,url);
 	  } while (!res && cpt++<50);
 		if(cpt == 50){
-			logging::vout("--No valid link");
+			logging::vout(1,"--No valid link");
 			link.url = Intelligence::search_keyword_handle();
 			link.text = "";
 		}
@@ -263,6 +264,8 @@ bool Intelligence::test_link(HyperLink &link,std::string &url)
 		logging::vout(4,"Leaving test_link");
 		return false;
 	}
+	if(link == this->last_link)
+		return false;
 	logging::vout(4,"Leaving test_link");
 	return true;
 }
@@ -329,14 +332,14 @@ std::vector<std::string> init_list(std::string path)
 	return list;
 }
 
-tuple_list init_otherlist(std::string name)
+std::vector<std::tuple<int, std::string>> init_otherlist(std::string name)
 {
 	logging::vout(2,"Entering init_otherlist");
 	std::string line;
 	int value;
 	std::string word;
 	std::ifstream file(name);
-	tuple_list list;
+	std::vector<std::tuple<int, std::string>> list;
 	if(file) {
 		while(std::getline(file, line)) {
 			value = std::stoi(line.substr(0, line.find(";")));
