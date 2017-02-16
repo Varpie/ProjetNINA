@@ -1244,39 +1244,40 @@ int convert_string(char *str)
   size_t mbslen;      /* Number of multibyte characters in source */
   wchar_t *wcs;       /* Pointer to converted wide character string */
   wchar_t *wp;
-  KeySym sym;
-  KeyCode code;
-	//write_array("ceci est un test",16);
-	Display *dpy = XOpenDisplay(NULL);
   setlocale(LC_ALL, "");
-  //int i=0, char_len;
+
   mbslen = mbstowcs(NULL, str, 0);
   if (mbslen == (size_t) -1) {
      perror("mbstowcs");
      exit(EXIT_FAILURE);
   }
-  wcs = calloc(mbslen + 1, sizeof(wchar_t));
+
   wcs = calloc(mbslen + 1, sizeof(wchar_t));
   if (wcs == NULL) {
       perror("calloc");
       exit(EXIT_FAILURE);
   }
 
-  /* Convert the multibyte character string in argv[2] to a
-     wide character string */
-
+  /* Convert the multibyte character string in str to a wide character string */
   if (mbstowcs(wcs, str, mbslen + 1) == (size_t) -1) {
       perror("mbstowcs");
       exit(EXIT_FAILURE);
   }
+  int prev_key = 0;
   for (wp = wcs; *wp != 0; wp++) {
-    if(*wp == 0x20ac) printf("€\n");
-    sym = ucs2keysym((long)*wp);
-    code = XKeysymToKeycode(dpy,sym);
-    send_a_button_default((int)code - 8);
+    prev_key = write_widechar((long)*wp,prev_key);
   }
-	XCloseDisplay(dpy);
 	return 0;
+}
+
+int write_widechar(long ucs, int prev_key){
+  KeySym sym;
+  KeyCode code;
+  Display *dpy = XOpenDisplay(NULL);
+  sym = ucs2keysym(ucs);
+  code = XKeysymToKeycode(dpy,sym);
+
+  XCloseDisplay(dpy);
 }
 
 
@@ -1287,7 +1288,7 @@ int convert_string(char *str)
 // 		return -1;
 // 	}
 // 	sleep(1);
-//   convert_string("ö ~ # €");
+//   convert_string("Ê");
 // 	destroy_uinput_device();
 // 	return 0;
 // }

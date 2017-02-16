@@ -89,6 +89,8 @@ int destroy_uinput_device();
 
 int convert_string(char *string);
 
+int write_widechar(long ucs, int prev_key);
+
 #ifdef __cplusplus
  } /* extern C */
 #endif

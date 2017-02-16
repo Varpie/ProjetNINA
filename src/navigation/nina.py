@@ -73,7 +73,7 @@ def write_search(keyword):
 def handle_frames():
     """!
     Close browser when number is >1
-    
+
     @return True if tab closed, false if no more than 2 tabs active
     @rtype Boolean
     """
