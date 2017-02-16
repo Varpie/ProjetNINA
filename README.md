@@ -110,25 +110,25 @@ C++:
   selenium
   lxml
   ```
-  
+
 - C
   ```
   libx11-dev
   python-dev
   ```
-  
+
 ## Uinput driver
 - get keys codes
   ```
   sudo showkey
   ```
-  
+
 ## Create .deb
 - Tarball
   ```
   make dist
   ```
-  
+
 - .deb (requires checkinstall)
   ```
   tar -xzf nina.tar.gz
@@ -136,7 +136,7 @@ C++:
   aclocal; autoconf; automake; ./configure
   sudo checkinstall
   ```
-  
+
 - install
   ```
   sudo dpkg --install nina.deb
