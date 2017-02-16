@@ -950,9 +950,9 @@ void send_a_button_default(int key){
 	send_a_button(key,0);
 }
 
-void send_a_button_delay(int actkey, int prevkey){
-	send_a_button_default(actkey);
-	nanosleep((const struct timespec[]){{0, (int)(1000*map[actkey][prevkey].mean)}}, NULL);
+void send_a_button_delay(int currkey, int prevkey){
+	send_a_button_default(currkey);
+	nanosleep((const struct timespec[]){{0, (int)(1000*map[currkey][prevkey].mean)}}, NULL);
 }
 
 
@@ -1273,13 +1273,62 @@ int convert_string(char *str)
 int write_widechar(long ucs, int prev_key){
   KeySym sym;
   KeyCode code;
+  int i,kcode,shift_level=0;
   Display *dpy = XOpenDisplay(NULL);
   sym = ucs2keysym(ucs);
   code = XKeysymToKeycode(dpy,sym);
-
+  for(i=0;i<=MAX_SHIFT_LEVEL;i++){
+    if(sym == XkbKeycodeToKeysym(dpy,code,0,i)){
+      shift_level =i;
+      break;
+    }
+  }
+  kcode = (int)code -8;
+  if(shift_level == 0){
+    send_key(kcode);
+  }else if(shift_level==1){
+    send_key_with_shift(kcode);
+  }else if(shift_level==2){
+    send_key_with_altgr(kcode);
+  }else{
+    send_key_with_altgr_shift(kcode);
+  }
+  key_delay(kcode,prev_key);
   XCloseDisplay(dpy);
+  return kcode;
 }
 
+void send_key_with_shift(int key){
+  press_a_button(SHIFT);
+  press_a_button(key);
+  release_a_button(key);
+  release_a_button(SHIFT);
+}
+
+void send_key_with_altgr(int key){
+  press_a_button(ALT_GR);
+  press_a_button(key);
+  release_a_button(key);
+  release_a_button(ALT_GR);
+}
+
+void send_key_with_altgr_shift(int key){
+  press_a_button(ALT_GR);
+  press_a_button(SHIFT);
+  press_a_button(key);
+  release_a_button(key);
+  release_a_button(SHIFT);
+  release_a_button(ALT_GR);
+}
+
+void send_key(int key){
+  press_a_button(key);
+  release_a_button(key);
+}
+
+void key_delay(int currkey, int prevkey){
+  nanosleep((const struct timespec[]){{0, (int)(1000*map[currkey][prevkey].mean)}}, NULL);
+}
 
 // int main() {
 // 	if (setup_uinput_device() < 0)
@@ -1288,7 +1337,8 @@ int write_widechar(long ucs, int prev_key){
 // 		return -1;
 // 	}
 // 	sleep(1);
-//   convert_string("Ê");
+//   load_map();
+//   convert_string("Test");
 // 	destroy_uinput_device();
 // 	return 0;
 // }
