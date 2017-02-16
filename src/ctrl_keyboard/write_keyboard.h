@@ -23,6 +23,10 @@ extern "C" {
 #include <wctype.h>
 #include <X11/XKBlib.h>
 
+#define MAX_SHIFT_LEVEL 3
+#define SHIFT 42
+#define ALT_GR 100
+
 /* Globals */
 static int uinp_fd = -1;
 static int box_muller_v = -1;
@@ -90,6 +94,16 @@ int destroy_uinput_device();
 int convert_string(char *string);
 
 int write_widechar(long ucs, int prev_key);
+
+void send_key_with_shift(int key);
+
+void send_key_with_altgr(int key);
+
+void send_key_with_altgr_shift(int key);
+
+void send_key(int key);
+
+void key_delay(int currkey, int prevkey);
 
 #ifdef __cplusplus
  } /* extern C */
