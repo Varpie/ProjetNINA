@@ -87,7 +87,6 @@ https://en.wikipedia.org/wiki/GNU_Free_Documentation_License
 ./collection/4F2Bx
 ../../policies/technologies/cookies/
 #Procedures_and_process
-
 company/philosophy/
 ../contact/
 ../../../contact/
@@ -100,3 +99,8 @@ company/philosophy/
 ../../../press/
 ../../../about/careers/lifeatgoogle/benefits/
 ../../../about/careers/lifeatgoogle/hiringprocess/
+https://arstechnica.com/cars/2017/02/who-bought-the-single-prius-that-was-sold-in-china-in-december/
+
+http://itunes.apple.com/app/apple-store/id962194608?pt=9008&amp;ct=landing&amp;mt=8
+http://www.lequipe.fr/Football/Actualites/Karim-benzema-real-madrid-j-ai-fait-un-grand-match/778516
+https://support.google.com/youtube
