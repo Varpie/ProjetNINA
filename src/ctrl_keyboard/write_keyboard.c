@@ -933,304 +933,302 @@ void release_a_button(int key){
 	event.value = 0;
 	write(uinp_fd, &event, sizeof(event));
 }
-void send_a_button(int key, int modifier){
-	if(modifier == 0)
-	{
-	press_a_button(key);
-	release_a_button(key);
-}else{
-	press_a_button(modifier);
-	press_a_button(key);
-	release_a_button(key);
-	release_a_button(modifier);
-}
-
-}
-void send_a_button_default(int key){
-	send_a_button(key,0);
-}
-
-void send_a_button_delay(int currkey, int prevkey){
-	send_a_button_default(currkey);
-	nanosleep((const struct timespec[]){{0, (int)(1000*map[currkey][prevkey].mean)}}, NULL);
-}
-
-
-
-
-void cvrt_char(int *a, int c){
-	if(sizeof(a)/sizeof(a[0]) > 2){
-		//printf("erreur, tableau de taille sup à 2\n");
-		return;
-	}else{
-		switch (c) {
-			case 97:
-			a[0] = 16;
-			a[1] = 0;
-			break;
-			case 98:
-			a[0] = 48;
-			a[1] = 0;
-			break;
-			case 99:
-			a[0] = 46;
-			a[1] = 0;
-			break;
-			case 100:
-			a[0] = 32;
-			a[1] = 0;
-			break;
-			case 101:
-			a[0] = 18;
-			a[1] = 0;
-			break;
-			case 102:
-			a[0] = 33;
-			a[1] = 0;
-			break;
-			case 103:
-			a[0] = 34;
-			a[1] = 0;
-			break;
-			case 104:
-			a[0] = 35;
-			a[1] = 0;
-			break;
-			case 105:
-			a[0] = 23;
-			a[1] = 0;
-			break;
-			case 106:
-			a[0] = 36;
-			a[1] = 0;
-			break;
-			case 107:
-			a[0] = 37;
-			a[1] = 0;
-			break;
-			case 108:
-			a[0] = 38;
-			a[1] = 0;
-			break;
-			case 109:
-			a[0] = 39;
-			a[1] = 0;
-			break;
-			case 110:
-			a[0] = 49;
-			a[1] = 0;
-			break;
-			case 111:
-			a[0] = 24;
-			a[1] = 0;
-			break;
-			case 112:
-			a[0] = 25;
-			a[1] = 0;
-			break;
-			case 113:
-			a[0] = 30;
-			a[1] = 0;
-			break;
-			case 114:
-			a[0] = 19;
-			a[1] = 0;
-			break;
-			case 115:
-			a[0] = 31;
-			a[1] = 0;
-			break;
-			case 116:
-			a[0] = 20;
-			a[1] = 0;
-			break;
-			case 117:
-			a[0] = 22;
-			a[1] = 0;
-			break;
-			case 118:
-			a[0] = 47;
-			a[1] = 0;
-			break;
-			case 119:
-			a[0] = 44;
-			a[1] = 0;
-			break;
-			case 120:
-			a[0] = 45;
-			a[1] = 0;
-			break;
-			case 121:
-			a[0] = 21;
-			a[1] = 0;
-			break;
-			case 122:
-			a[0] = 17;
-			a[1] = 0;
-			break;
-			case 65:
-			a[0] = 16;
-			a[1] = 42;
-			break;
-			case 66:
-			a[0] = 48;
-			a[1] = 42;
-			break;
-			case 67:
-			a[0] = 46;
-			a[1] = 42;
-			break;
-			case 68:
-			a[0] = 32;
-			a[1] = 42;
-			break;
-			case 69:
-			a[0] = 18;
-			a[1] = 42;
-			break;
-			case 70:
-			a[0] = 33;
-			a[1] = 42;
-			break;
-			case 71:
-			a[0] = 34;
-			a[1] = 42;
-			break;
-			case 72:
-			a[0] = 35;
-			a[1] = 42;
-			break;
-			case 73:
-			a[0] = 23;
-			a[1] = 42;
-			break;
-			case 74:
-			a[0] = 36;
-			a[1] = 42;
-			break;
-			case 75:
-			a[0] = 37;
-			a[1] = 42;
-			break;
-			case 76:
-			a[0] = 38;
-			a[1] = 42;
-			break;
-			case 77:
-			a[0] = 39;
-			a[1] = 42;
-			break;
-			case 78:
-			a[0] = 49;
-			a[1] = 42;
-			break;
-			case 79:
-			a[0] = 24;
-			a[1] = 42;
-			break;
-			case 80:
-			a[0] = 25;
-			a[1] = 42;
-			break;
-			case 81:
-			a[0] = 31;
-			a[1] = 42;
-			break;
-			case 82:
-			a[0] = 19;
-			a[1] = 42;
-			break;
-			case 83:
-			a[0] = 31;
-			a[1] = 42;
-			break;
-			case 84:
-			a[0] = 20;
-			a[1] = 42;
-			break;
-			case 85:
-			a[0] = 22;
-			a[1] = 42;
-			break;
-			case 86:
-			a[0] = 47;
-			a[1] = 42;
-			break;
-			case 87:
-			a[0] = 44;
-			a[1] = 42;
-			break;
-			case 88:
-			a[0] = 45;
-			a[1] = 42;
-			break;
-			case 89:
-			a[0] = 21;
-			a[1] = 42;
-			break;
-			case 90:
-			a[0] = 17;
-			a[1] = 42;
-			break;
-			default:
-				a[0] = 57;
-				a[1] =0;
-		}
-	}
-}
-
-void write_char(char c){
-	int a[2];
-	cvrt_char(a,c);
-	send_a_button(a[0],a[1]);
-}
-
-void load_random(double stat[]){
-	FILE * fp;
-  char * line = NULL;
-	char ** ptr = NULL;
-  size_t len = 0;
-  ssize_t read;
-  fp = fopen(name_conf, "r");
-  if (fp == NULL){
-		printf("No file found\n");
-	}else{
-		int i=0;
-    while ((read = getline(&line, &len, fp)) != -1) {
-			stat [i] = strtod(line,ptr);
-			i++;
-    }
-	}
-  fclose(fp);
-  if (line)
-      free(line);
-	if (ptr)
-			free (ptr);
-}
-
-double box_muller(double mean, double sig){
-	struct timespec ts;
-	double x;
-	box_muller_v = -box_muller_v;
-	clock_gettime(CLOCK_MONOTONIC,&ts);
-	srand((time_t)ts.tv_nsec);
-	double u = rand()/(double)RAND_MAX;
-	double v = rand()/(double)RAND_MAX;
-	if(box_muller_v == 1)
-		x = sqrt(-2.0*log(u))*cos(2.0*M_PI*v);
-	else
-		x = sqrt(-2.0*log(u))*sin(2.0*M_PI*v);
-	return mean+x*sig;
-}
-
-
-void write_array(char array[], int size){
-	int i;
-	for(i=0; i<=size; i++){
-			write_char(array[i-1]);
-			nanosleep((const struct timespec[]){{0, (int)(1000000)}}, NULL);
-	}
-}
+/* Deprecated functions */
+// void send_a_button(int key, int modifier){
+// 	if(modifier == 0)
+// 	{
+// 	press_a_button(key);
+// 	release_a_button(key);
+// }else{
+// 	press_a_button(modifier);
+// 	press_a_button(key);
+// 	release_a_button(key);
+// 	release_a_button(modifier);
+// }
+//
+// }
+// void send_a_button_default(int key){
+// 	send_a_button(key,0);
+// }
+//
+// void send_a_button_delay(int currkey, int prevkey){
+// 	send_a_button_default(currkey);
+// 	nanosleep((const struct timespec[]){{0, (int)(1000*map[currkey][prevkey].mean)}}, NULL);
+// }
+//
+// void cvrt_char(int *a, int c){
+// 	if(sizeof(a)/sizeof(a[0]) > 2){
+// 		//printf("erreur, tableau de taille sup à 2\n");
+// 		return;
+// 	}else{
+// 		switch (c) {
+// 			case 97:
+// 			a[0] = 16;
+// 			a[1] = 0;
+// 			break;
+// 			case 98:
+// 			a[0] = 48;
+// 			a[1] = 0;
+// 			break;
+// 			case 99:
+// 			a[0] = 46;
+// 			a[1] = 0;
+// 			break;
+// 			case 100:
+// 			a[0] = 32;
+// 			a[1] = 0;
+// 			break;
+// 			case 101:
+// 			a[0] = 18;
+// 			a[1] = 0;
+// 			break;
+// 			case 102:
+// 			a[0] = 33;
+// 			a[1] = 0;
+// 			break;
+// 			case 103:
+// 			a[0] = 34;
+// 			a[1] = 0;
+// 			break;
+// 			case 104:
+// 			a[0] = 35;
+// 			a[1] = 0;
+// 			break;
+// 			case 105:
+// 			a[0] = 23;
+// 			a[1] = 0;
+// 			break;
+// 			case 106:
+// 			a[0] = 36;
+// 			a[1] = 0;
+// 			break;
+// 			case 107:
+// 			a[0] = 37;
+// 			a[1] = 0;
+// 			break;
+// 			case 108:
+// 			a[0] = 38;
+// 			a[1] = 0;
+// 			break;
+// 			case 109:
+// 			a[0] = 39;
+// 			a[1] = 0;
+// 			break;
+// 			case 110:
+// 			a[0] = 49;
+// 			a[1] = 0;
+// 			break;
+// 			case 111:
+// 			a[0] = 24;
+// 			a[1] = 0;
+// 			break;
+// 			case 112:
+// 			a[0] = 25;
+// 			a[1] = 0;
+// 			break;
+// 			case 113:
+// 			a[0] = 30;
+// 			a[1] = 0;
+// 			break;
+// 			case 114:
+// 			a[0] = 19;
+// 			a[1] = 0;
+// 			break;
+// 			case 115:
+// 			a[0] = 31;
+// 			a[1] = 0;
+// 			break;
+// 			case 116:
+// 			a[0] = 20;
+// 			a[1] = 0;
+// 			break;
+// 			case 117:
+// 			a[0] = 22;
+// 			a[1] = 0;
+// 			break;
+// 			case 118:
+// 			a[0] = 47;
+// 			a[1] = 0;
+// 			break;
+// 			case 119:
+// 			a[0] = 44;
+// 			a[1] = 0;
+// 			break;
+// 			case 120:
+// 			a[0] = 45;
+// 			a[1] = 0;
+// 			break;
+// 			case 121:
+// 			a[0] = 21;
+// 			a[1] = 0;
+// 			break;
+// 			case 122:
+// 			a[0] = 17;
+// 			a[1] = 0;
+// 			break;
+// 			case 65:
+// 			a[0] = 16;
+// 			a[1] = 42;
+// 			break;
+// 			case 66:
+// 			a[0] = 48;
+// 			a[1] = 42;
+// 			break;
+// 			case 67:
+// 			a[0] = 46;
+// 			a[1] = 42;
+// 			break;
+// 			case 68:
+// 			a[0] = 32;
+// 			a[1] = 42;
+// 			break;
+// 			case 69:
+// 			a[0] = 18;
+// 			a[1] = 42;
+// 			break;
+// 			case 70:
+// 			a[0] = 33;
+// 			a[1] = 42;
+// 			break;
+// 			case 71:
+// 			a[0] = 34;
+// 			a[1] = 42;
+// 			break;
+// 			case 72:
+// 			a[0] = 35;
+// 			a[1] = 42;
+// 			break;
+// 			case 73:
+// 			a[0] = 23;
+// 			a[1] = 42;
+// 			break;
+// 			case 74:
+// 			a[0] = 36;
+// 			a[1] = 42;
+// 			break;
+// 			case 75:
+// 			a[0] = 37;
+// 			a[1] = 42;
+// 			break;
+// 			case 76:
+// 			a[0] = 38;
+// 			a[1] = 42;
+// 			break;
+// 			case 77:
+// 			a[0] = 39;
+// 			a[1] = 42;
+// 			break;
+// 			case 78:
+// 			a[0] = 49;
+// 			a[1] = 42;
+// 			break;
+// 			case 79:
+// 			a[0] = 24;
+// 			a[1] = 42;
+// 			break;
+// 			case 80:
+// 			a[0] = 25;
+// 			a[1] = 42;
+// 			break;
+// 			case 81:
+// 			a[0] = 31;
+// 			a[1] = 42;
+// 			break;
+// 			case 82:
+// 			a[0] = 19;
+// 			a[1] = 42;
+// 			break;
+// 			case 83:
+// 			a[0] = 31;
+// 			a[1] = 42;
+// 			break;
+// 			case 84:
+// 			a[0] = 20;
+// 			a[1] = 42;
+// 			break;
+// 			case 85:
+// 			a[0] = 22;
+// 			a[1] = 42;
+// 			break;
+// 			case 86:
+// 			a[0] = 47;
+// 			a[1] = 42;
+// 			break;
+// 			case 87:
+// 			a[0] = 44;
+// 			a[1] = 42;
+// 			break;
+// 			case 88:
+// 			a[0] = 45;
+// 			a[1] = 42;
+// 			break;
+// 			case 89:
+// 			a[0] = 21;
+// 			a[1] = 42;
+// 			break;
+// 			case 90:
+// 			a[0] = 17;
+// 			a[1] = 42;
+// 			break;
+// 			default:
+// 				a[0] = 57;
+// 				a[1] =0;
+// 		}
+// 	}
+// }
+//
+// void write_char(char c){
+// 	int a[2];
+// 	cvrt_char(a,c);
+// 	send_a_button(a[0],a[1]);
+// }
+//
+// void load_random(double stat[]){
+// 	FILE * fp;
+//   char * line = NULL;
+// 	char ** ptr = NULL;
+//   size_t len = 0;
+//   ssize_t read;
+//   fp = fopen(name_conf, "r");
+//   if (fp == NULL){
+// 		printf("No file found\n");
+// 	}else{
+// 		int i=0;
+//     while ((read = getline(&line, &len, fp)) != -1) {
+// 			stat [i] = strtod(line,ptr);
+// 			i++;
+//     }
+// 	}
+//   fclose(fp);
+//   if (line)
+//       free(line);
+// 	if (ptr)
+// 			free (ptr);
+// }
+//
+// double box_muller(double mean, double sig){
+// 	struct timespec ts;
+// 	double x;
+// 	box_muller_v = -box_muller_v;
+// 	clock_gettime(CLOCK_MONOTONIC,&ts);
+// 	srand((time_t)ts.tv_nsec);
+// 	double u = rand()/(double)RAND_MAX;
+// 	double v = rand()/(double)RAND_MAX;
+// 	if(box_muller_v == 1)
+// 		x = sqrt(-2.0*log(u))*cos(2.0*M_PI*v);
+// 	else
+// 		x = sqrt(-2.0*log(u))*sin(2.0*M_PI*v);
+// 	return mean+x*sig;
+// }
+//
+//
+// void write_array(char array[], int size){
+// 	int i;
+// 	for(i=0; i<=size; i++){
+// 			write_char(array[i-1]);
+// 			nanosleep((const struct timespec[]){{0, (int)(1000000)}}, NULL);
+// 	}
+// }
 
 int destroy_uinput_device(){
 	/* Destroy the input device */
@@ -1239,7 +1237,7 @@ int destroy_uinput_device(){
 	return close(uinp_fd);
 }
 
-int convert_string(char *str)
+int write_string(char *str)
 {
   size_t mbslen;      /* Number of multibyte characters in source */
   wchar_t *wcs;       /* Pointer to converted wide character string */
@@ -1270,13 +1268,18 @@ int convert_string(char *str)
 	return 0;
 }
 
-int write_widechar(long ucs, int prev_key){
+int write_widechar(long ucs,int prev_key){
+  setlocale(LC_ALL, "ru_RU.utf8");
+  //setlocale(LC_ALL, "fr_FR.utf8");
   KeySym sym;
   KeyCode code;
   int i,kcode,shift_level=0;
   Display *dpy = XOpenDisplay(NULL);
   sym = ucs2keysym(ucs);
   code = XKeysymToKeycode(dpy,sym);
+  /* Testing if the code doesn't exist on our keyboard */
+  if(code == 0)
+    return 0;
   for(i=0;i<=MAX_SHIFT_LEVEL;i++){
     if(sym == XkbKeycodeToKeysym(dpy,code,0,i)){
       shift_level =i;
@@ -1284,6 +1287,7 @@ int write_widechar(long ucs, int prev_key){
     }
   }
   kcode = (int)code -8;
+  key_delay(kcode,prev_key);
   if(shift_level == 0){
     send_key(kcode);
   }else if(shift_level==1){
@@ -1293,7 +1297,6 @@ int write_widechar(long ucs, int prev_key){
   }else{
     send_key_with_altgr_shift(kcode);
   }
-  key_delay(kcode,prev_key);
   XCloseDisplay(dpy);
   return kcode;
 }
@@ -1336,9 +1339,8 @@ void key_delay(int currkey, int prevkey){
 // 		printf("Unable to find uinput device\n");
 // 		return -1;
 // 	}
-// 	sleep(1);
 //   load_map();
-//   convert_string("Test");
+//   write_string("lol €");
 // 	destroy_uinput_device();
 // 	return 0;
 // }

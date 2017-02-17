@@ -1,5 +1,7 @@
 #include "timed_keystrokes.h"
-act_mean map[size_map][size_map];
+
+act_mean map[SIZE_MAP][SIZE_MAP];
+
 void writeConfFile(double m, double sig) {
         FILE *f = fopen("conf", "w+");
         fprintf(f, "%f\n", m);
@@ -77,8 +79,8 @@ void keystroke_time(int timer) {
 void create_mapconf(){
         int i,j;
         FILE *f = fopen("conf", "w+");
-        for(i=0;i<size_map;i++){
-            for(j=0;j<size_map;j++){
+        for(i=0;i<SIZE_MAP;i++){
+            for(j=0;j<SIZE_MAP;j++){
                 fprintf(f, "%d;%d;%f;%d\n", i,j,base_time,base_n);
             }
         }
@@ -88,8 +90,8 @@ void create_mapconf(){
 void update_mapconf(){
   int i,j;
   FILE *f = fopen("conf", "w+");
-  for(i=0;i<size_map;i++){
-      for(j=0;j<size_map;j++){
+  for(i=0;i<SIZE_MAP;i++){
+      for(j=0;j<SIZE_MAP;j++){
           fprintf(f, "%d;%d;%f;%d\n", i,j,map[i][j].mean,map[i][j].n);
       }
   }
