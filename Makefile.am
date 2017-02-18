@@ -35,5 +35,5 @@ EXTRA_DIST = \
   debian/postinst \
   debian/rules
 
-AM_LDFLAGS=-lpython2.7 -lX11 -lpthread -o2
+AM_LDFLAGS=-lpython2.7 -lX11 -lpthread
 dist_man1_MANS = doc/nina.1
