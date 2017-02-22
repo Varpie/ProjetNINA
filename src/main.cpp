@@ -16,9 +16,9 @@ std::string lang = "en";
 std::string layout = "en";
 std::string browser = "firefox";
 //std::string url = "http://www.google.com";
-std::string url = "http://arstechnica.com/";
+//std::string url = "http://arstechnica.com/";
 //std::string url = "http://fnac.com/";
-//std::string url = "http://www.wikipedia.org/wiki/Special:Random";
+std::string url = "http://www.wikipedia.org/wiki/Special:Random";
 std::atomic<bool> threading::running(true);
 
 
@@ -39,7 +39,7 @@ void daemonize()
         exit(EXIT_FAILURE);
 
     /* Success: Let the parent terminate */
-    if (pid > 0)
+    if (pid > 0)//queue
         exit(EXIT_SUCCESS);
 
     /* On success: The child process becomes session leader */
@@ -207,7 +207,7 @@ bool parse_arguments(int argc, char **argv)
 				ask_keystrokes();
 				std::string word = "cool un Test";
 				double r[2];
-				write_array(const_cast<char*>(word.c_str()),word.length());
+				write_string(const_cast<char*>(word.c_str()));
 				flag = false;
 				break;
 			}

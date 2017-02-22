@@ -65,9 +65,9 @@ def write_search(keyword):
     # inputElement = driver.find_element_by_name("q")
     # inputElement.click();
     # TODO : Choose between google search or taburl search
-    uinput_wrapping_module.send_a_button_default_func(64)
-    uinput_wrapping_module.write_array_func(keyword)
-    uinput_wrapping_module.send_a_button_default_func(28)
+    uinput_wrapping_module.send_key_func(64)
+    uinput_wrapping_module.write_string_func(keyword)
+    uinput_wrapping_module.send_key_func(28)
     time.sleep(3.5)
     return driver.current_url
 
@@ -79,7 +79,7 @@ def handle_frames():
     @rtype Boolean
     """
     if(len(driver.window_handles) > 1):
-        uinput_wrapping_module.send_a_button_func(44,29);
+        uinput_wrapping_module.send_key_with_ctrl_func(44,29);
         #print "=py=== Tab closed ! ===py="
         return True
     else:

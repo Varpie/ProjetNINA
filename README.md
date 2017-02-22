@@ -135,6 +135,7 @@ C++:
   cd nina
   aclocal; autoconf; automake; ./configure
   sudo checkinstall
+  https://wiki.debian.org/Packaging/Intro
   ```
 
 - install

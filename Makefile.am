@@ -29,11 +29,7 @@ EXTRA_DIST = \
   src/ctrl_keyboard/uinput_wrapping_module.c \
   src/ctrl_keyboard/setup.py \
   scripts/setup_python.sh \
-  src/navigation/nina.py \
-  debian/control \
-  debian/copyright \
-  debian/postinst \
-  debian/rules
+  src/navigation/nina.py
 
 AM_LDFLAGS=-lpython2.7 -lX11 -lpthread
 dist_man1_MANS = doc/nina.1

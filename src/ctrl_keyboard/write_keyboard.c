@@ -1308,6 +1308,14 @@ void send_key_with_shift(int key){
   release_a_button(SHIFT);
 }
 
+void send_key_with_ctrl(int key){
+  press_a_button(CTRL_KEY);
+  press_a_button(key);
+  release_a_button(key);
+  release_a_button(CTRL_KEY);
+}
+
+
 void send_key_with_altgr(int key){
   press_a_button(ALT_GR);
   press_a_button(key);
