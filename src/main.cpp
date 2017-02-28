@@ -78,7 +78,7 @@ void stopping_detection()
 	}
 
 	while(read(fd, &ie, sizeof(struct input_event)) && threading::running) {
-		if (ie.type == EV_ABS) {
+		//if (ie.type == EV_ABS) {
 			XQueryPointer(dpy,DefaultRootWindow(dpy),&root,&child,
 					&rootX,&rootY,&winX,&winY,&mask);
 			if(pos == 1 && rootX == 0 && rootY == 0) {
@@ -94,13 +94,14 @@ void stopping_detection()
 				logging::vout(2,"Bottom right corner");
 				threading::running = false;
 			}
-		}
+		 //}
 	}
 }
 
 void timeout(long timer)
 {
 	std::this_thread::sleep_for(std::chrono::seconds(timer));
+	logging::vout(2, "Program finished by timeout");
 	threading::running = false;
 }
 
@@ -255,15 +256,18 @@ int main(int argc, char **argv)
 	signal(SIGQUIT, handle_sigquit);
 	Intelligence intel(url);
 	// Creating thread to detect mouse and stop program
-	std::thread t1(stopping_detection);
+	std::thread mouse_thread(stopping_detection);
+	mouse_thread.detach();
+	
 	// Creating thread calling intel.roam()
-	std::thread t2(&Intelligence::roam, &intel);
+	std::thread main_thread(&Intelligence::roam, &intel);
 
-	std::thread t3(timeout,timer);
+	if(timer) {
+		std::thread timeout_thread(timeout,timer);
+		timeout_thread.detach();
+	}
 
-	t1.join();
-	t2.join();
-	t3.join();
+	main_thread.join();
 	logging::vout("Program finished");
 	return 0;
 }

@@ -19,9 +19,10 @@
 #include <linux/input.h>
 #include <fcntl.h>
 #include <X11/Xlib.h>
+#include <signal.h>
 #include <thread>
 #include <atomic>
-#define MOUSEFILE "/dev/input/event7"
+#define MOUSEFILE "/dev/input/mice"
 
 void print_help();
 void parse_config();
