@@ -1247,19 +1247,19 @@ int write_string(char *str)
   mbslen = mbstowcs(NULL, str, 0);
   if (mbslen == (size_t) -1) {
      perror("mbstowcs");
-     exit(EXIT_FAILURE);
+     return -1;
   }
 
   wcs = calloc(mbslen + 1, sizeof(wchar_t));
   if (wcs == NULL) {
       perror("calloc");
-      exit(EXIT_FAILURE);
+      return -1;
   }
 
   /* Convert the multibyte character string in str to a wide character string */
   if (mbstowcs(wcs, str, mbslen + 1) == (size_t) -1) {
       perror("mbstowcs");
-      exit(EXIT_FAILURE);
+      return -1;
   }
   int prev_key = 0;
   for (wp = wcs; *wp != 0; wp++) {
@@ -1308,6 +1308,14 @@ void send_key_with_shift(int key){
   release_a_button(SHIFT);
 }
 
+void send_key_with_ctrl(int key){
+  press_a_button(CTRL_KEY);
+  press_a_button(key);
+  release_a_button(key);
+  release_a_button(CTRL_KEY);
+}
+
+
 void send_key_with_altgr(int key){
   press_a_button(ALT_GR);
   press_a_button(key);
@@ -1341,6 +1349,6 @@ void key_delay(int currkey, int prevkey){
 // 	}
 //   load_map();
 //   write_string("lol €");
-// 	destroy_uinput_device();
+// 	destroy_uinput_device();sw
 // 	return 0;
 // }

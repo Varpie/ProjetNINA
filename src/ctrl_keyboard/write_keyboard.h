@@ -26,6 +26,7 @@ extern "C" {
 #define MAX_SHIFT_LEVEL 3
 #define SHIFT 42
 #define ALT_GR 100
+#define CTRL_KEY 29
 
 /* Globals */
 static int uinp_fd = -1;

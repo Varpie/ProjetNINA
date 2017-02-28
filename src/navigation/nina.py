@@ -1,3 +1,4 @@
+#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 from selenium import webdriver
 import uinput_wrapping_module
@@ -64,9 +65,9 @@ def write_search(keyword):
     # inputElement = driver.find_element_by_name("q")
     # inputElement.click();
     # TODO : Choose between google search or taburl search
-    uinput_wrapping_module.send_a_button_default_func(64)
-    uinput_wrapping_module.write_array_func(keyword)
-    uinput_wrapping_module.send_a_button_default_func(28)
+    uinput_wrapping_module.send_key_func(64)
+    uinput_wrapping_module.write_string_func(keyword)
+    uinput_wrapping_module.send_key_func(28)
     time.sleep(3.5)
     return driver.current_url
 
@@ -78,8 +79,8 @@ def handle_frames():
     @rtype Boolean
     """
     if(len(driver.window_handles) > 1):
-        uinput_wrapping_module.send_a_button_func(44,29);
-        print "=py=== Tab closed ! ===py="
+        uinput_wrapping_module.send_key_with_ctrl_func(44,29);
+        #print "=py=== Tab closed ! ===py="
         return True
     else:
         return False
@@ -119,8 +120,6 @@ def nav(var_url):
     OR returns failed if url wasn't valid
     @rtype string
     """
-    #print("entered") #debug
-    #print("entree : "+var_url) #debug
     # wait at least 0.5s
     driver.implicitly_wait(0.5)
     # current url, and domain
@@ -139,11 +138,11 @@ def nav(var_url):
     elif var_url.find('#'):
         try:
             # Execute javascript, and avoir driver to wait for DOM readyState event
-            #print "sortie, js : "+var_url #debug
             driver.execute_script("document.body.querySelector('a[href=\""+var_url+"\"]').click()");
             return driver.current_url
         except Exception, e:
-            print e
+            pass
+            # print e
     # absolute url
     if(var_url[:4] == "http"):
         css_selector = "a[href*='"+var_url+"']"
@@ -152,19 +151,15 @@ def nav(var_url):
             element = driver.find_element_by_css_selector(css_selector)
             if(element.is_displayed()):
             # if findable and displayed we click on it
-                #print "sortie : clicked http"
                 element.click()
             else:
-                #print("sortie, get 2 : "+var_url) #debug
                 driver.get(var_url)
         # if not we get it
         except:
-            #print "sortie, get 3 : "+var_url #debug
             driver.get(var_url)
     # invalid url
     else:
         # we return failed to get another rand from C++
-        #print "sortie failed" #debug
         return "failed"
     #we return current url to keep navigate
     return driver.current_url
