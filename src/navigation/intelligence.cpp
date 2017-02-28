@@ -36,10 +36,6 @@ void Intelligence::roam()
 		if (countdown::links) {
 			logging::vout("Links countdown : " + std::to_string(countdown::number-x));
 		}
-		if(countdown::timeout) {
-			logging::vout("Time countdown : " + std::to_string(countdown::time));
-		}
-		time(&begin);
 		logging::vout(3,"Get page's html");
 		page_html = this->navigator->get_body_html();
 		if(!search) {
@@ -52,8 +48,7 @@ void Intelligence::roam()
 		}
 		if(links.size() != 0){
 			logging::vout(3,"Select link");
-			last_link = select_link(links,this->current_url);
-			current_url = last_link.url;
+			current_url = select_link(links,this->current_url).url;
 			logging::vout(3,"Navigate to the link's url");
 			navigate_res = this->navigator->navigate(this->current_url);
 		} else {
@@ -69,13 +64,13 @@ void Intelligence::roam()
 		} else {
 			this->current_url = navigate_res;
 		}
-		time(&end);
-		countdown::time -= (long)difftime(end,begin);
-		timer = (countdown::timeout && (countdown::time <= 0));
 		overflow = (countdown::links && (x++ >= countdown::number));
 		logging::vout(3,"Add current url to the history");
 		append_vector(this->history,this->current_url,HISTORY_MAX);
-	} while( !( timer || overflow || !threading::running ));
+	} while( !(overflow || !threading::running ));
+	if (countdown::links) {
+		logging::vout("Links countdown : " + std::to_string(countdown::number-x));
+	}
 	logging::vout(2,"Leaving Intelligence::roam");
 	threading::running = false;
 }
@@ -120,7 +115,7 @@ int Intelligence::current_domain_occurences()
 	logging::vout(2,"Entering Intelligence::current_domain_occurences");
 	int res = 0;
 	logging::vout(3,"Get current domain");
-	std::string dommain = this->current_url.substr(0,this->current_url.find("/",9));
+	std::string domain = this->current_url.substr(0,this->current_url.find("/",9));
 	for(auto const& url: this->history) {
 		if(url.substr(0,url.find("/",9)) == domain) {
 			res++;
@@ -264,8 +259,6 @@ bool Intelligence::test_link(HyperLink &link,std::string &url)
 		logging::vout(4,"Leaving test_link");
 		return false;
 	}
-	if(link == this->last_link)
-		return false;
 	logging::vout(4,"Leaving test_link");
 	return true;
 }

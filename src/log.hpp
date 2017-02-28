@@ -31,8 +31,6 @@ namespace dict {
 }
 
 namespace countdown {
-    extern bool timeout;
-    extern long time;
     extern bool links;
     extern long number;
 }

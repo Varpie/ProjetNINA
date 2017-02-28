@@ -8,8 +8,7 @@ bool dict::blacklist = false;
 std::string dict::blackfile;
 bool dict::other = false;
 std::string dict::otherfile;
-bool countdown::timeout = false;
-long countdown::time;
+long timer;
 bool countdown::links = false;
 long countdown::number;
 std::string lang = "en";
@@ -48,7 +47,8 @@ void daemonize()
 	logging::vout("succeded");
 }
 
-void stop_daemon() {
+void stop_daemon()
+{
 	std::ofstream file("/proc/nina");
 	if (!file.is_open())
 	    throw std::runtime_error("Could not open the file");
@@ -56,7 +56,8 @@ void stop_daemon() {
 	file.close();
 }
 
-void stopping_detection() {
+void stopping_detection()
+{
 	int fd;
 	char pos = 0;
 	struct input_event ie;
@@ -95,6 +96,12 @@ void stopping_detection() {
 			}
 		}
 	}
+}
+
+void timeout(long timer)
+{
+	std::this_thread::sleep_for(std::chrono::seconds(timer));
+	threading::running = false;
 }
 
 void parse_config()
@@ -159,15 +166,14 @@ bool parse_arguments(int argc, char **argv)
 				if(long_options[option_index].name == "config"){
 					flag = false;
 					system("vim config.conf");
-				}
-				else if(long_options[option_index].name == "language"){
+				} else if(long_options[option_index].name == "language"){
 					lang = optarg;
-				}else if(long_options[option_index].name == "url"){
+				} else if(long_options[option_index].name == "url"){
 					url = optarg;
-				}else if(long_options[option_index].name == "timedkey"){
+				} else if(long_options[option_index].name == "timedkey"){
 					ask_keystrokes();
 					flag = false;
-				}else if(long_options[option_index].name == "verbose"){
+				} else if(long_options[option_index].name == "verbose"){
 					logging::verbose = std::stoi(optarg);
 					logging::vout("Verbose is active");
 				} else if(long_options[option_index].name == "whitelist"){
@@ -188,11 +194,10 @@ bool parse_arguments(int argc, char **argv)
 				} else if(long_options[option_index].name == "stop") {
 					stop_daemon();
 					flag = false;
-				}else if(long_options[option_index].name == "timeout"){
+				} else if(long_options[option_index].name == "timeout"){
 					logging::vout("Using time countdown");
-					countdown::timeout = true;
-					countdown::time = std::stod(optarg);
-				}else if(long_options[option_index].name == "links"){
+					timer = std::stod(optarg);
+				} else if(long_options[option_index].name == "links"){
 					logging::vout("Using links countdown");
 					countdown::links = true;
 					countdown::number = std::stod(optarg);
@@ -254,8 +259,11 @@ int main(int argc, char **argv)
 	// Creating thread calling intel.roam()
 	std::thread t2(&Intelligence::roam, &intel);
 
+	std::thread t3(timeout,timer);
+
 	t1.join();
 	t2.join();
+	t3.join();
 	logging::vout("Program finished");
 	return 0;
 }
