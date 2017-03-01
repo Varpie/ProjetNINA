@@ -259,6 +259,10 @@ bool parse_arguments(int argc, char **argv)
 
 int main(int argc, char **argv)
 {
+	if(getuid()) {
+		std::cout << "This program should be run with sudo" << std::endl;
+		return 0;
+	}
 	parse_config();
 	if(!parse_arguments(argc, argv)){
 		return 0;
