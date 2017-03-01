@@ -22,7 +22,21 @@ std::atomic<bool> threading::running(true);
 
 void print_help()
 {
-	printf("Yet to be done\n");
+	std::cout
+	<< "Usage : nina [options]" << std::endl << std::endl
+	<< "   -h, --help        " << "Afficher l'aide" << std::endl
+	<< "       --config      " << "Afficher et modifier le fichier de configuration" << std::endl
+	<< "       --url URL     " << "Démarrer depuis URL" << std::endl
+	<< "   -k, --timedkey    " << "Je ne sais pas :/" << std::endl
+	<< "       --verbose X   " << "Lance l'application avec une verbose de niveau X" << std::endl
+	<< "       --whitelist   " << "Démarrer l'application avec la whitelist" << std::endl
+	<< "       --blacklist   " << "Démarrer l'application avec la whitelist" << std::endl
+	<< "       --otherlist   " << "Démarrer l'application avec la liste personnelle" << std::endl
+	<< "   -d, --daemonize   " << "Détache l'application du terminal" << std::endl
+	<< "   -s, --stop        " << "Stoppe l'execution de l'application" << std::endl
+	<< "       --timeout X   " << "Arrête l'application après X secondes d'execution" << std::endl
+	<< "       --links X     " << "Arrête l'application après X liens parcourus" << std::endl
+	<< std::endl;
 }
 
 void daemonize()
@@ -71,8 +85,6 @@ void stopping_detection()
 	dispY = DefaultScreenOfDisplay(dpy)->height;
 	dispX = DefaultScreenOfDisplay(dpy)->width;
 
-	std::cout << MOUSEFILE << std::endl;
-
 	if((fd = open(MOUSEFILE.c_str(), O_RDONLY)) == -1) {
 		perror("opening device");
 		exit(EXIT_FAILURE);
@@ -104,7 +116,8 @@ void timeout(long timer)
 	threading::running = false;
 }
 
-void handle_sigquit(int signum) {
+void handle_sigquit(int signum)
+{
 	threading::running = false;
 }
 
@@ -123,14 +136,7 @@ void parse_config()
 			std::string var = line.substr(0, line.find("="));
 			std::string value = line.substr(var.length()+1);
 
-			 if(var == "lang") {
-			 	/* Getting value */
-				lang = value;
-			} else if(var == "layout") {
-				layout = value;
-			} else if(var == "browser") {
-				browser = value;
-			} else if(var == "device") {
+			if(var == "device") {
 				MOUSEFILE = value;
 			} else {
 			 	std::cout << "Mistake on line " << i << ": " << line << std::endl;
@@ -149,7 +155,6 @@ bool parse_arguments(int argc, char **argv)
 			/* name, has_arg, flag, val */
 			{"help", no_argument, 0, 'h'},
 			{"config", no_argument, 0, 0},
-			{"language", required_argument, 0, 0},
 			{"url", required_argument, 0, 0},
 			{"timedkey", no_argument,0,'k'},
 			{"verbose", required_argument, 0, 0},
@@ -176,8 +181,6 @@ bool parse_arguments(int argc, char **argv)
 				} else if(long_options[option_index].name == "config"){
 					flag = false;
 					system("vim config.conf");
-				} else if(long_options[option_index].name == "language"){
-					lang = optarg;
 				} else if(long_options[option_index].name == "url"){
 					url = optarg;
 				} else if(long_options[option_index].name == "timedkey"){
