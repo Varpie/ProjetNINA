@@ -2,9 +2,9 @@
 
 Navigator::Navigator(void)
 {
-  logging::vout("Creating Navigator object");
+  logging::vout(1,"Creating Navigator object");
   Py_Initialize();
-  logging::vout("Python initialized");
+  logging::vout(1,"Python initialized");
   /* not necessary since we moved nina.py to /usr/local/lib/python2.7/dist-packages/ /
   /*if(PyRun_SimpleString("import sys;sys.path.insert(0, './src/navigation/')")) {
     logging::verr("path expansion failed");
@@ -18,10 +18,10 @@ Navigator::Navigator(void)
 
 Navigator::~Navigator(void)
 {
-  logging::vout("Destroying Navigator object");
+  logging::vout(1,"Destroying Navigator object");
   end_python();
   Py_Finalize();
-  logging::vout("Python context finalized");
+  logging::vout(1,"Python context finalized");
 }
 
 void Navigator::call_python_function_void_nargs(std::string function)
@@ -212,7 +212,7 @@ bool Navigator::parse_tag_a(HyperLink &lk,std::string &tag_a) {
     }
     return true;
   } catch (const std::out_of_range &e) {
-    logging::vout("Error : " + (std::string)e.what());
+    logging::vout(1,"Error : " + (std::string)e.what());
     return false;
   }
   logging::vout(4,"Leaving Navigator::parse_tag_a");

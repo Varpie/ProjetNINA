@@ -20,7 +20,6 @@ std::string browser = "firefox";
 std::string url = "http://www.wikipedia.org/wiki/Special:Random";
 std::atomic<bool> threading::running(true);
 
-
 void print_help()
 {
 	printf("Yet to be done\n");
@@ -32,7 +31,7 @@ void daemonize()
 
     /* Fork off the parent process */
     pid = fork();
-	logging::vout("forked");
+	logging::vout(1,"forked");
     /* An error occurred */
     if (pid < 0)
         exit(EXIT_FAILURE);
@@ -44,7 +43,7 @@ void daemonize()
     /* On success: The child process becomes session leader */
     if (setsid() < 0)
         exit(EXIT_FAILURE);
-	logging::vout("succeded");
+	logging::vout(1,"succeded");
 }
 
 void stop_daemon()
@@ -105,6 +104,10 @@ void timeout(long timer)
 	threading::running = false;
 }
 
+void handle_sigquit(int signum) {
+	threading::running = false;
+}
+
 void parse_config()
 {
 	std::string config_path = "/home/" + std:string(getenv("SUDO_USER")) + "/.config/nina.conf";
@@ -139,7 +142,7 @@ void parse_config()
 bool parse_arguments(int argc, char **argv)
 {
 	int character;
-	while(1) {
+	while(flag) {
 		int option_index = 0;
 		/* Listing options */
 		static struct option long_options[] = {
@@ -167,7 +170,10 @@ bool parse_arguments(int argc, char **argv)
 		}
 		switch (character) {
 			case 0:
-				if(long_options[option_index].name == "config"){
+				if(long_options[option_index].name == "help"){
+					flag = false;
+					print_help();
+				} else if(long_options[option_index].name == "config"){
 					flag = false;
 					system("vim config.conf");
 				} else if(long_options[option_index].name == "language"){
@@ -179,37 +185,43 @@ bool parse_arguments(int argc, char **argv)
 					flag = false;
 				} else if(long_options[option_index].name == "verbose"){
 					logging::verbose = std::stoi(optarg);
-					logging::vout("Verbose is active");
+					if(logging::verbose > 0){
+						logging::vout("Verbose is active.");
+						logging::vout(" Level : " + std::to_string(logging::verbose));
+					} else {
+						logging::vout("Select a correct verbose level.");
+						flag = false;
+					}
 				} else if(long_options[option_index].name == "whitelist"){
-					logging::vout("Using whitelist");
+					logging::vout(1,"Using whitelist");
 					dict::whitelist = true;
 					dict::whitefile = "./config/dictionaries/whitelist.txt";
 				} else if(long_options[option_index].name == "blacklist"){
-					logging::vout("Using blacklist");
+					logging::vout(1,"Using blacklist");
 					dict::blacklist = true;
 					dict::blackfile = "./config/dictionaries/blacklist.txt";
 				} else if(long_options[option_index].name == "otherlist"){
-					logging::vout("Using otherlist");
+					logging::vout(1,"Using otherlist");
 					dict::other = true;
 					dict::otherfile = "./config/dictionaries/otherlist.txt";
 				} else if(long_options[option_index].name == "daemonize") {
 					daemonize();
-					logging::vout("Process daemonized");
+					logging::vout(1,"Process daemonized");
 				} else if(long_options[option_index].name == "stop") {
 					stop_daemon();
 					flag = false;
 				} else if(long_options[option_index].name == "timeout"){
-					logging::vout("Using time countdown");
+					logging::vout(1,"Using time countdown");
 					timer = std::stod(optarg);
 				} else if(long_options[option_index].name == "links"){
-					logging::vout("Using links countdown");
+					logging::vout(1,"Using links countdown");
 					countdown::links = true;
 					countdown::number = std::stod(optarg);
 				}
 				break;
 			case 'h':
-				print_help();
 				flag = false;
+				print_help();
 				break;
 			case 'k':
 			{
@@ -247,21 +259,18 @@ bool parse_arguments(int argc, char **argv)
 	return flag;
 }
 
-void handle_sigquit(int signum) {
-	threading::running = false;
-}
-
 int main(int argc, char **argv)
 {
 	parse_config();
-	if(!parse_arguments(argc, argv))
+	if(!parse_arguments(argc, argv)){
 		return 0;
+	}
 	signal(SIGQUIT, handle_sigquit);
 	Intelligence intel(url);
 	// Creating thread to detect mouse and stop program
 	std::thread mouse_thread(stopping_detection);
 	mouse_thread.detach();
-	
+
 	// Creating thread calling intel.roam()
 	std::thread main_thread(&Intelligence::roam, &intel);
 
@@ -271,6 +280,6 @@ int main(int argc, char **argv)
 	}
 
 	main_thread.join();
-	logging::vout("Program finished");
+	logging::vout(1,"Program finished");
 	return 0;
 }
