@@ -22,7 +22,8 @@
 #include <signal.h>
 #include <thread>
 #include <atomic>
-#define MOUSEFILE "/dev/input/mice"
+
+std::string MOUSEFILE = "/dev/input/mice";
 
 void print_help();
 void parse_config();

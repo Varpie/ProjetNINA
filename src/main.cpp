@@ -72,13 +72,14 @@ void stopping_detection()
 	dispY = DefaultScreenOfDisplay(dpy)->height;
 	dispX = DefaultScreenOfDisplay(dpy)->width;
 
-	if((fd = open(MOUSEFILE, O_RDONLY)) == -1) {
+	std::cout << MOUSEFILE << std::endl;
+
+	if((fd = open(MOUSEFILE.c_str(), O_RDONLY)) == -1) {
 		perror("opening device");
 		exit(EXIT_FAILURE);
 	}
 
 	while(read(fd, &ie, sizeof(struct input_event)) && threading::running) {
-		//if (ie.type == EV_ABS) {
 			XQueryPointer(dpy,DefaultRootWindow(dpy),&root,&child,
 					&rootX,&rootY,&winX,&winY,&mask);
 			if(pos == 1 && rootX == 0 && rootY == 0) {
@@ -94,7 +95,6 @@ void stopping_detection()
 				logging::vout(2,"Bottom right corner");
 				threading::running = false;
 			}
-		 //}
 	}
 }
 
@@ -107,7 +107,8 @@ void timeout(long timer)
 
 void parse_config()
 {
-	std::ifstream configFile("config.conf");
+	std::string config_path = "/home/" + std:string(getenv("SUDO_USER")) + "/.config/nina.conf";
+	std::ifstream configFile(config_path);
 	std::string line = "";
 	int i = 0;
 	/* Reading file line by line */
@@ -126,6 +127,8 @@ void parse_config()
 				layout = value;
 			} else if(var == "browser") {
 				browser = value;
+			} else if(var == "device") {
+				MOUSEFILE = value;
 			} else {
 			 	std::cout << "Mistake on line " << i << ": " << line << std::endl;
 			}
