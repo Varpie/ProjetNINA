@@ -138,6 +138,11 @@ void parse_config()
 
 			if(var == "device") {
 				MOUSEFILE = value;
+			} else if(var == "links") {
+				timer = std::stod(optarg);
+			} else if(var == "time") {
+				countdown::links = true;
+				countdown::number = std::stod(optarg);
 			} else {
 				std::cerr << "Mistake on line " << i << ": " << line << std::endl;
 			}
