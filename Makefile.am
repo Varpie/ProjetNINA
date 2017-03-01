@@ -19,7 +19,7 @@ nina_HEADERS = \
 
 EXTRA_DIST = \
   config/conf \
-  config/config.conf \
+  config/nina.conf \
   config/dictionaries/auto_blacklist.txt \
   config/dictionaries/blacklist.txt \
   config/dictionaries/keywords.txt \
