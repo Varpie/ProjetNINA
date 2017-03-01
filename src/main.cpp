@@ -41,22 +41,22 @@ void print_help()
 
 void daemonize()
 {
-    pid_t pid;
+	pid_t pid;
 
-    /* Fork off the parent process */
-    pid = fork();
+	/* Fork off the parent process */
+	pid = fork();
 	logging::vout(1,"forked");
-    /* An error occurred */
-    if (pid < 0)
-        exit(EXIT_FAILURE);
+	/* An error occurred */
+	if (pid < 0)
+		exit(EXIT_FAILURE);
 
-    /* Success: Let the parent terminate */
-    if (pid > 0)//queue
-        exit(EXIT_SUCCESS);
+	/* Success: Let the parent terminate */
+	if (pid > 0)//queue
+		exit(EXIT_SUCCESS);
 
-    /* On success: The child process becomes session leader */
-    if (setsid() < 0)
-        exit(EXIT_FAILURE);
+	/* On success: The child process becomes session leader */
+	if (setsid() < 0)
+		exit(EXIT_FAILURE);
 	logging::vout(1,"succeded");
 }
 
@@ -64,7 +64,7 @@ void stop_daemon()
 {
 	std::ofstream file("/proc/nina");
 	if (!file.is_open())
-	    throw std::runtime_error("Could not open the file");
+		throw std::runtime_error("Could not open the file");
 	file << "kill";
 	file.close();
 }
@@ -81,7 +81,7 @@ void stopping_detection()
 
 	dpy = XOpenDisplay(NULL);
 	XQueryPointer(dpy,DefaultRootWindow(dpy),&root,&child,
-	          &rootX,&rootY,&winX,&winY,&mask);
+				&rootX,&rootY,&winX,&winY,&mask);
 	dispY = DefaultScreenOfDisplay(dpy)->height;
 	dispX = DefaultScreenOfDisplay(dpy)->width;
 
@@ -91,21 +91,21 @@ void stopping_detection()
 	}
 
 	while(read(fd, &ie, sizeof(struct input_event)) && threading::running) {
-			XQueryPointer(dpy,DefaultRootWindow(dpy),&root,&child,
-					&rootX,&rootY,&winX,&winY,&mask);
-			if(pos == 1 && rootX == 0 && rootY == 0) {
-				logging::vout(2,"Top left corner");
-				pos++;
-			} else if(pos == 2 && rootX == 0 && rootY == dispY -1) {
-				pos++;
-				logging::vout(2,"Bottom left corner");
-			} else if(pos == 0 && rootX == dispX - 1 && rootY == 0) {
-				pos++;
-				logging::vout(2,"Top right corner");
-			} else if(pos == 3 && rootX == dispX-1 && rootY == dispY-1) {
-				logging::vout(2,"Bottom right corner");
-				threading::running = false;
-			}
+		XQueryPointer(dpy,DefaultRootWindow(dpy),&root,&child,
+				&rootX,&rootY,&winX,&winY,&mask);
+		if(pos == 1 && rootX == 0 && rootY == 0) {
+			logging::vout(2,"Top left corner");
+			pos++;
+		} else if(pos == 2 && rootX == 0 && rootY == dispY -1) {
+			pos++;
+			logging::vout(2,"Bottom left corner");
+		} else if(pos == 0 && rootX == dispX - 1 && rootY == 0) {
+			pos++;
+			logging::vout(2,"Top right corner");
+		} else if(pos == 3 && rootX == dispX-1 && rootY == dispY-1) {
+			logging::vout(2,"Bottom right corner");
+			threading::running = false;
+		}
 	}
 }
 
@@ -139,7 +139,7 @@ void parse_config()
 			if(var == "device") {
 				MOUSEFILE = value;
 			} else {
-			 	std::cout << "Mistake on line " << i << ": " << line << std::endl;
+				std::cerr << "Mistake on line " << i << ": " << line << std::endl;
 			}
 		}
 	}
@@ -264,6 +264,10 @@ bool parse_arguments(int argc, char **argv)
 
 int main(int argc, char **argv)
 {
+	if(getuid()) {
+		std::cout << "This program should be run with sudo" << std::endl;
+		return 0;
+	}
 	parse_config();
 	if(!parse_arguments(argc, argv)){
 		return 0;
