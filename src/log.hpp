@@ -10,7 +10,7 @@ namespace logging {
       std::cout << msg << std::endl;
     }
     inline void vout(std::string msg) {
-      vout(1,msg);
+      vout(verbose,msg);
     }
     inline void verr(int level,std::string msg) {
       if(verbose >= level)

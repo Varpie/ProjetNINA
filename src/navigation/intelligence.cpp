@@ -2,7 +2,7 @@
 
 Intelligence::Intelligence(std::string &start_url)
 {
-	logging::vout("Creating Intelligence object");
+	logging::vout(1,"Creating Intelligence object");
 	this->current_url = start_url;
 	this->navigator = new Navigator();
 	srand(time(NULL));
@@ -14,13 +14,13 @@ Intelligence::~Intelligence()
 	/* important, not destroyed dynamically */
 	delete(this->navigator);
 	dump_lists();
-	logging::vout("Deleting Intelligence object");
+	logging::vout(1,"Deleting Intelligence object");
 }
 
 void Intelligence::roam()
 {
 	logging::vout(2,"Entering Intelligence::roam");
-	logging::vout("Program began");
+	logging::vout(1,"Program began");
 	std::string page_html;
 	std::vector<HyperLink> links;
 	time_t begin,end;
@@ -34,7 +34,7 @@ void Intelligence::roam()
 	this->current_url = this->navigator->navigate(this->current_url);
 	do {
 		if (countdown::links) {
-			logging::vout("Links countdown : " + std::to_string(countdown::number-x));
+			logging::vout(1,"Links countdown : " + std::to_string(countdown::number-x));
 		}
 		logging::vout(3,"Get page's html");
 		page_html = this->navigator->get_body_html();
@@ -69,7 +69,7 @@ void Intelligence::roam()
 		append_vector(this->history,this->current_url,HISTORY_MAX);
 	} while( !(overflow || !threading::running ));
 	if (countdown::links) {
-		logging::vout("Links countdown : " + std::to_string(countdown::number-x));
+		logging::vout(1,"Links countdown : " + std::to_string(countdown::number-x));
 	}
 	logging::vout(2,"Leaving Intelligence::roam");
 	threading::running = false;
@@ -275,21 +275,21 @@ void Intelligence::load_lists()
 	this->rubbish_links = init_list("./config/dictionaries/rubbish_links.txt");
 	this->auto_blacklist = init_list("./config/dictionaries/auto_blacklist.txt");
 	if(keywords.size() == 0) {
-		logging::vout("Keywords load failed");
+		logging::vout(1,"Keywords load failed");
 	}
 	if(rubbish_links.size() == 0) {
-		logging::vout("Rubbish Links load failed");
+		logging::vout(1,"Rubbish Links load failed");
 	}
 	if(dict::whitelist){
-		logging::vout("Loading whitelist");
+		logging::vout(1,"Loading whitelist");
 		this->whitelist = init_list(dict::whitefile);
 	}
 	if(dict::blacklist){
-		logging::vout("Loading blacklist");
+		logging::vout(1,"Loading blacklist");
 		this->blacklist = init_list(dict::blackfile);
 	}
 	if(dict::other){
-		logging::vout("Loading other list");
+		logging::vout(1,"Loading other list");
 		this->otherlist = init_otherlist(dict::otherfile);
 	}
 	logging::vout(2,"Leaving Intelligence::load_lists");
@@ -318,7 +318,7 @@ std::vector<std::string> init_list(std::string path)
 				list.push_back(line);
 		}
 	} else {
-		logging::vout("Error : file not opened");
+		logging::vout(1,"Error : file not opened");
 	}
 	file.close();
 	logging::vout(2,"Leaving init_list");
@@ -340,7 +340,7 @@ std::vector<std::tuple<int, std::string>> init_otherlist(std::string name)
 			list.emplace_back(std::tuple<int,std::string> (value,word));
 		}
 	} else {
-		logging::vout("Error : file not opened");
+		logging::vout(1,"Error : file not opened");
 	}
 	file.close();
 	logging::vout(2,"Leaving init_otherlist");
