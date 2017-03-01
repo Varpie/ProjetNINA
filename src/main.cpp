@@ -24,18 +24,30 @@ void print_help()
 {
 	std::cout
 	<< "Usage : nina [options]" << std::endl << std::endl
-	<< "   -h, --help        " << "Afficher l'aide" << std::endl
-	<< "       --config      " << "Afficher et modifier le fichier de configuration" << std::endl
-	<< "       --url URL     " << "Démarrer depuis URL" << std::endl
-	<< "   -k, --timedkey    " << "Je ne sais pas :/" << std::endl
-	<< "       --verbose X   " << "Lance l'application avec une verbose de niveau X" << std::endl
-	<< "       --whitelist   " << "Démarrer l'application avec la whitelist" << std::endl
-	<< "       --blacklist   " << "Démarrer l'application avec la whitelist" << std::endl
-	<< "       --otherlist   " << "Démarrer l'application avec la liste personnelle" << std::endl
-	<< "   -d, --daemonize   " << "Détache l'application du terminal" << std::endl
-	<< "   -s, --stop        " << "Stoppe l'execution de l'application" << std::endl
-	<< "       --timeout X   " << "Arrête l'application après X secondes d'execution" << std::endl
-	<< "       --links X     " << "Arrête l'application après X liens parcourus" << std::endl
+	<< "   -h, --help        "
+	<< "Afficher l'aide" << std::endl
+	<< "       --config      "
+	<< "Afficher et modifier le fichier de configuration" << std::endl
+	<< "       --url URL     "
+	<< "Démarrer depuis URL" << std::endl
+	<< "   -k, --timedkey    "
+	<< "Je ne sais pas :/" << std::endl
+	<< "       --verbose X   "
+	<< "Lance l'application avec une verbose de niveau X" << std::endl
+	<< "       --whitelist   "
+	<< "Démarrer l'application avec la whitelist" << std::endl
+	<< "       --blacklist   "
+	<< "Démarrer l'application avec la whitelist" << std::endl
+	<< "       --otherlist   "
+	<< "Démarrer l'application avec la liste personnelle" << std::endl
+	<< "   -d, --daemonize   "
+	<< "Détache l'application du terminal" << std::endl
+	<< "   -s, --stop        "
+	<< "Stoppe l'execution de l'application" << std::endl
+	<< "       --timeout X   "
+	<< "Arrête l'application après X secondes d'execution" << std::endl
+	<< "       --links X     "
+	<< "Arrête l'application après X liens parcourus" << std::endl
 	<< std::endl;
 }
 
