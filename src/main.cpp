@@ -1,25 +1,4 @@
 #include "main.hpp"
-bool flag = true;
-static int forked_pid = 0;
-int logging::verbose = 0;
-bool dict::whitelist = false;
-std::string dict::whitefile;
-bool dict::blacklist = false;
-std::string dict::blackfile;
-bool dict::other = false;
-std::string dict::otherfile;
-long timer;
-bool countdown::links = false;
-long countdown::number;
-std::string lang = "en";
-std::string layout = "en";
-std::string browser = "firefox";
-//std::string url = "http://www.google.com";
-//std::string url = "http://arstechnica.com/";
-//std::string url = "http://fnac.com/";
-std::string url = "http://www.wikipedia.org/wiki/Special:Random";
-std::atomic<bool> threading::running(true);
-std::string config_path;
 
 void print_help()
 {
@@ -170,6 +149,7 @@ void parse_config()
 
 bool parse_arguments(int argc, char **argv)
 {
+	bool flag = true;
 	int character;
 	while(flag) {
 		int option_index = 0;
