@@ -1,9 +1,9 @@
-Source: nina
+Source: nina-1.0
 Section: base
 Priority: optional
 Maintainer: Anony Mouse <example@mail.com>
 Standards-Version: 3.9.8
-Build-Depends: debhelper (>= 9), autotools-dev, python (>= 2.7), python-dev, libx11-dev, python-pip
+Build-Depends: autotools-dev, python (>= 2.7), python-dev, libx11-dev, python-pip
 #Vcs-Git: https://github.com/Varpie/ProjetNINA
 X-Python-Version: >= 2.7
 

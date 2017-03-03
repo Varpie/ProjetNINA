@@ -1,19 +1,18 @@
 #!/bin/bash
-
 printf "setup python modules..."
 
-pyMod=$(pip list --format columns | grep Uinput)
-pyMain=$(find /usr/local/lib/python2.7/ | grep nina.py)
 gd=$(find /usr/local/bin/ -name geckodriver)
 
-if [ -z "$pyMod" ]; then
-  cd src/ctrl_keyboard
-  sudo python setup.py install
-  cd -
-fi
+cd src/ctrl_keyboard
+sudo python setup.py install
+cd -
 
-if [ -z "$pyMain" ]; then
-  sudo cp src/navigation/nina.py /usr/local/lib/python2.7/
+if cat /etc/*release | grep ^NAME | grep Debian ; then
+  sudo cp src/navigation/nina.py /usr/local/lib/python2.7/dist-packages/
+elif cat /etc/*release | grep ^NAME | grep Ubuntu ; then
+  sudo cp src/navigation/nina.py /usr/local/lib/python2.7/dist-packages/
+else
+  sudo cp src/navigation/nina.py /usr/local/lib/python2.7/site-packages/
 fi
 
 if [ -z "$gd" ]; then

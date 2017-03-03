@@ -1,7 +1,2 @@
-config/conf
-config/config.conf
-config/dictionaries/auto_blacklist.txt
-config/dictionaries/blacklist.txt
-config/dictionaries/whitelist.txt
-config/dictionaries/rubbish_links.txt
-config/dictionaries/keywords.txt
+etc/conf
+etc/nina.conf

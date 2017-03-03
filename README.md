@@ -8,7 +8,7 @@ Using autotools (install `autoconf` if you don't have it), run the following com
   aclocal
   autoconf
   automake
-  ./configure
+  ./configure --sysconfdir=/etc --localstatedir=/var
   make
   ```
 
