@@ -188,37 +188,34 @@ bool parse_arguments(int argc, char **argv)
 			{0,0,0,0}
 		};
 
-		character = getopt_long(argc, argv, "hkds", long_options, &option_index);
+		character = getopt_long(argc, argv, "hk:ds", long_options, &option_index);
 		if(character == -1){
 			return true;
 		}
 		switch (character) {
 			case 0:
-				if(long_options[option_index].name == "help"){
-					flag = false;
-					print_help();
-				} else if(long_options[option_index].name == "config"){
+				if(long_options[option_index].name == "config"){
 					flag = false;
 					system("vim config.conf");
 				} else if(long_options[option_index].name == "url"){
 					url = optarg;
-				} else if(long_options[option_index].name == "timedkey"){
-					//TODO manage stoi exception
-					int timer_key = std::stoi(optarg);
-					if(timer_key > 0)
-						keystroke_time(timer_key);
-					else
-						std::cerr << "Please enter a correct time" << std::endl;
-					flag = false;
 				} else if(long_options[option_index].name == "verbose"){
-					logging::verbose = std::stoi(optarg);
-					if(logging::verbose > 0){
-						logging::vout("Verbose is active.");
-						logging::vout(" Level : " + std::to_string(logging::verbose));
-					} else {
-						logging::vout("Select a correct verbose level.");
+					try
+				  {
+						logging::verbose = std::stoi(optarg);
+						if(logging::verbose > 0){
+							logging::vout("Verbose is active.");
+							logging::vout(" Level : " + std::to_string(logging::verbose));
+						} else {
+							std::cerr << "Select a correct verbose level." << std::endl;
+							flag = false;
+						}
+				  }
+				  catch (std::invalid_argument)
+				  {
+				    std::cerr << "Error : verbose required a number argument" << std::endl;
 						flag = false;
-					}
+				  }
 				} else if(long_options[option_index].name == "whitelist"){
 					logging::vout(1,"Using whitelist");
 					dict::whitelist = true;
@@ -231,25 +228,27 @@ bool parse_arguments(int argc, char **argv)
 					logging::vout(1,"Using otherlist");
 					dict::other = true;
 					dict::otherfile = "./config/dictionaries/otherlist.txt";
-				} else if(long_options[option_index].name == "daemonize") {
-					daemonize();
-					logging::vout(1,"Process daemonized");
-				} else if(long_options[option_index].name == "stop") {
-					stop_daemon();
-					flag = false;
 				} else if(long_options[option_index].name == "timeout"){
 					logging::vout(1,"Using time countdown");
-					timer = std::stod(optarg);
+					try
+				  {
+						timer = std::stol(optarg);
+				  }
+				  catch (std::invalid_argument)
+				  {
+				    std::cerr << "Error : timeout required a number argument" << std::endl;
+						flag = false;
+				  }
 				} else if(long_options[option_index].name == "links"){
 					logging::vout(1,"Using links countdown");
 					countdown::links = true;
 					try
 				  {
-				    countdown::number = std::stod(optarg);
+				    countdown::number = std::stol(optarg);
 				  }
-				  catch (std::invalid_argument &e)
+				  catch (std::invalid_argument)
 				  {
-				    std::cout << "Error : --links required a number argument" << std::endl;
+				    std::cerr << "Error : links required a number argument" << std::endl;
 						flag = false;
 				  }
 				}
@@ -260,15 +259,23 @@ bool parse_arguments(int argc, char **argv)
 				break;
 			case 'k':
 			{
-				ask_keystrokes();
-				std::string word = "cool un Test";
-				double r[2];
-				write_string(const_cast<char*>(word.c_str()));
+				try
+				{
+					int timer_key = std::stoi(optarg);
+					if(timer_key > 0)
+						keystroke_time(timer_key);
+					else
+						std::cerr << "Please enter a correct time" << std::endl;
+				}
+				catch (std::invalid_argument)
+				{
+					std::cerr << "Error : timedkey required a number argument" << std::endl;
+				}
 				flag = false;
-				break;
 			}
 			case 'd':
 				daemonize();
+				logging::vout(1,"Process daemonized");
 				break;
 			case 's':
 				stop_daemon();
@@ -281,7 +288,7 @@ bool parse_arguments(int argc, char **argv)
 				flag = false;
 				break;
 			default:
-				logging::verr("Argument parsing error");
+				std::cerr << "Argument parsing error" << std::endl;
 				flag = false;
 		}
 	}

@@ -64,10 +64,11 @@ void Intelligence::roam()
 		} else {
 			this->current_url = navigate_res;
 		}
-		overflow = (countdown::links && (++x >= countdown::number));
+		if(countdown::links && (++x >= countdown::number))
+			threading:running = false;
 		logging::vout(3,"Add current url to the history");
 		append_vector(this->history,this->current_url,HISTORY_MAX);
-	} while( !(overflow || !threading::running ));
+	} while(threading::running);
 	if (countdown::links) {
 		logging::vout(1,"Links countdown : " + std::to_string(countdown::number-x));
 	}
@@ -103,7 +104,8 @@ void Intelligence::search_keyword()
 	logging::vout(2,"Leaving Intelligence::search_keyword");
 }
 
-std::string Intelligence::search_keyword_handle(){
+std::string Intelligence::search_keyword_handle()
+{
 	logging::vout(2,"Entering Intelligence::search_keyword_handle");
 	std::string kw = select_keyword(keywords);
 	return this->navigator->write_search(kw);
@@ -167,17 +169,14 @@ HyperLink Intelligence::select_link(std::vector<HyperLink> &links,std::string ur
 		std::vector<std::tuple<int,HyperLink>> found_list;
 		for(auto const& lk: links){
 			std::string text = " "+lk.text+" ";
-			//logging::vout(14,"--LINK :" + text);
 			for(auto const& word: this->otherlist){
 				if(text.find(" "+std::get<1>(word)+" ") != std::string::npos){
 					res = Intelligence::test_link(link,url);
-					// logging::vout(1,"__LINK.TEXT : " + lk.text);
-					// logging::vout(1,"__LINK.URL  : " + lk.url);
 					if(res){
 						found_list.emplace_back(std::tuple<int,HyperLink> (std::get<0>(word),lk));
 						found = true;
-						logging::vout(3,"--Find word : " + std::get<1>(word));
-						logging::vout(3,"--In text   :" + text);
+						logging::vout(3,"Find word : " + std::get<1>(word));
+						logging::vout(3,"In text   :" + text);
 					}
 				}
 			}
@@ -189,13 +188,10 @@ HyperLink Intelligence::select_link(std::vector<HyperLink> &links,std::string ur
 					value = std::get<0>(l);
 					link = std::get<1>(l);
 				}
-				// logging::vout(14,"--LINK  : " + std::get<1>(l).text);
-				// logging::vout(14,"--LVAL  : " + std::to_string(std::get<0>(l)));
-				// logging::vout(14,"--VALUE : " + std::to_string(value));
 			}
 		}
 		else {
-			logging::vout(1,"--No link found");
+			logging::vout(1,"No link found");
 		}
 	}
 	else if(dict::whitelist) {
@@ -211,8 +207,8 @@ HyperLink Intelligence::select_link(std::vector<HyperLink> &links,std::string ur
 					if(res){
 						found = true;
 						wlfound_list.push_back(lk);
-						logging::vout(3,"--Find wl : " + wl);
-						logging::vout(3,"--In text :" + text);
+						logging::vout(3,"Find wl : " + wl);
+						logging::vout(3,"In text :" + text);
 					}
 				}
 			}
@@ -221,7 +217,7 @@ HyperLink Intelligence::select_link(std::vector<HyperLink> &links,std::string ur
 			link = select_random_in_vector(wlfound_list);
 		}
 		else {
-				logging::vout(1,"--No link found");
+				logging::vout(1,"No link found");
 		}
 	}
 	if( (!dict::other && !dict::whitelist) || !found ){
@@ -231,14 +227,14 @@ HyperLink Intelligence::select_link(std::vector<HyperLink> &links,std::string ur
 	    res = Intelligence::test_link(link,url);
 	  } while (!res && cpt++<50);
 		if(cpt == 50){
-			logging::vout(1,"--No valid link");
+			logging::vout(1,"No valid link");
 			link.url = Intelligence::search_keyword_handle();
 			link.text = "";
 		}
 	}
 	logging::vout(2,"Leaving Intelligence::select_link");
-	logging::vout(1,"--Chosen link : " + link.text);
-	logging::vout(1,"          url : " + link.url);
+	logging::vout(1,"Chosen link : " + link.text);
+	logging::vout(1,"        url : " + link.url);
 	return link;
 }
 
