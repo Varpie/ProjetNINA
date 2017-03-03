@@ -19,6 +19,7 @@ std::string browser = "firefox";
 //std::string url = "http://fnac.com/";
 std::string url = "http://www.wikipedia.org/wiki/Special:Random";
 std::atomic<bool> threading::running(true);
+std::string config_path;
 
 void print_help()
 {
@@ -135,7 +136,10 @@ void handle_sigquit(int signum)
 
 void parse_config()
 {
-	std::string config_path = "/home/" + std::string(getenv("SUDO_USER")) + "/.config/nina.conf";
+	if(!getuid())
+		config_path = "/home/" + std::string(getenv("SUDO_USER")) + "/.config/nina.conf";
+	else
+		config_path = std::string(getenv("HOME")) + "/.config/nina.conf";
 	std::ifstream configFile(config_path);
 	std::string line = "";
 	int i = 0;
@@ -199,7 +203,7 @@ bool parse_arguments(int argc, char **argv)
 					print_help();
 				} else if(long_options[option_index].name == "config"){
 					flag = false;
-					system("vim config.conf");
+					system(std::string("vim " + config_path).c_str());
 				} else if(long_options[option_index].name == "url"){
 					url = optarg;
 				} else if(long_options[option_index].name == "timedkey"){
@@ -283,12 +287,12 @@ bool parse_arguments(int argc, char **argv)
 
 int main(int argc, char **argv)
 {
-	if(getuid()) {
-		std::cout << "This program should be run with sudo" << std::endl;
-		return 0;
-	}
 	parse_config();
 	if(!parse_arguments(argc, argv)){
+		return 0;
+	}
+	if(getuid()) {
+		std::cerr << "This program should be run with sudo" << std::endl;
 		return 0;
 	}
 	signal(SIGQUIT, handle_sigquit);
