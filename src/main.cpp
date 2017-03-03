@@ -179,7 +179,7 @@ bool parse_arguments(int argc, char **argv)
 			{"help", no_argument, 0, 'h'},
 			{"config", no_argument, 0, 0},
 			{"url", required_argument, 0, 0},
-			{"timedkey", no_argument,0,'k'},
+			{"timedkey", required_argument,0,'k'},
 			{"verbose", required_argument, 0, 0},
 			{"whitelist", no_argument, 0, 0},
 			{"blacklist", no_argument, 0, 0},
@@ -207,7 +207,12 @@ bool parse_arguments(int argc, char **argv)
 				} else if(long_options[option_index].name == "url"){
 					url = optarg;
 				} else if(long_options[option_index].name == "timedkey"){
-					ask_keystrokes();
+					//TODO manage stoi exception
+					int timer_key = std::stoi(optarg);
+					if(timer_key > 0)
+						keystroke_time(timer_key);
+					else
+						std::cerr << "Please enter a correct time" << std::endl;
 					flag = false;
 				} else if(long_options[option_index].name == "verbose"){
 					logging::verbose = std::stoi(optarg);
