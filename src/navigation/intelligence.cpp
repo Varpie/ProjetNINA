@@ -64,7 +64,7 @@ void Intelligence::roam()
 		} else {
 			this->current_url = navigate_res;
 		}
-		overflow = (countdown::links && (x++ >= countdown::number));
+		overflow = (countdown::links && (++x >= countdown::number));
 		logging::vout(3,"Add current url to the history");
 		append_vector(this->history,this->current_url,HISTORY_MAX);
 	} while( !(overflow || !threading::running ));

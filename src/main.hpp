@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <exception>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

@@ -238,7 +238,15 @@ bool parse_arguments(int argc, char **argv)
 				} else if(long_options[option_index].name == "links"){
 					logging::vout(1,"Using links countdown");
 					countdown::links = true;
-					countdown::number = std::stod(optarg);
+					try
+				  {
+				    countdown::number = std::stod(optarg);
+				  }
+				  catch (std::invalid_argument &e)
+				  {
+				    std::cout << "Error : --links required a number argument" << std::endl;
+						flag = false;
+				  }
 				}
 				break;
 			case 'h':
