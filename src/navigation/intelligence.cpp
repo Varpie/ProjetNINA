@@ -65,7 +65,7 @@ void Intelligence::roam()
 			this->current_url = navigate_res;
 		}
 		if(countdown::links && (++x >= countdown::number))
-			threading:running = false;
+			threading::running = false;
 		logging::vout(3,"Add current url to the history");
 		append_vector(this->history,this->current_url,HISTORY_MAX);
 	} while(threading::running);
