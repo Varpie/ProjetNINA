@@ -1,24 +1,4 @@
 #include "main.hpp"
-bool flag = true;
-static int forked_pid = 0;
-int logging::verbose = 0;
-bool dict::whitelist = false;
-std::string dict::whitefile;
-bool dict::blacklist = false;
-std::string dict::blackfile;
-bool dict::other = false;
-std::string dict::otherfile;
-long timer;
-bool countdown::links = false;
-long countdown::number;
-std::string lang = "en";
-std::string layout = "en";
-std::string browser = "firefox";
-//std::string url = "http://www.google.com";
-//std::string url = "http://arstechnica.com/";
-//std::string url = "http://fnac.com/";
-std::string url = "http://www.wikipedia.org/wiki/Special:Random";
-std::atomic<bool> threading::running(true);
 
 void print_help()
 {
@@ -135,7 +115,10 @@ void handle_sigquit(int signum)
 
 void parse_config()
 {
-	std::string config_path = "/home/" + std::string(getenv("SUDO_USER")) + "/.config/nina.conf";
+	if(!getuid())
+		config_path = "/home/" + std::string(getenv("SUDO_USER")) + "/.config/nina.conf";
+	else
+		config_path = std::string(getenv("HOME")) + "/.config/nina.conf";
 	std::ifstream configFile(config_path);
 	std::string line = "";
 	int i = 0;
@@ -166,6 +149,7 @@ void parse_config()
 
 bool parse_arguments(int argc, char **argv)
 {
+	bool flag = true;
 	int character;
 	while(flag) {
 		int option_index = 0;
@@ -196,7 +180,7 @@ bool parse_arguments(int argc, char **argv)
 			case 0:
 				if(long_options[option_index].name == "config"){
 					flag = false;
-					system("vim config.conf");
+					system(std::string("vim " + config_path).c_str());
 				} else if(long_options[option_index].name == "url"){
 					url = optarg;
 				} else if(long_options[option_index].name == "verbose"){
@@ -303,12 +287,12 @@ bool parse_arguments(int argc, char **argv)
 
 int main(int argc, char **argv)
 {
-	if(getuid()) {
-		std::cout << "This program should be run with sudo" << std::endl;
-		return 0;
-	}
 	parse_config();
 	if(!parse_arguments(argc, argv)){
+		return 0;
+	}
+	if(getuid()) {
+		std::cerr << "This program should be run with sudo" << std::endl;
 		return 0;
 	}
 	signal(SIGQUIT, handle_sigquit);

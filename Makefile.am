@@ -17,14 +17,17 @@ nina_HEADERS = \
   src/ctrl_keyboard/write_keyboard.h \
   src/log.hpp
 
-EXTRA_DIST = \
+ninaconfdir= $(sysconfdir)/nina
+ninaconf_DATA =  \
   config/conf \
   config/nina.conf \
   config/dictionaries/auto_blacklist.txt \
   config/dictionaries/blacklist.txt \
   config/dictionaries/keywords.txt \
   config/dictionaries/rubbish_links.txt \
-  config/dictionaries/whitelist.txt \
+  config/dictionaries/whitelist.txt
+
+EXTRA_DIST = \
   scripts/python_dependencies.sh \
   src/ctrl_keyboard/uinput_wrapping_module.c \
   src/ctrl_keyboard/setup.py \
@@ -34,12 +37,9 @@ EXTRA_DIST = \
   debian/compat \
   debian/control \
   debian/copyright \
-  debian/nina.conffiles \
-  debian/nina.dirs \
-  debian/nina.install \
   debian/postinst \
   debian/rules \
   debian/sources/format
-  
+
 AM_LDFLAGS=-lpython2.7 -lX11 -lpthread
 dist_man1_MANS = doc/nina.1
