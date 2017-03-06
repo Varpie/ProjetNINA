@@ -267,9 +267,9 @@ void Intelligence::load_lists()
 	logging::vout(3,"Add current url to history");
 	this->history.push_back(this->current_url);
 	logging::vout(3,"Initialize keywords, rubbish list and automatic blacklist");
-	this->keywords = init_list("./config/dictionaries/keywords.txt");
-	this->rubbish_links = init_list("./config/dictionaries/rubbish_links.txt");
-	this->auto_blacklist = init_list("./config/dictionaries/auto_blacklist.txt");
+	this->keywords = init_list("/etc/nina/keywords.txt");
+	this->rubbish_links = init_list("/etc/nina/rubbish_links.txt");
+	this->auto_blacklist = init_list("/etc/nina/auto_blacklist.txt");
 	if(keywords.size() == 0) {
 		logging::vout(1,"Keywords load failed");
 	}
@@ -294,7 +294,7 @@ void Intelligence::load_lists()
 void Intelligence::dump_lists()
 {
 	logging::vout(2,"Entering Intelligence::dump_lists");
-	std::ofstream file("./config/dictionaries/auto_blacklist.txt");
+	std::ofstream file("/etc/nina/auto_blacklist.txt");
 	for(auto const& line: this->auto_blacklist){
 		file << line << "\n";
 	}

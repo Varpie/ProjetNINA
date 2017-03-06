@@ -115,10 +115,7 @@ void handle_sigquit(int signum)
 
 void parse_config()
 {
-	if(!getuid())
-		config_path = "/home/" + std::string(getenv("SUDO_USER")) + "/.config/nina.conf";
-	else
-		config_path = std::string(getenv("HOME")) + "/.config/nina.conf";
+	config_path = "/etc/nina/nina.conf";
 	std::ifstream configFile(config_path);
 	std::string line = "";
 	int i = 0;
@@ -203,15 +200,15 @@ bool parse_arguments(int argc, char **argv)
 				} else if(long_options[option_index].name == "whitelist"){
 					logging::vout(1,"Using whitelist");
 					dict::whitelist = true;
-					dict::whitefile = "./config/dictionaries/whitelist.txt";
+					dict::whitefile = "/etc/nina/whitelist.txt";
 				} else if(long_options[option_index].name == "blacklist"){
 					logging::vout(1,"Using blacklist");
 					dict::blacklist = true;
-					dict::blackfile = "./config/dictionaries/blacklist.txt";
+					dict::blackfile = "/etc/nina/blacklist.txt";
 				} else if(long_options[option_index].name == "otherlist"){
 					logging::vout(1,"Using otherlist");
 					dict::other = true;
-					dict::otherfile = "./config/dictionaries/otherlist.txt";
+					dict::otherfile = "/etc/nina/otherlist.txt";
 				} else if(long_options[option_index].name == "timeout"){
 					logging::vout(1,"Using time countdown");
 					try

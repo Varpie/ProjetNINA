@@ -3,7 +3,7 @@
 act_mean map[SIZE_MAP][SIZE_MAP];
 
 void writeConfFile(double m, double sig) {
-        FILE *f = fopen("conf", "w+");
+        FILE *f = fopen(name_conf, "w+");
         fprintf(f, "%f\n", m);
         fprintf(f, "%f\n", sig);
         fclose(f);
@@ -78,7 +78,7 @@ void keystroke_time(int timer) {
 }
 void create_mapconf(){
         int i,j;
-        FILE *f = fopen("conf", "w+");
+        FILE *f = fopen(name_conf, "w+");
         for(i=0;i<SIZE_MAP;i++){
             for(j=0;j<SIZE_MAP;j++){
                 fprintf(f, "%d;%d;%f;%d\n", i,j,base_time,base_n);
@@ -89,7 +89,7 @@ void create_mapconf(){
 
 void update_mapconf(){
   int i,j;
-  FILE *f = fopen("conf", "w+");
+  FILE *f = fopen(name_conf, "w+");
   for(i=0;i<SIZE_MAP;i++){
       for(j=0;j<SIZE_MAP;j++){
           fprintf(f, "%d;%d;%f;%d\n", i,j,map[i][j].mean,map[i][j].n);
@@ -107,10 +107,10 @@ void load_map() {
         ssize_t read;
         int actkey = 0;
         int prevkey = 0;
-        fp = fopen("conf", "r");
+        fp = fopen(name_conf, "r");
         if (fp == NULL) {
               create_mapconf();
-              fp = fopen("conf", "r");
+              fp = fopen(name_conf, "r");
         }
         while ((read = getline(&line, &len, fp)) != -1) {
                 char *token;
