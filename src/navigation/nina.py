@@ -7,6 +7,8 @@ import random
 import lxml.html.clean
 import time
 import signal
+import os
+os.environ['GLOG_minloglevel'] = '3'
 
 """!
 Selenium webdriver
