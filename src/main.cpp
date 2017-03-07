@@ -115,7 +115,11 @@ void handle_sigquit(int signum)
 
 void parse_config()
 {
-	config_path = "/etc/nina/nina.conf";
+	
+	if(!getuid())
+		config_path = "/home/" + std::string(getenv("SUDO_USER")) + "/.config/nina.conf";
+	else
+		config_path = std::string(getenv("HOME")) + "/.config/nina.conf";
 	std::ifstream configFile(config_path);
 	std::string line = "";
 	int i = 0;

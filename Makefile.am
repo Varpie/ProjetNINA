@@ -1,7 +1,7 @@
 AUTOMAKE_OPTIONS = foreign subdir-objects
 bin_PROGRAMS = nina
 ninadir = .
-
+SUBDIR = src doc scripts debian
 nina_SOURCES = \
   src/main.cpp \
   src/navigation/navigator.cpp \
@@ -20,7 +20,6 @@ nina_HEADERS = \
 ninaconfdir= $(sysconfdir)/nina
 ninaconf_DATA =  \
   config/conf \
-  config/nina.conf \
   config/dictionaries/auto_blacklist.txt \
   config/dictionaries/blacklist.txt \
   config/dictionaries/keywords.txt \
