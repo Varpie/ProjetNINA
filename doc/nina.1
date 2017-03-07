@@ -29,8 +29,17 @@ Permet de détacher le programme du terminal l'ayant lancé.
 Permet d'arrêter le programme.
 
 .SH CONFIGURATION FILE
-Un fichier de configuration `nina.conf' peut être placé dans `/.config/'.
+Un fichier de configuration `nina.conf' peut être placé dans `~/.config/'.
 Les options utilisables sont les suivantes :
 .TP
 \fBdevice\fR=/dev/input/eventX
 Permet de définir le fichier d'événement à utiliser pour la souris.
+.TP
+\fBtime\fR=n
+Permet de définir le temps d'exécution du programme (en secondes).
+.TP
+\fBlinks\fR=n
+Permet de définir le nombre de liens que parcoure le programme.
+.TP
+\fBurl\fR=www.example.com
+Permet de définir l'url de départ de la navigation.

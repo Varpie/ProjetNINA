@@ -9,25 +9,25 @@ void print_help()
 		<< "       --config      "
 		<< "Afficher et modifier le fichier de configuration" << std::endl
 		<< "       --url URL     "
-		<< "Démarrer depuis URL" << std::endl
-		<< "   -k, --timedkey    "
-		<< "Je ne sais pas :/" << std::endl
-		<< "       --verbose X   "
-		<< "Lance l'application avec une verbose de niveau X" << std::endl
+		<< "Démarrer l'application depuis URL" << std::endl
+		<< "   -k, --timedkey N  "
+		<< "Écoute le pattern de frappe pendant N secondes" << std::endl
+		<< "       --verbose N   "
+		<< "Lance l'application avec une verbose de niveau N" << std::endl
 		<< "       --whitelist   "
 		<< "Démarrer l'application avec la whitelist" << std::endl
 		<< "       --blacklist   "
-		<< "Démarrer l'application avec la whitelist" << std::endl
+		<< "Démarrer l'application avec la blacklist" << std::endl
 		<< "       --otherlist   "
 		<< "Démarrer l'application avec la liste personnelle" << std::endl
 		<< "   -d, --daemonize   "
 		<< "Détache l'application du terminal" << std::endl
 		<< "   -s, --stop        "
 		<< "Stoppe l'execution de l'application" << std::endl
-		<< "       --timeout X   "
-		<< "Arrête l'application après X secondes d'execution" << std::endl
-		<< "       --links X     "
-		<< "Arrête l'application après X liens parcourus" << std::endl
+		<< "       --timeout N   "
+		<< "Arrête l'application après N secondes d'execution" << std::endl
+		<< "       --links N     "
+		<< "Arrête l'application après N liens parcourus" << std::endl
 	<< std::endl;
 }
 
@@ -115,7 +115,10 @@ void handle_sigquit(int signum)
 
 void parse_config()
 {
-	config_path = "/etc/nina/nina.conf";
+	if(!getuid())
+		config_path = "/home/" + std::string(getenv("SUDO_USER")) + "/.config/nina.conf";
+	else
+		config_path = std::string(getenv("HOME")) + "/.config/nina.conf";
 	std::ifstream configFile(config_path);
 	std::string line = "";
 	int i = 0;
@@ -131,10 +134,24 @@ void parse_config()
 			if(var == "device") {
 				MOUSEFILE = value;
 			} else if(var == "links") {
-				timer = std::stod(value);
+				try
+				{
+					countdown::links = true;
+					countdown::number = std::stol(optarg);
+				}
+				catch (std::invalid_argument)
+				{
+					std::cerr << "Error : links required a number argument" << std::endl;
+				}
 			} else if(var == "time") {
-				countdown::links = true;
-				countdown::number = std::stod(value);
+				try
+				{
+					timer = std::stol(value);
+				}
+				catch (std::invalid_argument)
+				{
+					std::cerr << "Error : timeout required a number argument" << std::endl;
+				}
 			} else if(var == "url") {
 				url = value;
 			} else {
@@ -210,7 +227,6 @@ bool parse_arguments(int argc, char **argv)
 					dict::other = true;
 					dict::otherfile = "/etc/nina/otherlist.txt";
 				} else if(long_options[option_index].name == "timeout"){
-					logging::vout(1,"Using time countdown");
 					try
 				  {
 						timer = std::stol(optarg);
@@ -220,8 +236,8 @@ bool parse_arguments(int argc, char **argv)
 				    std::cerr << "Error : timeout required a number argument" << std::endl;
 						flag = false;
 				  }
+					logging::vout(1,"Using time countdown : " + std::string(optarg));
 				} else if(long_options[option_index].name == "links"){
-					logging::vout(1,"Using links countdown");
 					countdown::links = true;
 					try
 				  {
@@ -232,6 +248,7 @@ bool parse_arguments(int argc, char **argv)
 				    std::cerr << "Error : links required a number argument" << std::endl;
 						flag = false;
 				  }
+					logging::vout(1,"Using links countdown : " + std::string(optarg));
 				}
 				break;
 			case 'h':

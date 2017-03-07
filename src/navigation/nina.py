@@ -7,6 +7,8 @@ import random
 import lxml.html.clean
 import time
 import signal
+import os
+os.environ['GLOG_minloglevel'] = '3'
 
 """!
 Selenium webdriver
@@ -79,7 +81,7 @@ def handle_frames():
     @rtype Boolean
     """
     if(len(driver.window_handles) > 1):
-        uinput_wrapping_module.send_key_with_ctrl_func(44,29);
+        uinput_wrapping_module.send_key_with_ctrl_func(44);
         #print "=py=== Tab closed ! ===py="
         return True
     else:
