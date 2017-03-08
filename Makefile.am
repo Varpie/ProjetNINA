@@ -3,14 +3,14 @@ bin_PROGRAMS = nina
 ninadir = .
 SUBDIR = src doc scripts debian
 
-nina_SOURCES =
+nina_SOURCES = \
 	src/main.cpp \
 	src/navigation/navigator.cpp \
 	src/navigation/intelligence.cpp \
 	src/ctrl_keyboard/timed_keystrokes.c \
 	src/ctrl_keyboard/write_keyboard.c
 
-nina_HEADERS =
+nina_HEADERS = \
 	src/main.hpp \
 	src/navigation/navigator.hpp \
 	src/navigation/intelligence.hpp \
@@ -18,10 +18,10 @@ nina_HEADERS =
 	src/ctrl_keyboard/write_keyboard.h \
 	src/log.hpp
 
-ninaconfdir= 
+ninaconfdir= \
 	$(sysconfdir)/nina
 
-ninaconf_DATA =  \
+ninaconf_DATA = \
 	config/conf \
 	config/dictionaries/auto_blacklist.txt \
 	config/dictionaries/blacklist.txt \
@@ -29,14 +29,16 @@ ninaconf_DATA =  \
 	config/dictionaries/rubbish_links.txt \
 	config/dictionaries/whitelist.txt
 
-pythonlibdir =
+pythonlibdir = \
 	$(pythondir)
 
-pythonlib_DATA =
+pythonlib_DATA = \
 	src/navigation/nina.py
 
-EXTRA_DIST =
+EXTRA_DIST = \
 	scripts/python_dependencies.sh \
+	src/ctrl_keyboard/uinput_wrapping_module.c \
+	src/ctrl_keyboard/setup.py \
 	debian/changelog \
 	debian/compat \
 	debian/control \
