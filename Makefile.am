@@ -22,7 +22,7 @@ ninaconfdir= \
 	$(sysconfdir)/nina
 
 ninaconf_DATA = \
-	config/conf \
+	src/ctrl_keyboard/conf \
 	config/dictionaries/auto_blacklist.txt \
 	config/dictionaries/blacklist.txt \
 	config/dictionaries/keywords.txt \
@@ -36,24 +36,30 @@ pythonlib_DATA = \
 	src/navigation/nina.py
 
 EXTRA_DIST = \
-	scripts/python_dependencies.sh \
+	scripts/get_geckodriver.sh \
+	src/navigation/nina.py \
 	src/ctrl_keyboard/uinput_wrapping_module.c \
 	src/ctrl_keyboard/setup.py \
+	src/ctrl_keyboard/conf \
+	config/dictionaries/auto_blacklist.txt \
+	config/dictionaries/blacklist.txt \
+	config/dictionaries/keywords.txt \
+	config/dictionaries/rubbish_links.txt \
+	config/dictionaries/whitelist.txt \
 	debian/changelog \
 	debian/compat \
 	debian/control \
 	debian/copyright \
-	debian/postinst \
 	debian/rules \
 	debian/sources/format
 
-AM_LDFLAGS=-lpython2.7 -lX11 -lpthread
+AM_LDFLAGS=-lpython2.7 -lX11 -lpthread -lXi
 dist_man1_MANS = doc/nina.1
 
 install-exec-local:
-	cd src/ctrl_keyboard && python setup.py install --record $(pythondir)/nina_py_installed_files.txt && cd - \
-	cd src/module_kernel && make && cp ninartk.ko /lib/modules/$(uname -r)/misc && modprobe ninartk \
-	sudo ./scripts/get_geckodriver.sh
+	cd src/ctrl_keyboard && python setup.py install --record $(pythondir)/nina_py_installed_files.txt && cd -; \
+	sh $(current_dir)/scripts/get_geckodriver.sh;
+#cd src/module_kernel && make && cp ninartk.ko /lib/modules/$(uname -r)/misc && modprobe ninartk;
 
 uninstall-local:
 	cat $(pythondir)/nina_py_installed_files.txt | xargs rm -rf \

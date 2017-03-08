@@ -1,7 +1,5 @@
 #!/usr/bin/make -f
 %:
 	dh $@ --with autotools_dev
-#override_dh_auto_configure:
-#override_dh_auto_build:
-override_dh_auto_install:
-	$(MAKE) DESTDIR=$$(pwd)/debian/nina prefix=/usr install
+override_dh_auto_configure:
+	dh_auto_configure -- --sysconfdir=/etc

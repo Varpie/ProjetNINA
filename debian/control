@@ -1,14 +1,14 @@
-Source: nina-0.1-1
+Source: nina
 Section: base
 Priority: optional
 Maintainer: Anony Mouse <example@mail.com>
 Standards-Version: 3.9.8
-Build-Depends: autotools-dev, python (>= 2.7), python-dev, libx11-dev, python-pip
+Build-Depends: autotools-dev, python2.7, python-dev, libx11-dev, libxi-dev, python-pip
 #Vcs-Git: https://github.com/Varpie/ProjetNINA
 X-Python-Version: >= 2.7
 
-Package: nina-0.1-1
+Package: nina
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, python2.7, python-lxml, python-selenium
+Depends: ${shlibs:Depends}, ${misc:Depends}, python2.7, python-lxml
 Description: A small AI that browses on the web
  Nina is a study project that intent to develop a software that browses automatically on the web in order to dizzy addtrackers

@@ -14,6 +14,7 @@ AC_CHECK_PROG([PIP_CHECK],[pip],[yes])
 AC_CHECK_HEADER([X11/Xlib.h],[X11_CHECK=yes],[X11_CHECK=no])
 AC_CHECK_HEADER([python2.7/Python.h],[PYDEV_CHECK=yes],[PYDEC_CHECK=no])
 AC_CHECK_PROG([PY2_CHECK],[python2.7],[yes])
+
 message="Missing package(s) :"
 flag=0
 if test x"$PY2_CHECK" != x"yes" ; then
@@ -35,9 +36,12 @@ fi
 if test x"$flag" == x"1" ; then
   AC_MSG_ERROR(["$message"])
 fi
+AC_CONFIG_COMMANDS_PRE([./scripts/python_dependencies.sh])
+
+current_dir=$PWD
+AC_SUBST(current_dir)
 
 AM_PATH_PYTHON([2.7])
 CXXFLAGS=-std=c++14
-
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
