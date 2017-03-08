@@ -124,7 +124,11 @@ class Intelligence
 		 * links to not select in a google search
 		 */
 		std::vector<std::string> rubbish_links;
-		tuple_list otherlist;
+		/**
+		 * user list, configurable
+		 * with keyword's weight
+		 */
+		std::vector<std::tuple<int, std::string>> otherlist;
 		/**
 		 * Max size of blacklist vector
 		 */
@@ -153,7 +157,13 @@ HyperLink select_random_in_vector(std::vector<HyperLink> &links);
  * Used to init Intelligence member lists in init_lists function
  */
 std::vector<std::string> init_list(std::string path);
-tuple_list init_otherlist(std::string name);
+/** Init the otherlist from a text file
+ * \fn std::vector<std::tuple<int, std::string>> init_otherlist(std::string name);
+ * \param path std::string path to source file
+ * \return std::vector<std::tuple<int, std::string>> list initialized
+ * Used to init Intelligence otherlist in init_otherlist function
+ */
+std::vector<std::tuple<int, std::string>> init_otherlist(std::string name);
 /** Used to fill size limited vectors such as history
  * \fn void append_vector(std::vector<std::string> &list,std::string param,int limit)
  * \param list std::vector<std::string> Vector to fill
