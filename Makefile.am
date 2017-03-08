@@ -51,7 +51,8 @@ AM_LDFLAGS=-lpython2.7 -lX11 -lpthread
 dist_man1_MANS = doc/nina.1
 
 install-exec-local:
-	cd src/ctrl_keyboard && python setup.py install --record $(pythondir)/nina_py_installed_files.txt
+	cd src/ctrl_keyboard && python setup.py install --record $(pythondir)/nina_py_installed_files.txt && cd -; \
+	sudo ./scripts/python_dependencies.sh
 
 uninstall-local:
 	cat $(pythondir)/nina_py_installed_files.txt | xargs rm -rf \
