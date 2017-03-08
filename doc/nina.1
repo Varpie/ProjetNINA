@@ -14,19 +14,37 @@ est un programme permettant de lancer une intelligence artificielle simulant un 
 Affiche la page d'aide et quitte.
 .TP
 \fB\-\-config\fR CONFIG
-Ouvre le fichier de configuration dans l'éditeur de texte par défaut
+Ouvre le fichier de configuration dans l'éditeur de texte par défaut.
 .TP
 \fB\-\-url\fR URL
-Permet de définir l'URL de départ de la navigation
+Permet de définir l'URL de départ de la navigation.
+.TP
+\fB\-k, \-\-timedkey\fR N
+Écoute le pattern de frappe de l'utilisateur pendant N secondes.
 .TP
 \fB\-\-verbose\fR LVL
 Ajoute un niveau de verbose au programme. À n'utiliser que pour du débuggage.
+.TP
+\fB\-\-whitelist\fR
+Permet d'utiliser une whitelist en ne selectionnant que les liens correspondants aux mots-clés
+.TP
+\fB\-\-blacklist\fR
+Permet d'utiliser une blacklist en ne selectionnant pas les liens correspondants aux mots-clés
+.TP
+\fB\-\-otherlist\fR
+Permet d'utiliser une liste en selectionnant que les liens correspondants aux mots-clés suivant un poids défini
 .TP
 \fB\-d, \-\-daemonize\fR
 Permet de détacher le programme du terminal l'ayant lancé.
 .TP
 \fB\-s, \-\-stop\fR
 Permet d'arrêter le programme.
+.TP
+\fB\-\-timeout\fR N
+Lance l'application qui va s'arrêter après N secondes d'execution
+.TP
+\fB\-\-links\fR N
+Lance l'appplication qui va s'arrêter après N liens parcourus
 
 .SH CONFIGURATION FILE
 Un fichier de configuration `nina.conf' peut être placé dans `~/.config/'.

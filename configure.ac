@@ -36,9 +36,7 @@ if test x"$flag" == x"1" ; then
   AC_MSG_ERROR(["$message"])
 fi
 
-AC_CONFIG_COMMANDS_PRE([sudo ./scripts/python_dependencies.sh])
-AC_CONFIG_COMMANDS_PRE([sudo ./scripts/setup_python.sh])
-
+AM_PATH_PYTHON([2.7])
 CXXFLAGS=-std=c++14
 
 AC_CONFIG_FILES([Makefile])

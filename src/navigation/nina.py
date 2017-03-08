@@ -21,6 +21,13 @@ ref to Uinput kernel module
 """
 uinput_wrapping_module.setup_uinput_device_func()
 
+def get_pid():
+    """!
+    @return return driver's pid
+    @rtype int
+    """
+    return str(driver.service.process.pid)
+
 def end_python():
     """!
     Close driver and destroy virtual keyboad reference when navigation is over
@@ -29,7 +36,8 @@ def end_python():
     driver.quit()
 
 def get_body_html():
-    """!
+    """!drag
+
     Get body html of a page, and strips it from its Styles and Scripts
     It does so, with webdriver.
     Cleaning it does with lxml.html.clean dependance

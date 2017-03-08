@@ -121,6 +121,11 @@ std::string Navigator::write_search(std::string keyword)
   return this->call_python_function("write_search",keyword);
 }
 
+int Navigator::get_pid()
+{
+  std::string pid = this->call_python_function_nargs("get_pid");
+  return std::stoi(pid);
+}
 
 void Navigator::select_hyperlinks_from_html(std::string html, std::vector<HyperLink> &links)
 {

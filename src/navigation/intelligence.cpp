@@ -33,8 +33,8 @@ void Intelligence::roam()
 	logging::vout(3,"Get current url");
 	this->current_url = this->navigator->navigate(this->current_url);
 	do {
-		if (countdown::links) {
-			logging::vout(1,"Links countdown : " + std::to_string(countdown::number-x));
+		if(countdown::links) {
+			logging::vout(1,"Links countdown : " + std::to_string(countdown::links));
 		}
 		logging::vout(3,"Get page's html");
 		page_html = this->navigator->get_body_html();
@@ -64,16 +64,14 @@ void Intelligence::roam()
 		} else {
 			this->current_url = navigate_res;
 		}
-		if(countdown::links && (++x >= countdown::number))
+		if(!--countdown::links){
 			threading::running = false;
+			logging::vout(1,"Links countdown : " + std::to_string(countdown::links));
+		}
 		logging::vout(3,"Add current url to the history");
 		append_vector(this->history,this->current_url,HISTORY_MAX);
 	} while(threading::running);
-	if (countdown::links) {
-		logging::vout(1,"Links countdown : " + std::to_string(countdown::number-x));
-	}
 	logging::vout(2,"Leaving Intelligence::roam");
-	threading::running = false;
 }
 
 /*=================================KEYWORDS===================================*/

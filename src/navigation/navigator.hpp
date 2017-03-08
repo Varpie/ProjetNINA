@@ -33,10 +33,10 @@ class HyperLink
 class Navigator
 {
 	public:
-		/** Navigator class constructor
-		 * \brief Open python connexion
-		 */
-		Navigator();
+	/** Navigator class constructor
+	 * \brief Open python connexion
+	 */
+	Navigator();
     /**
      * Navigator copy constructor
      * \brief informs that copy constructor was called
@@ -53,18 +53,18 @@ class Navigator
     /** Navigator class destructor
      * \brief Closes python connexion
      */
-		~Navigator();
-		/** Function to call python function with args and return
-		 * \fn std::string call_python_function(std::string function,std::string arg)
-		 * \param function String the name of the function
-		 * \param arg String the argument passed to the function
-		 * \return String Result of python function
-		 *
-		 * A function that parse parameters into py_objects type
-		 * and call the function with it thank to python connexion opened
-		 * in constructor
-		 */
-		std::string call_python_function(std::string function,std::string arg);
+	~Navigator();
+	/** Function to call python function with args and return
+	 * \fn std::string call_python_function(std::string function,std::string arg)
+	 * \param function String the name of the function
+	 * \param arg String the argument passed to the function
+	 * \return String Result of python function
+	 *
+	 * A function that parse parameters into py_objects type
+	 * and call the function with it thank to python connexion opened
+	 * in constructor
+	 */
+	std::string call_python_function(std::string function,std::string arg);
     /** Function to call python function with no args
      * \fn std::string call_python_function_nargs(std::string function)
      * \param function String the name of the function
@@ -89,14 +89,14 @@ class Navigator
     * \return String the raw html of the current page stripped of Styles and Scripts
     * \brief Calls call_python_function_nargs with get_body_html as function parametter
     */
-		std::string get_body_html();
-		/** Function to change page of the browser
-		 * \fn std::string navigate(std::string url)
-		 * \param url the url to navigate
-		 * \return String current url of the browser, avoid redirection problems
-		 * \brief Calls call_python_function with navigate as function parametter
-		 */
-		std::string navigate(std::string url);
+	std::string get_body_html();
+	/** Function to change page of the browser
+	 * \fn std::string navigate(std::string url)
+	 * \param url the url to navigate
+	 * \return String current url of the browser, avoid redirection problems
+	 * \brief Calls call_python_function with navigate as function parametter
+	 */
+	std::string navigate(std::string url);
     /** Function to end python properly
      * \fn void start_driver();
      * \brief Calls call_python_function_void_nargs with end_python as function parametter
@@ -105,21 +105,28 @@ class Navigator
      * dynamically after the end of python context and still exist in the RAM
      */
     void end_python();
-		/** Function to get HyperLinks from raw html
-		 * \fn select_hyperlinks_from_html(std::string html,std::vector<HyperLink> &links)
-		 * \param html Raw html
-		 * \param links Vector to put HyperLinks once found
-		 * \brief Get href and text for each <a> tag, and put them in an HyperLink
-		 */
+	/** Function to get navigator's PID
+     * \fn int get_pid()
+     * \return int driver pid
+     * \brief Calls call_python_function_void_nargs
+     * Get driver's pid attribute.
+     */
+    int get_pid();
+    /** Function to get HyperLinks from raw html
+	 * \fn select_hyperlinks_from_html(std::string html,std::vector<HyperLink> &links)
+	 * \param html Raw html
+	 * \param links Vector to put HyperLinks once found
+	 * \brief Get href and text for each <a> tag, and put them in an HyperLink
+	 */
     void select_hyperlinks_from_html(std::string html, std::vector<HyperLink> &links);
     /** select_hyperlinks_from_html slightly modified to include additional processes
      * \fn void select_hyperlinks_from_html(std::string html, std::vector<HyperLink> &links, std::vector<std::string> rubbish)
      * \param html Raw html
-		 * \param links Vector to put HyperLinks once found
+	 * \param links Vector to put HyperLinks once found
      * \param rubbish std::vector<std::string> list of rubbish links
      * Include rubbish_links in it's selection process
      */
-		void select_hyperlinks_from_html(std::string html, std::vector<HyperLink> &links, std::vector<std::string> rubbish);
+	void select_hyperlinks_from_html(std::string html, std::vector<HyperLink> &links, std::vector<std::string> rubbish);
     /** Parses a raw <a> html tag to fit HyperLink class pattern
      * \fn bool parse_tag_a(HyperLink &lk,std::string &tag_a)
      * \param lk HyperLink link to be filled with link url & text

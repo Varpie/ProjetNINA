@@ -1,4 +1,4 @@
-Source: nina-1.0
+Source: nina-0.1-1
 Section: base
 Priority: optional
 Maintainer: Anony Mouse <example@mail.com>
@@ -7,7 +7,7 @@ Build-Depends: autotools-dev, python (>= 2.7), python-dev, libx11-dev, python-pi
 #Vcs-Git: https://github.com/Varpie/ProjetNINA
 X-Python-Version: >= 2.7
 
-Package: nina
+Package: nina-0.1-1
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, python2.7, python-lxml, python-selenium
 Description: A small AI that browses on the web
