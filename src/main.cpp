@@ -136,8 +136,10 @@ void parse_config()
 			} else if(var == "links") {
 				try
 				{
-					countdown::links = true;
-					countdown::number = std::stol(optarg);
+					countdown::links = std::stol(optarg);
+					if(countdown::links < 0) {
+						countdown::links = 0;
+					}
 				}
 				catch (std::invalid_argument)
 				{
@@ -147,6 +149,8 @@ void parse_config()
 				try
 				{
 					timer = std::stol(value);
+					if(timer < 0)
+						timer = 0;
 				}
 				catch (std::invalid_argument)
 				{
@@ -230,6 +234,10 @@ bool parse_arguments(int argc, char **argv)
 					try
 				  {
 						timer = std::stol(optarg);
+						if(timer <= 0) {
+							std::cerr << "Please enter a correct time" << std::endl;
+							flag = false;
+						}
 				  }
 				  catch (std::invalid_argument)
 				  {
@@ -241,7 +249,11 @@ bool parse_arguments(int argc, char **argv)
 					countdown::links = true;
 					try
 				  {
-				    countdown::number = std::stol(optarg);
+				    countdown::links = std::stol(optarg);
+						if(countdown::links < 0) {
+							std::cerr << "Please enter a correct number" << std::endl;
+							flag = false;
+						}
 				  }
 				  catch (std::invalid_argument)
 				  {
