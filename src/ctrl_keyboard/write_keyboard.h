@@ -22,14 +22,19 @@ extern "C" {
 #include <locale.h>
 #include <wctype.h>
 #include <X11/XKBlib.h>
+#include <X11/Xatom.h>
+#include <X11/extensions/XInput.h>
 
 #define MAX_SHIFT_LEVEL 3
 #define SHIFT 42
 #define ALT_GR 100
 #define CTRL_KEY 29
 
+
 /* Globals */
 static int uinp_fd = -1;
+static const char *DEVICE_NAME  = "Custom Device";
+
 //static int box_muller_v = -1;
 //realtive url !!!
 //static const char name_conf[] = "/home/etienne/ProjetNINA/config/conf";
@@ -47,7 +52,7 @@ struct input_event event;
 int setup_uinput_device();
 
 /* Implementation for mouse event */
-void send_click_events();
+void send_click_events(int x, int y);
 
 /*Send an event of value = 1 and type = EV_KEY (press of key) */
 void press_a_button(int key);
