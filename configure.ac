@@ -1,14 +1,11 @@
 AC_PREREQ([2.69])
-AC_INIT([nina], [0.1], [])
-AM_INIT_AUTOMAKE
+AC_INIT([nina], [1.0], [])
+AM_INIT_AUTOMAKE([1.15 foreign])
 
 AC_PROG_CXX
 AC_PROG_CC
 AC_PROG_CPP
 AC_PROG_INSTALL
-AC_PROG_LN_S
-AC_PROG_MAKE_SET
-AC_PROG_RANLIB
 
 AC_CHECK_PROG([PIP_CHECK],[pip],[yes])
 AC_CHECK_HEADER([X11/Xlib.h],[X11_CHECK=yes],[X11_CHECK=no])
@@ -43,8 +40,8 @@ if test x"$flag" == x"1" ; then
 fi
 AC_CONFIG_COMMANDS_PRE([./scripts/python_dependencies.sh])
 
-current_dir=$PWD
-AC_SUBST(current_dir)
+CURRENT_DIR=$PWD
+AC_SUBST(CURRENT_DIR)
 
 AM_PATH_PYTHON([2.7])
 CXXFLAGS=-std=c++14

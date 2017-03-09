@@ -1,7 +1,7 @@
 Source: nina
 Section: base
 Priority: optional
-Maintainer: Anony Mouse <example@mail.com>
+Maintainer: Etienne JODRY <etienne.jodry@hotmail.fr>
 Standards-Version: 3.9.8
 Build-Depends: autotools-dev, debhelper (>=9), python2.7, python-dev, libx11-dev, libxi-dev, python-pip
 #Vcs-Git: https://github.com/Varpie/ProjetNINA

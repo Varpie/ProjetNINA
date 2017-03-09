@@ -57,11 +57,19 @@ AM_LDFLAGS=-lpython2.7 -lX11 -lpthread -lXi
 dist_man1_MANS = doc/nina.1
 
 install-exec-local:
-	cd src/ctrl_keyboard && $(PYTHON) setup.py install --verbose --record $(pythondir)/nina_py_installed_files.txt && cd -; \
-	sh $(current_dir)/scripts/get_geckodriver.sh;
-#cd src/module_kernel && make && cp ninartk.ko /lib/modules/$(uname -r)/misc && modprobe ninartk;
+	cd $(CURRENT_DIR)/src/ctrl_keyboard && \
+	$(PYTHON) setup.py install \
+	--verbose \
+	--prefix $(DESTDIR)$(prefix) \
+	--record $(DESTDIR)$(pythondir)/nina_py_installed_files.txt && \
+	cd -; \
+	sh $(CURRENT_DIR)/scripts/get_geckodriver.sh;
+#cd $(CURRENT_DIR)/src/module_kernel && \
+#make && \
+#cp ninartk.ko /lib/modules/$(uname -r)/misc && \
+#modprobe ninartk;
 
 uninstall-local:
-	cat $(pythondir)/nina_py_installed_files.txt | xargs rm -rf \
-	rm $(pythondir)/nina* \
-	rm -r $(sysconfdir)/nina
+	( cat $(DESTDIR)$(pythondir)/nina_py_installed_files.txt | xargs rm -rf \
+	rm $(DESTDIR)$(pythondir)/nina* \
+	rm -r $(DESTDIR)$(sysconfdir)/nina )
