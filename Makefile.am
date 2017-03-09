@@ -57,7 +57,7 @@ AM_LDFLAGS=-lpython2.7 -lX11 -lpthread -lXi
 dist_man1_MANS = doc/nina.1
 
 install-exec-local:
-	cd src/ctrl_keyboard && python setup.py install --record $(pythondir)/nina_py_installed_files.txt && cd -; \
+	cd src/ctrl_keyboard && $(PYTHON) setup.py install --verbose --record $(pythondir)/nina_py_installed_files.txt && cd -; \
 	sh $(current_dir)/scripts/get_geckodriver.sh;
 #cd src/module_kernel && make && cp ninartk.ko /lib/modules/$(uname -r)/misc && modprobe ninartk;
 
