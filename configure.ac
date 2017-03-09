@@ -12,6 +12,7 @@ AC_PROG_RANLIB
 
 AC_CHECK_PROG([PIP_CHECK],[pip],[yes])
 AC_CHECK_HEADER([X11/Xlib.h],[X11_CHECK=yes],[X11_CHECK=no])
+AC_CHECK_HEADER([X11/extensions/XInput.h],[XI_CHECK=yes],[XI_CHECK=no])
 AC_CHECK_HEADER([python2.7/Python.h],[PYDEV_CHECK=yes],[PYDEC_CHECK=no])
 AC_CHECK_PROG([PY2_CHECK],[python2.7],[yes])
 
@@ -23,6 +24,10 @@ if test x"$PY2_CHECK" != x"yes" ; then
 fi
 if test x"$X11_CHECK" != x"yes" ; then
   message+=" libx11-dev"
+  flag=1
+fi
+if test x"$XI_CHECK" != x"yes" ; then
+  message+=" libxi-dev"
   flag=1
 fi
 if test x"$PYDEV_CHECK" != x"yes" ; then
