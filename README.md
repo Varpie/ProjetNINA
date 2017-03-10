@@ -129,13 +129,22 @@ C++:
   make dist
   ```
 
-- .deb (requires checkinstall)
+- .deb (checkinstall)
   ```
   tar -xzf nina.tar.gz
   cd nina
   aclocal; autoconf; automake; ./configure
   sudo checkinstall
+  ```
+
+- .deb (debhelper)
+  ```
   https://wiki.debian.org/Packaging/Intro
+  ```
+
+- .deb (dpkg-buildpackage -us -uc -b)
+  ```
+    https://vincent.bernat.im/en/blog/2016-pragmatic-debian-packaging
   ```
 
 - install

@@ -59,17 +59,16 @@ dist_man1_MANS = doc/nina.1
 install-exec-local:
 	cd $(CURRENT_DIR)/src/ctrl_keyboard && \
 	$(PYTHON) setup.py install \
-	--verbose \
-	--prefix $(DESTDIR)$(prefix) \
-	--record $(DESTDIR)$(pythondir)/nina_py_installed_files.txt && \
-	cd -; \
-	sh $(CURRENT_DIR)/scripts/get_geckodriver.sh;
+		--prefix $(DESTDIR)$(prefix) \
+		--record $(DESTDIR)$(prefix)/lib/python2.7/site-packages/nina_py_installed_files.txt \
+		--verbose && \
+	cd -;
 #cd $(CURRENT_DIR)/src/module_kernel && \
 #make && \
 #cp ninartk.ko /lib/modules/$(uname -r)/misc && \
 #modprobe ninartk;
 
 uninstall-local:
-	( cat $(DESTDIR)$(pythondir)/nina_py_installed_files.txt | xargs rm -rf \
-	rm $(DESTDIR)$(pythondir)/nina* \
-	rm -r $(DESTDIR)$(sysconfdir)/nina )
+	cat $(DESTDIR)$(prefix)/lib/python2.7/site-packages/nina_py_installed_files.txt | xargs rm -rf; \
+	rm $(DESTDIR)$(pythondir)/nina*; \
+	rm -r $(DESTDIR)$(sysconfdir)/nina;

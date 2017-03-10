@@ -1,7 +1,3 @@
 #!/usr/bin/make -f
 %:
 	dh $@ --with autotools_dev
-
-override_dh_usrlocal:
-override_dh_configure:
-	./configure --sysconfdir=/etc
