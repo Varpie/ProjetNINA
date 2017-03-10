@@ -136,9 +136,10 @@ void parse_config()
 			} else if(var == "links") {
 				try
 				{
-					countdown::links = std::stol(optarg);
-					if(countdown::links < 0) {
-						countdown::links = 0;
+					countdown::links = true;
+					countdown::number = std::stoi(optarg);
+					if(countdown::number < 0) {
+						countdown::number = 0;
 					}
 				}
 				catch (std::invalid_argument)
@@ -148,7 +149,7 @@ void parse_config()
 			} else if(var == "time") {
 				try
 				{
-					timer = std::stol(value);
+					timer = std::stoi(value);
 					if(timer < 0)
 						timer = 0;
 				}
@@ -233,7 +234,7 @@ bool parse_arguments(int argc, char **argv)
 				} else if(long_options[option_index].name == "timeout"){
 					try
 				  {
-						timer = std::stol(optarg);
+						timer = std::stoi(optarg);
 						if(timer <= 0) {
 							std::cerr << "Please enter a correct time" << std::endl;
 							flag = false;
@@ -246,11 +247,11 @@ bool parse_arguments(int argc, char **argv)
 				  }
 					logging::vout(1,"Using time countdown : " + std::string(optarg));
 				} else if(long_options[option_index].name == "links"){
-					countdown::links = true;
 					try
 				  {
-				    countdown::links = std::stol(optarg);
-						if(countdown::links < 0) {
+						countdown::links = true;
+				    countdown::number = std::stoi(optarg);
+						if(countdown::number < 0) {
 							std::cerr << "Please enter a correct number" << std::endl;
 							flag = false;
 						}
