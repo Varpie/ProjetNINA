@@ -34,7 +34,7 @@ void Intelligence::roam()
 	this->current_url = this->navigator->navigate(this->current_url);
 	do {
 		if(countdown::links) {
-			logging::vout(1,"Links countdown : " + std::to_string(countdown::links));
+			logging::vout(1,"Links countdown : " + std::to_string(countdown::number));
 		}
 		logging::vout(3,"Get page's html");
 		page_html = this->navigator->get_body_html();
@@ -53,20 +53,22 @@ void Intelligence::roam()
 			navigate_res = this->navigator->navigate(this->current_url);
 		} else {
 			logging::vout(3,"Search keyword in the adress bar");
-			search_keyword();
+			logging::vout(3,"Add current url to automatic blacklist");
+			append_vector(this->auto_blacklist,this->current_url,AUTO_BL_MAX);
+			current_url = search_keyword();
 		}
 		/* we get out if we passed more than 10 links on the same domain
 		 	 or if python met an error */
 		if(navigate_res == "failed" || current_domain_occurences() > 10) {
 			logging::vout(3,"Search keyword in the adress bar");
-			search_keyword();
+			current_url = search_keyword();
 			search = true;
 		} else {
 			this->current_url = navigate_res;
 		}
-		if(!--countdown::links){
+		if(countdown::links && !--countdown::number){
 			threading::running = false;
-			logging::vout(1,"Links countdown : " + std::to_string(countdown::links));
+			logging::vout(1,"Links countdown : " + std::to_string(countdown::number));
 		}
 		logging::vout(3,"Add current url to the history");
 		append_vector(this->history,this->current_url,HISTORY_MAX);
@@ -90,24 +92,14 @@ std::string select_keyword(std::vector<std::string> list)
 	return res;
 }
 
-void Intelligence::search_keyword()
+std::string Intelligence::search_keyword()
 {
 	logging::vout(2,"Entering Intelligence::search_keyword");
-	logging::vout(3,"Add current url to automatic blacklist");
-	append_vector(this->auto_blacklist,this->current_url,AUTO_BL_MAX);
 	logging::vout(3,"Select keyword");
 	std::string kw = select_keyword(keywords);
 	logging::vout(3,"Write keyword in the adress bar");
-	this->current_url = this->navigator->write_search(kw);
 	logging::vout(2,"Leaving Intelligence::search_keyword");
-}
-
-std::string Intelligence::search_keyword_handle()
-{
-	logging::vout(2,"Entering Intelligence::search_keyword_handle");
-	std::string kw = select_keyword(keywords);
 	return this->navigator->write_search(kw);
-	logging::vout(2,"Leaving Intelligence::search_keyword_handle");
 }
 
 int Intelligence::current_domain_occurences()
@@ -226,7 +218,7 @@ HyperLink Intelligence::select_link(std::vector<HyperLink> &links,std::string ur
 	  } while (!res && cpt++<50);
 		if(cpt == 50){
 			logging::vout(1,"No valid link");
-			link.url = Intelligence::search_keyword_handle();
+			link.url = Intelligence::search_keyword();
 			link.text = "";
 		}
 	}

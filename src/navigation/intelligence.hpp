@@ -82,12 +82,7 @@ class Intelligence
 		 * Go on urltab, type keyword calling uinput and enter search
 		 * Usually called when error case met
 		 */
-		void search_keyword();
-		/** An adaptation of search_keyword called in a specific case
-		 * \fn std::string search_keyword_handle()
-		 * \return std::string : url of page after research
-		 */
-		std::string search_keyword_handle();
+		std::string search_keyword();
 		// HyperLink select_otherlist(std::vector<HyperLink> &links,std::string url, tuple_list list);
 	private:
 		/**

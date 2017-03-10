@@ -31,7 +31,8 @@ namespace dict {
 }
 
 namespace countdown {
-    extern long links;
+    extern bool links;
+    extern int number;
 }
 
 namespace threading {
