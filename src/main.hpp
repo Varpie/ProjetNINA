@@ -59,11 +59,15 @@ std::string dict::otherfile;
 /**
  * Execution time in seconds
  */
-long timer;
+int timer;
 /**
  * Links countdown
  */
-long countdown::links;
+bool countdown::links = false;
+/**
+ * Number of links browsed
+ */
+int countdown::number;
 /**
  * Start url
  */
