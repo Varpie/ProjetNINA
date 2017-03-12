@@ -44,10 +44,6 @@ AC_CONFIG_COMMANDS_PRE([sudo ./scripts/get_geckodriver.sh])
 CURRENT_DIR=$PWD
 AC_SUBST(CURRENT_DIR)
 
-TOTO=$pythonpath
-AC_SUBST(TOTO)
-
-
 AM_PATH_PYTHON([2.7])
 CXXFLAGS=-std=c++14
 AC_CONFIG_FILES([Makefile])
