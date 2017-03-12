@@ -32,8 +32,14 @@ ninaconf_DATA = \
 pythonlibdir = \
 	$(pythondir)
 
+bindeptsdir = \
+	$(prefix)/bin
+
 pythonlib_DATA = \
 	src/navigation/nina.py
+
+bindepts_DATA = \
+	/usr/local/bin/geckodriver
 
 EXTRA_DIST = \
 	scripts/get_geckodriver.sh \
@@ -46,29 +52,26 @@ EXTRA_DIST = \
 	config/dictionaries/keywords.txt \
 	config/dictionaries/rubbish_links.txt \
 	config/dictionaries/whitelist.txt \
-	debian/changelog \
-	debian/compat \
-	debian/control \
-	debian/copyright \
-	debian/rules \
-	debian/sources/format
 
 AM_LDFLAGS=-lpython2.7 -lX11 -lpthread -lXi
 dist_man1_MANS = doc/nina.1
+dist_doc_DATA = \
+	README.md \
+	COPYING	
+
 
 install-exec-local:
+	mkdir $(DESTDIR)$(sysconfdir); \
+	mkdir $(DESTDIR)$(sysconfdir)/nina ; \
 	cd $(CURRENT_DIR)/src/ctrl_keyboard && \
 	$(PYTHON) setup.py install \
-		--prefix $(DESTDIR)$(prefix) \
-		--record $(DESTDIR)$(prefix)/lib/python2.7/site-packages/nina_py_installed_files.txt \
+		--root $(DESTDIR) \
+		--record $(DESTDIR)$(sysconfdir)/nina/nina_installed_files.txt \
 		--verbose && \
-	cd -;
-#cd $(CURRENT_DIR)/src/module_kernel && \
-#make && \
-#cp ninartk.ko /lib/modules/$(uname -r)/misc && \
-#modprobe ninartk;
+	cd -; \
+	echo $(prefix)/bin/geckodriver >> $(DESTDIR)$(sysconfdir)/nina/nina_installed_files.txt;
 
 uninstall-local:
-	cat $(DESTDIR)$(prefix)/lib/python2.7/site-packages/nina_py_installed_files.txt | xargs rm -rf; \
-	rm $(DESTDIR)$(pythondir)/nina*; \
-	rm -r $(DESTDIR)$(sysconfdir)/nina;
+	cat $(DESTDIR)$(sysconfdir)/nina/nina_installed_files.txt | xargs rm -rf;
+	rm $(DESTDIR)$(pythondir)/nina.*; \
+	rm -r $(DESTDIR)$(sysconfdir)/nina/;

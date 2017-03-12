@@ -1392,7 +1392,7 @@ void link_devices(Display *dpy){
     }
     XFreeDeviceList(devlist);
 }
-
+/*
 int main() {
         system("/home/louis/projetnina/scripts/loadUinput.sh");
         if (setup_uinput_device() < 0)
@@ -1422,4 +1422,4 @@ int main() {
         destroy_uinput_device();
         system("/home/louis/projetnina/scripts/remove_devices.sh");
         return 0;
-}
+}*/
