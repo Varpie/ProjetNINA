@@ -123,31 +123,30 @@ C++:
   sudo showkey
   ```
 
-## Create .deb
+## Packaging
 - Tarball
   ```
-  make dist
+  Export :
+
+    aclocal; autoconf; automake; ./configure --sysconfdir=/etc
+    make dist
+
+
+  Installation :
+
+    tar -zxvf ninaX-x.tar.gz
+    cd ninaX-x/
+    ./configure --sysconfdir=/etc
+    sudo make install
   ```
 
-- .deb (checkinstall)
+- .deb
   ```
-  tar -xzf nina.tar.gz
-  cd nina
-  aclocal; autoconf; automake; ./configure
-  sudo checkinstall
-  ```
+  Packaging :
+  
+    dpkg-buildpackage -us -uc -b
 
-- .deb (debhelper)
-  ```
-  https://wiki.debian.org/Packaging/Intro
-  ```
+  Installation :
 
-- .deb (dpkg-buildpackage -us -uc -b)
-  ```
-    https://vincent.bernat.im/en/blog/2016-pragmatic-debian-packaging
-  ```
-
-- install
-  ```
-  sudo dpkg --install nina.deb
+    sudo dpkg -i ninaX-x.deb
   ```
