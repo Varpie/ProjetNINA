@@ -2,7 +2,7 @@ Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: nina
 
 Files: *
-Copyright: 2017, Nina
+Copyright: 2017, JODRY Etienne, VARLEZ Pierre, KLEIN Louis, VUAGNOUX Alix 
 License: (GNU-GPLv3)
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License version 3 as published by 

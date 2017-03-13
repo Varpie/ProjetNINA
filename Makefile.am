@@ -22,7 +22,7 @@ ninaconfdir= \
 	$(sysconfdir)/nina
 
 ninaconf_DATA = \
-	src/ctrl_keyboard/conf \
+	src/ctrl_keyboard/timed_keys \
 	config/dictionaries/auto_blacklist.txt \
 	config/dictionaries/blacklist.txt \
 	config/dictionaries/keywords.txt \
@@ -46,7 +46,7 @@ EXTRA_DIST = \
 	src/navigation/nina.py \
 	src/ctrl_keyboard/uinput_wrapping_module.c \
 	src/ctrl_keyboard/setup.py \
-	src/ctrl_keyboard/conf \
+	src/ctrl_keyboard/timed_keys \
 	config/dictionaries/auto_blacklist.txt \
 	config/dictionaries/blacklist.txt \
 	config/dictionaries/keywords.txt \
@@ -54,11 +54,12 @@ EXTRA_DIST = \
 	config/dictionaries/whitelist.txt
 
 AM_LDFLAGS=-lpython2.7 -lX11 -lpthread -lXi
+
 dist_man1_MANS = doc/nina.1
+
 dist_doc_DATA = \
 	README.md \
 	COPYING	
-
 
 install-exec-local:
 	mkdir $(DESTDIR)$(sysconfdir); \
