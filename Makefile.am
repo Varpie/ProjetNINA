@@ -31,14 +31,14 @@ ninaconf_DATA = \
 pythonlibdir = \
 	$(pythondir)
 
-bindeptsdir = \
-	$(prefix)/bin
-
 pythonlib_DATA = \
 	src/navigation/nina.py
 
 bindepts_DATA = \
 	geckodriver
+
+bindeptsdir = \
+	$(prefix)/bin
 
 EXTRA_DIST = \
 	scripts/get_geckodriver.sh \
@@ -57,18 +57,21 @@ dist_man1_MANS = doc/nina.1
 
 dist_doc_DATA = \
 	README.md \
-	COPYING	
+	COPYING
 
 install-exec-local:
-	mkdir $(DESTDIR)$(sysconfdir); \
-	mkdir $(DESTDIR)$(sysconfdir)/nina ; \
+	mkdir -p $(DESTDIR)$(sysconfdir); \
+	mkdir -p $(DESTDIR)$(sysconfdir)/nina ; \
 	cd $(CURRENT_DIR)/src/ctrl_keyboard && \
 	$(PYTHON) setup.py install \
-		--root $(DESTDIR) \
+		--prefix $(DESTDIR)$(prefix) \
 		--record $(DESTDIR)$(sysconfdir)/nina/nina_installed_files.txt \
 		--verbose && \
 	cd -; \
-	echo $(prefix)/bin/geckodriver >> $(DESTDIR)$(sysconfdir)/nina/nina_installed_files.txt;
+	echo $(DESTDIR)$(prefix)/bin/geckodriver >> $(DESTDIR)$(sysconfdir)/nina/nina_installed_files.txt;
+
+install-data-hook:
+	chmod +x $(DESTDIR)$(prefix)/bin/geckodriver;
 
 uninstall-local:
 	cat $(DESTDIR)$(sysconfdir)/nina/nina_installed_files.txt | xargs rm -rf;

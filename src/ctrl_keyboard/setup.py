@@ -12,8 +12,7 @@ setup(ext_modules=[uinput_wrapping_module],
     author='Etienne JODRY',
     author_email='etienne.jodry@hotmail.fr',
     url='https://github.com/Varpie/ProjetNINA',
-    license='GNU/GPLv3',
-    data_files=['/etc/nina/timed_keys']
+    license='GNU/GPLv3'
     )
 #python setup.py build_ext --inplace
 #sudo python setup.py install
