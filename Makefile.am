@@ -64,16 +64,26 @@ install-exec-local:
 	mkdir -p $(DESTDIR)$(sysconfdir)/nina ; \
 	cd $(CURRENT_DIR)/src/ctrl_keyboard && \
 	$(PYTHON) setup.py install \
-		--prefix $(DESTDIR)$(prefix) \
+		--root $(DESTDIR) \
 		--record $(DESTDIR)$(sysconfdir)/nina/nina_installed_files.txt \
 		--verbose && \
 	cd -; \
-	echo $(DESTDIR)$(prefix)/bin/geckodriver >> $(DESTDIR)$(sysconfdir)/nina/nina_installed_files.txt;
+	echo $(DESTDIR)$(prefix)/bin/geckodriver >> $(DESTDIR)$(sysconfdir)/nina/nina_installed_files.txt; \
+	./scripts/python_dependencies.sh;
+
 
 install-data-hook:
 	chmod +x $(DESTDIR)$(prefix)/bin/geckodriver;
 
 uninstall-local:
-	cat $(DESTDIR)$(sysconfdir)/nina/nina_installed_files.txt | xargs rm -rf;
+	cat $(DESTDIR)$(sysconfdir)/nina/nina_installed_files.txt | xargs rm -rf; \
 	rm $(DESTDIR)$(pythondir)/nina.*; \
 	rm -r $(DESTDIR)$(sysconfdir)/nina/;
+
+clean-local:
+	rm -rf \
+		Makefile Makefile.in aclocal.m4 autom4te.cache/ compile config.log config.status \
+		configure debian/.debhelper/ debian/debhelper-build-stamp debian/files debian/nina./ \
+		debian/nina.debhelper.log debian/nina.substvars debian/nina/ depcomp geckodriver \
+		install-sh missing src/.deps/ src/.dirstamp src/ctrl_keyboard/.deps/ src/ctrl_keyboard/.dirstamp \
+		src/ctrl_keyboard/build/ src/navigation/.deps/ src/navigation/.dirstamp geckodriver.log;

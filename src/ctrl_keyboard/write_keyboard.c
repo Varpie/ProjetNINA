@@ -1376,10 +1376,10 @@ Window get_window_by_pid(Display *dpy, unsigned long pid){
                                 XFree(propPID);
                         }
                 }
-
         }
         return (Window)NULL;
 }
+
 
 // int main() {
 //         system("/home/louis/projetnina/scripts/loadUinput.sh");
