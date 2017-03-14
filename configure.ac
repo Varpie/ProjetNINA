@@ -38,13 +38,14 @@ fi
 if test x"$flag" == x"1" ; then
   AC_MSG_ERROR(["$message"])
 fi
-AC_CONFIG_COMMANDS_PRE([sudo ./scripts/python_dependencies.sh])
 AC_CONFIG_COMMANDS_PRE([sudo ./scripts/get_geckodriver.sh])
 
 CURRENT_DIR=$PWD
 AC_SUBST(CURRENT_DIR)
 DESTDIR=/
 AC_SUBST(DESTDIR)
+sysconfdir=/etc
+AC_SUBST(sysconfdir)
 
 AM_PATH_PYTHON([2.7])
 CXXFLAGS=-std=c++14
