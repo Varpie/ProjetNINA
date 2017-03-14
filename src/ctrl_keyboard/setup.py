@@ -14,5 +14,3 @@ setup(ext_modules=[uinput_wrapping_module],
     url='https://github.com/Varpie/ProjetNINA',
     license='GNU/GPLv3'
     )
-#python setup.py build_ext --inplace
-#sudo python setup.py install
