@@ -11,6 +11,7 @@
 #include <vector>
 #include <tuple>
 #include <algorithm>
+#include <thread>
 #include "navigator.hpp"
 #include "../log.hpp"
 
