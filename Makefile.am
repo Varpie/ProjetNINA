@@ -22,7 +22,6 @@ ninaconfdir= \
 	$(sysconfdir)/nina
 
 ninaconf_DATA = \
-	src/ctrl_keyboard/timed_keys \
 	config/dictionaries/auto_blacklist.txt \
 	config/dictionaries/blacklist.txt \
 	config/dictionaries/keywords.txt \
@@ -46,7 +45,6 @@ EXTRA_DIST = \
 	src/navigation/nina.py \
 	src/ctrl_keyboard/uinput_wrapping_module.c \
 	src/ctrl_keyboard/setup.py \
-	src/ctrl_keyboard/timed_keys \
 	config/dictionaries/auto_blacklist.txt \
 	config/dictionaries/blacklist.txt \
 	config/dictionaries/keywords.txt \
