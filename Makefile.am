@@ -64,7 +64,7 @@ install-exec-local:
 	mkdir -p $(DESTDIR)$(sysconfdir)/nina ; \
 	cd $(CURRENT_DIR)/src/ctrl_keyboard && \
 	$(PYTHON) setup.py install \
-		--prefix $(DESTDIR)$(prefix) \
+		--root $(DESTDIR) \
 		--record $(DESTDIR)$(sysconfdir)/nina/nina_installed_files.txt \
 		--verbose && \
 	cd -; \
@@ -74,6 +74,6 @@ install-data-hook:
 	chmod +x $(DESTDIR)$(prefix)/bin/geckodriver;
 
 uninstall-local:
-	cat $(DESTDIR)$(sysconfdir)/nina/nina_installed_files.txt | xargs rm -rf;
+	cat $(DESTDIR)$(sysconfdir)/nina/nina_installed_files.txt | xargs rm -rf; \
 	rm $(DESTDIR)$(pythondir)/nina.*; \
 	rm -r $(DESTDIR)$(sysconfdir)/nina/;

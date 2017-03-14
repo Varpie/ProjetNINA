@@ -1381,7 +1381,7 @@ Window get_window_by_pid(Display *dpy, unsigned long pid){
   return (Window)NULL;
 }
 
-void link_devices(Display *dpy){
+/*void link_devices(Display *dpy){
     int nbdev;
     XDeviceInfo *devlist;
     devlist = XListInputDevices(dpy, &nbdev);
@@ -1391,7 +1391,7 @@ void link_devices(Display *dpy){
         printf("Device Name : %s\n",devlist[i].name);
     }
     XFreeDeviceList(devlist);
-}
+}*/
 
 // int main() {
 //         system("/home/louis/projetnina/scripts/loadUinput.sh");
