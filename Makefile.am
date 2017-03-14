@@ -38,7 +38,7 @@ pythonlib_DATA = \
 	src/navigation/nina.py
 
 bindepts_DATA = \
-	/usr/local/bin/geckodriver
+	geckodriver
 
 EXTRA_DIST = \
 	scripts/get_geckodriver.sh \
