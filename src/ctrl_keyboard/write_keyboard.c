@@ -1392,34 +1392,29 @@ void link_devices(Display *dpy){
     }
     XFreeDeviceList(devlist);
 }
-/*
-int main() {
-        system("/home/louis/projetnina/scripts/loadUinput.sh");
-        if (setup_uinput_device() < 0)
-        {
-                printf("Unable to find uinput device\n");
-                return -1;
-        }
 
-        //system("/home/louis/projetnina/scripts/create_devices.sh");
-        //send_click_events();
-        load_map();
-        Display *dpy = XOpenDisplay(NULL);
-        char * name = "Generic Device";
-        int j;
-        printf("Before create master\n");
-        create_master(dpy,name);
-        printf("After create master\n");
-        int *ids = find_device_id(dpy,name,&j);
-        printf("J %d\n",j );
-        int i=0;
-        for(i=j-1;i>=0;i--)
-          printf("Ids : %d \n",ids[i]);
-        //Window browser = get_window_by_pid(dpy, pid);
-        getchar();
-        send_key_with_ctrl(38);
-        write_string("lol €");
-        destroy_uinput_device();
-        system("/home/louis/projetnina/scripts/remove_devices.sh");
-        return 0;
-}*/
+// int main() {
+//         system("/home/louis/projetnina/scripts/loadUinput.sh");
+//         if (setup_uinput_device() < 0)
+//         {
+//                 printf("Unable to find uinput device\n");
+//                 return -1;
+//         }
+//
+//         //system("/home/louis/projetnina/scripts/create_devices.sh");
+//         //send_click_events();
+//         load_map();
+//         Display *dpy = XOpenDisplay(NULL);
+//         char * name = "Generic Device";
+//         create_master(dpy,name);
+//         int j;
+//         int *ids = find_device_id(dpy, "Custom Device", &j);
+//
+//         //Window browser = get_window_by_pid(dpy, pid);
+//         getchar();
+//         send_key_with_ctrl(38);
+//         write_string("lol €");
+//         destroy_uinput_device();
+//         system("/home/louis/projetnina/scripts/remove_devices.sh");
+//         return 0;
+// }
