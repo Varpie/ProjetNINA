@@ -7,9 +7,10 @@ import random
 import lxml.html.clean
 import time
 import signal
+import sys
 import os
-os.environ['GLOG_minloglevel'] = '3'
-
+sys.stdout = os.devnull
+sys.stderr = os.devnull
 """!
 Selenium webdriver
 Marionette on Firefox browser

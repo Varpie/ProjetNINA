@@ -105,16 +105,25 @@ C++:
 
 
 ## Dependancies
-- python (pip)
+
+- Build
+	
 	```
-	selenium
-	lxml
+		autotools-dev
+		debhelper(>=9)
+		python2.7
+		python-dev
+		libx11-dev
+		libxi-dev
+		python-pip
 	```
 
-- C
+- Run
+	
 	```
-	libx11-dev
-	python-dev
+		python2.7
+		python-selenium
+		python-lxml
 	```
 
 ## Uinput driver
