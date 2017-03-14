@@ -1343,54 +1343,42 @@ void key_delay(int currkey, int prevkey){
 }
 
 Window get_window_by_pid(Display *dpy, unsigned long pid){
-  Window root = XDefaultRootWindow(dpy);
-  unsigned int numchildren;
-  Window *children;
-  Window parent;
-  Window r;
-  Window result;
-  if(XQueryTree(dpy,root,&r,&parent,&children,&numchildren) == Success) {
-          fprintf(stderr, "Erreur XQueryTree\n");
-          return (Window)NULL;
-  }
-  Atom atom_PID = XInternAtom(dpy, "_NET_WM_PID", True);
-  if(atom_PID == None) {
-          fprintf(stderr, "Erreur XInternAtom\n");
-          return (Window)NULL;
-  }
-  printf("Nombre d'enfant : %d\n",numchildren);
-  int i;
-  Atom type;
-  int format;
-  unsigned long nItems;
-  unsigned long bytesAfter;
-  unsigned char *propPID = 0;
-  for(i=numchildren-1; i>=0; i--) {
-          if(Success == XGetWindowProperty(dpy, children[i], atom_PID, 0, 1, False, XA_CARDINAL, &type, &format, &nItems, &bytesAfter, &propPID)) {
-                  if(propPID != 0) {
-                          // If the PID matches, add this window to the result set.
-                          if(pid == *((unsigned long *)propPID)){
-                            result = children[i];
-                            return result;
-                          }
-                          XFree(propPID);
-                  }
-          }
+        Window root = XDefaultRootWindow(dpy);
+        unsigned int numchildren;
+        Window *children;
+        Window parent;
+        Window r;
+        Window result;
+        if(XQueryTree(dpy,root,&r,&parent,&children,&numchildren) == Success) {
+                fprintf(stderr, "Erreur XQueryTree\n");
+                return (Window)NULL;
+        }
+        Atom atom_PID = XInternAtom(dpy, "_NET_WM_PID", True);
+        if(atom_PID == None) {
+                fprintf(stderr, "Erreur XInternAtom\n");
+                return (Window)NULL;
+        }
+        printf("Nombre d'enfant : %d\n",numchildren);
+        int i;
+        Atom type;
+        int format;
+        unsigned long nItems;
+        unsigned long bytesAfter;
+        unsigned char *propPID = 0;
+        for(i=numchildren-1; i>=0; i--) {
+                if(Success == XGetWindowProperty(dpy, children[i], atom_PID, 0, 1, False, XA_CARDINAL, &type, &format, &nItems, &bytesAfter, &propPID)) {
+                        if(propPID != 0) {
+                                // If the PID matches, add this window to the result set.
+                                if(pid == *((unsigned long *)propPID)) {
+                                        result = children[i];
+                                        return result;
+                                }
+                                XFree(propPID);
+                        }
+                }
 
-  }
-  return (Window)NULL;
-}
-
-void link_devices(Display *dpy){
-    int nbdev;
-    XDeviceInfo *devlist;
-    devlist = XListInputDevices(dpy, &nbdev);
-    int i;
-    for(i=nbdev-1;i>=0;i--){
-      //if(devlist[i].use == IsXKeyboard)
-        printf("Device Name : %s\n",devlist[i].name);
-    }
-    XFreeDeviceList(devlist);
+        }
+        return (Window)NULL;
 }
 
 // int main() {
@@ -1400,17 +1388,46 @@ void link_devices(Display *dpy){
 //                 printf("Unable to find uinput device\n");
 //                 return -1;
 //         }
-//
 //         //system("/home/louis/projetnina/scripts/create_devices.sh");
 //         //send_click_events();
 //         load_map();
 //         Display *dpy = XOpenDisplay(NULL);
 //         char * name = "Generic Device";
 //         create_master(dpy,name);
+//         XSync(dpy, False);
+//         printf("After master\n");
 //         int j;
-//         int *ids = find_device_id(dpy, "Custom Device", &j);
-//
-//         //Window browser = get_window_by_pid(dpy, pid);
+//         XIDeviceInfo * ids = find_device_id(dpy, "Custom Device", &j);
+//         int i;
+//         XIDeviceInfo * master_kbd = find_device_id(dpy, "Generic Device keyboard", &i);
+//         printf("master kbd %d\n",master_kbd[0].deviceid);
+//         XIDeviceInfo * master_ptr = find_device_id(dpy, "Generic Device pointer", &i);
+//         XSync(dpy,False);
+//         printf("master ptr %d\n",master_ptr[0].deviceid);
+//         i=0;
+//         for(i=j-1; i>=0; i--) {
+//                 if(ids[i].use == XISlavePointer) {
+//                         link_devices(dpy, ids[i], master_ptr[0]);
+//                         printf("link ptr\n");
+//                 }else if(ids[i].use == XISlaveKeyboard) {
+//                         link_devices(dpy,ids[i], master_kbd[0]);
+//                         printf("link kbd\n");
+//                 }
+//                 XSync(dpy, False);
+//         }
+//         int pid=1331;
+//         Window browser = get_window_by_pid(dpy, pid);
+//         XGrabPointer(dpy, browser, True, ButtonPressMask |
+//                      ButtonReleaseMask |
+//                      PointerMotionMask |
+//                      FocusChangeMask |
+//                      EnterWindowMask |
+//                      LeaveWindowMask,
+//                      GrabModeAsync,
+//                      GrabModeAsync,
+//                      browser,
+//                      None,
+//                      CurrentTime);
 //         getchar();
 //         send_key_with_ctrl(38);
 //         write_string("lol €");
