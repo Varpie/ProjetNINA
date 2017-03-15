@@ -1380,9 +1380,8 @@ Window get_window_by_pid(Display *dpy, unsigned long pid){
         return (Window)NULL;
 }
 
-
 // int main() {
-//         system("/home/louis/projetnina/scripts/loadUinput.sh");
+//         //system("/home/louis/projetnina/scripts/loadUinput.sh");
 //         if (setup_uinput_device() < 0)
 //         {
 //                 printf("Unable to find uinput device\n");
@@ -1394,20 +1393,26 @@ Window get_window_by_pid(Display *dpy, unsigned long pid){
 //         Display *dpy = XOpenDisplay(NULL);
 //         char * name = "Generic Device";
 //         create_master(dpy,name);
+//         getchar();
 //         XSync(dpy, False);
 //         printf("After master\n");
 //         int j;
 //         XIDeviceInfo * ids = find_device_id(dpy, "Custom Device", &j);
+//         XSync(dpy, False);
 //         int i;
 //         XIDeviceInfo * master_kbd = find_device_id(dpy, "Generic Device keyboard", &i);
+//         XSync(dpy, False);
 //         printf("master kbd %d\n",master_kbd[0].deviceid);
 //         XIDeviceInfo * master_ptr = find_device_id(dpy, "Generic Device pointer", &i);
 //         XSync(dpy,False);
 //         printf("master ptr %d\n",master_ptr[0].deviceid);
 //         i=0;
+//         printf("J : %d\n", j);
+//         XIDeviceInfo sdptr;
 //         for(i=j-1; i>=0; i--) {
 //                 if(ids[i].use == XISlavePointer) {
 //                         link_devices(dpy, ids[i], master_ptr[0]);
+//                         sdptr = ids[i];
 //                         printf("link ptr\n");
 //                 }else if(ids[i].use == XISlaveKeyboard) {
 //                         link_devices(dpy,ids[i], master_kbd[0]);
@@ -1415,23 +1420,20 @@ Window get_window_by_pid(Display *dpy, unsigned long pid){
 //                 }
 //                 XSync(dpy, False);
 //         }
-//         int pid=1331;
-//         Window browser = get_window_by_pid(dpy, pid);
-//         XGrabPointer(dpy, browser, True, ButtonPressMask |
-//                      ButtonReleaseMask |
-//                      PointerMotionMask |
-//                      FocusChangeMask |
-//                      EnterWindowMask |
-//                      LeaveWindowMask,
-//                      GrabModeAsync,
-//                      GrabModeAsync,
-//                      browser,
-//                      None,
-//                      CurrentTime);
 //         getchar();
+//         int pid=616;
+//         XIEventMask mask;
+//         Window browser = get_window_by_pid(dpy,pid);
+//         int err = XIGrabDevice(dpy, sdptr.deviceid,  browser, CurrentTime, None, GrabModeAsync,GrabModeAsync, False, &mask);
+//
+//         printf("Bad Value : %d\n", BadValue);
+//         // printf("Bad Device : %d\n", BadDevice);
+//         printf("Bad Match : %d\n", BadMatch);
+//         printf("Bad Window : %d\n", BadWindow);
+//         printf("err : %d\n",err);
 //         send_key_with_ctrl(38);
 //         write_string("lol €");
 //         destroy_uinput_device();
-//         system("/home/louis/projetnina/scripts/remove_devices.sh");
+//         //system("/home/louis/Projects/projetnina/scripts/remove_devices.sh");
 //         return 0;
 // }
