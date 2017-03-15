@@ -14,7 +14,7 @@ Navigator::Navigator(void)
     logging::verr("import failed");
     PyErr_Print();
   }
-  //this->define_verbose(logging::verbose);
+  this->define_verbose(logging::verbose);
 }
 
 Navigator::~Navigator(void)
@@ -52,7 +52,7 @@ std::string Navigator::call_python_function_nargs(std::string function)
   retour = PyEval_CallObject(fonction,NULL);
   Py_DECREF(fonction);
   if(retour == NULL) {
-    printf("It all went wrong\n");
+    logging::verr(1,"It all went wrong\n");
     PyErr_Print();
   }
   PyArg_Parse(retour, "s", &resultat);
@@ -90,7 +90,7 @@ std::string Navigator::call_python_function(std::string function,std::string arg
 
 
   if(retour == NULL) {
-    printf("It all went wrong\n");
+    logging::verr(1,"It all went wrong\n");
     PyErr_Print();
     return arg;
   }
@@ -209,7 +209,8 @@ void Navigator::select_hyperlinks_from_html(std::string html, std::vector<HyperL
   logging::vout(2,"Leaving Navigator::select_hyperlinks_from_html rubbish");
 }
 
-bool Navigator::parse_tag_a(HyperLink &lk,std::string &tag_a) {
+bool Navigator::parse_tag_a(HyperLink &lk,std::string &tag_a) 
+{
   logging::vout(4,"Entering Navigator::parse_tag_a");
   try {
     size_t b_href = tag_a.find("href=\"");

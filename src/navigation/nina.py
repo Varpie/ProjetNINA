@@ -1,5 +1,7 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
+import sys
+import os
 from selenium import webdriver
 import uinput_wrapping_module
 import threading
@@ -7,11 +9,7 @@ import random
 import lxml.html.clean
 import time
 import signal
-import sys
-import os
 
-#sys.stdout = os.devnull
-#sys.stderr = os.devnull
 """!
 Selenium webdriver
 Marionette on Firefox browser
@@ -22,6 +20,14 @@ Command that creates file descriptor for a user space keyboad
 ref to Uinput kernel module
 """
 uinput_wrapping_module.setup_uinput_device_func()
+"""
+We redirect verbose to /dev/null by default
+Outputs will be redirected acordingly to verbose level
+in define_verbose function
+"""
+sys.stdout = os.devnull
+sys.stderr = os.devnull
+
 class TimeoutError(Exception): pass
 
 def get_pid():
@@ -182,3 +188,9 @@ def nav(var_url):
         return "failed"
     #we return current url to keep navigate
     return driver.current_url
+
+def define_verbose(level):
+    if(int(level) > 0):
+        sys.stderr = sys.__stderr__
+    if(int(level) > 1):
+        sys.stdout = sys.__stdout__
