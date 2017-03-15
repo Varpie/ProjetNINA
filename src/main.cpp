@@ -222,15 +222,15 @@ bool parse_arguments(int argc, char **argv)
 				} else if(long_options[option_index].name == "whitelist"){
 					logging::vout(1,"Using whitelist");
 					dict::whitelist = true;
-					dict::whitefile = "/etc/nina/whitelist.txt";
+					dict::whitefile = "/var/nina/whitelist.txt";
 				} else if(long_options[option_index].name == "blacklist"){
 					logging::vout(1,"Using blacklist");
 					dict::blacklist = true;
-					dict::blackfile = "/etc/nina/blacklist.txt";
+					dict::blackfile = "/var/nina/blacklist.txt";
 				} else if(long_options[option_index].name == "otherlist"){
 					logging::vout(1,"Using otherlist");
 					dict::other = true;
-					dict::otherfile = "/etc/nina/otherlist.txt";
+					dict::otherfile = "/var/nina/otherlist.txt";
 				} else if(long_options[option_index].name == "timeout"){
 					try
 				  {

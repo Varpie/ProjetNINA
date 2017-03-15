@@ -43,8 +43,6 @@ CURRENT_DIR=$PWD
 AC_SUBST(CURRENT_DIR)
 DESTDIR=/
 AC_SUBST(DESTDIR)
-sysconfdir=/etc
-AC_SUBST(sysconfdir)
 
 CXXFLAGS=-std=c++14
 AC_CONFIG_FILES([Makefile])

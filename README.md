@@ -8,7 +8,7 @@ Using autotools (install `autoconf` if you don't have it), run the following com
 	aclocal
 	autoconf
 	automake
-	./configure
+	./configure --localstatedir=/var
 	make
 	```
 
@@ -137,7 +137,7 @@ C++:
 	```
 	Export :
 
-		aclocal; autoconf; automake; ./configure
+		aclocal; autoconf; automake; ./configure --localstatedir=/var
 		make dist
 
 
@@ -145,7 +145,7 @@ C++:
 
 		tar -zxvf ninaX-x.tar.gz
 		cd ninaX-x/
-		./configure
+		./configure --localstatedir=/var
 		sudo make install
 	```
 
@@ -153,7 +153,7 @@ C++:
 	```
 	Packaging :
 	
-		aclocal; autoconf; automake; ./configure
+		aclocal; autoconf; automake; ./configure --localstatedir=/var
 		sudo dpkg-buildpackage -us -uc -b 
 
 		(result can be seen in debian/nina/ folder with a "/" like tree)
