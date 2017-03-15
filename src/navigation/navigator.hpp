@@ -78,6 +78,11 @@ class Navigator
      * \brief Equivalent of call_python_function_nargs but don't get return
      */
     void call_python_function_void_nargs(std::string function);
+    /** Function to call python function with passed args and no return
+     * \fn void call_python_function_void_args(std::string function, std::string arg)
+     * \param function String the name of the function
+     * \brief Equivalent of call_python_function but don't get return
+     */
     void call_python_function_void_args(std::string function, std::string arg);
     /** Function to perform a keyword search on default search engine of the browser
      * \fn std::string write_search(std::string keyword)
@@ -113,10 +118,19 @@ class Navigator
      * Get driver's pid attribute.
      */
     int get_pid();
+    /** Function to set python verbose levels
+     * \fn void define_verbose(int level)
+     * \param level int level of verbose
+     * \brief Calls call_python_function_void_args with get_pid as function parameter 
+     *
+     * Shut all outputs at level below 1
+     * Allows errors at level above 1
+     * Allows prints at level above 2
+     */
     void define_verbose(int level);
     /** Function to get HyperLinks from raw html
      * \fn select_hyperlinks_from_html(std::string html,std::vector<HyperLink> &links)
-     * \param html Raw html
+     * \param html std::string Raw html
      * \param links Vector to put HyperLinks once found
      * \brief Get href and text for each <a> tag, and put them in an HyperLink
      */

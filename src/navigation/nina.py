@@ -190,6 +190,13 @@ def nav(var_url):
     return driver.current_url
 
 def define_verbose(level):
+    """!
+    Define verbose level
+    Accepts logging::verbose c++ variable content
+
+    @type level: int
+    @param level: Actual level of verbose
+    """
     if(int(level) > 0):
         sys.stderr = sys.__stderr__
     if(int(level) > 1):
