@@ -80,7 +80,8 @@ uninstall-local:
 	rm $(DESTDIR)$(pythondir)/nina.*; \
 	rm -r $(DESTDIR)$(sysconfdir)/nina/;
 
-clean-local:
+#important, else it's called by dh_clean when .deb and packaging fails
+clean-comp:
 	rm -rf \
 		Makefile Makefile.in aclocal.m4 autom4te.cache/ compile config.log config.status \
 		configure debian/.debhelper/ debian/debhelper-build-stamp debian/files debian/nina./ \
