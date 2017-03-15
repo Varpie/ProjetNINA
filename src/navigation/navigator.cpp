@@ -14,6 +14,7 @@ Navigator::Navigator(void)
     logging::verr("import failed");
     PyErr_Print();
   }
+  define_verbose(logging::verbose);
 }
 
 Navigator::~Navigator(void)
@@ -99,6 +100,32 @@ std::string Navigator::call_python_function(std::string function,std::string arg
   Py_DECREF(retour);
   logging::vout(2,"Leaving Navigator::call_python_function : "+function);
   return cpp_str;
+}
+
+void Navigator::call_python_function_void_args(std::string function, std::string arg)
+{
+  logging::vout(2,"Entering Navigator::call_python_function_args : "+function);
+  PyObject *fonction, *arguments;
+
+  fonction = PyObject_GetAttrString(module, function.c_str());
+  if(fonction == NULL) {
+    std::string error = "could not find function\n";
+    logging::verr(error);
+  }
+
+  arguments = Py_BuildValue("(s)", arg.c_str());
+  if(arguments == NULL) {
+    std::string error = "arg parsing failed\n";
+    logging::verr(error);
+  }
+  PyEval_CallObject(fonction, arguments);
+  Py_DECREF(arguments);
+  Py_DECREF(fonction);
+}
+
+void Navigator::define_verbose(int level)
+{
+  this->call_python_function_void_args("define_verbose",std::to_string(level));
 }
 
 std::string Navigator::get_body_html()

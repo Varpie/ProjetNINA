@@ -64,7 +64,7 @@ class Navigator
 	 * and call the function with it thank to python connexion opened
 	 * in constructor
 	 */
-	std::string call_python_function(std::string function,std::string arg);
+	std::string call_python_function(std::string function, std::string arg);
     /** Function to call python function with no args
      * \fn std::string call_python_function_nargs(std::string function)
      * \param function String the name of the function
@@ -78,6 +78,7 @@ class Navigator
      * \brief Equivalent of call_python_function_nargs but don't get return
      */
     void call_python_function_void_nargs(std::string function);
+    void call_python_function_void_args(std::string function, std::string arg);
     /** Function to perform a keyword search on default search engine of the browser
      * \fn std::string write_search(std::string keyword)
      * \param keyword String the keyword to browse
@@ -112,12 +113,13 @@ class Navigator
      * Get driver's pid attribute.
      */
     int get_pid();
+    void define_verbose(int level);
     /** Function to get HyperLinks from raw html
-	 * \fn select_hyperlinks_from_html(std::string html,std::vector<HyperLink> &links)
-	 * \param html Raw html
-	 * \param links Vector to put HyperLinks once found
-	 * \brief Get href and text for each <a> tag, and put them in an HyperLink
-	 */
+     * \fn select_hyperlinks_from_html(std::string html,std::vector<HyperLink> &links)
+     * \param html Raw html
+     * \param links Vector to put HyperLinks once found
+     * \brief Get href and text for each <a> tag, and put them in an HyperLink
+     */
     void select_hyperlinks_from_html(std::string html, std::vector<HyperLink> &links);
     /** select_hyperlinks_from_html slightly modified to include additional processes
      * \fn void select_hyperlinks_from_html(std::string html, std::vector<HyperLink> &links, std::vector<std::string> rubbish)
