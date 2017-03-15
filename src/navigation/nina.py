@@ -9,8 +9,9 @@ import time
 import signal
 import sys
 import os
-sys.stdout = os.devnull
-sys.stderr = os.devnull
+
+#sys.stdout = os.devnull
+#sys.stderr = os.devnull
 """!
 Selenium webdriver
 Marionette on Firefox browser
@@ -21,6 +22,7 @@ Command that creates file descriptor for a user space keyboad
 ref to Uinput kernel module
 """
 uinput_wrapping_module.setup_uinput_device_func()
+class TimeoutError(Exception): pass
 
 def get_pid():
     """!
@@ -97,29 +99,37 @@ def handle_frames():
         return False
 
 def navigate(var_url):
-    """!
-    Thread nav() function and kill it if it takes more than 40 seconds.
-
-    @type var_url: string
-    @param var_url: parameter for nav() function
-
-    @return returns nav result OR 'failed' if killed
-    @rtype string
-
-    ! 40 replaced by 15 for test purpose
-    """
-    if(handle_frames()):
-        driver.back()
-        return "failed"
-    ret = runFunctionWithTimeout(nav, (var_url,), timeout_duration=15)
-    if(ret is not None):
-        if(len(ret) != 0):
-            return ret
-        else:
-            return "failed"
-    else:
+    try:
+        return nav(var_url)
+    except Exception, e:
+        print e
         return "failed"
 
+def timelimit(timeout):
+    def internal(function):
+        def internal2(*args, **kw):
+            class Calculator(threading.Thread):
+                def __init__(self):
+                    threading.Thread.__init__(self)
+                    self.result = None
+                    self.error = None
+                def run(self):
+                    try:
+                        self.result = function(*args, **kw)
+                    except:
+                        self.error = sys.exc_info()[0]
+            c = Calculator()
+            c.start()
+            c.join(timeout)
+            if c.isAlive():
+                raise TimeoutError
+            if c.error:
+                raise c.error
+            return c.result
+        return internal2
+    return internal
+
+@timelimit(20)
 def nav(var_url):
     """!
     Browse to the indicated page
@@ -131,8 +141,6 @@ def nav(var_url):
     OR returns failed if url wasn't valid
     @rtype string
     """
-    # wait at least 0.5s
-    driver.implicitly_wait(0.5)
     # current url, and domain
     current = driver.current_url
     # protocol relative url -> free to http or https
@@ -174,48 +182,3 @@ def nav(var_url):
         return "failed"
     #we return current url to keep navigate
     return driver.current_url
-
-def runFunctionWithTimeout(func, args=(), kwargs={}, timeout_duration=10, default=None):
-    """!
-    Thread a function and kill it if execution time exceed timeout_duration
-
-    @type func: function
-    @param func: Function to be executed
-
-    @type timeout_duration: int
-    @param timeout_duration: Number of seconds given to the function
-
-    @return returns function result OR exception raised by it
-    @rtype mixed
-
-    """
-    class InterruptableThread(threading.Thread):
-        def __init__(self):
-            threading.Thread.__init__(self)
-            self.result = default
-        def run(self):
-            self.result = runFunctionCatchExceptions(func, *args, **kwargs)
-    it = InterruptableThread()
-    it.start()
-    it.join(timeout_duration)
-    if it.isAlive():
-        return default
-    if it.result[0] == "exception":
-        raise it.result[1]
-    return it.result[1]
-
-def runFunctionCatchExceptions(func, *args, **kwargs):
-    """!
-    Exception raiser for runFunctionWithTimeout function
-
-    @type func: function
-    @param func: Function to be executed
-
-    @return returns function result OR exception raised by it
-    @rtype mixed
-    """
-    try:
-        result = func(*args, **kwargs)
-    except Exception, message:
-        return ["exception", message]
-    return ["RESULT", result]
