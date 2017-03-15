@@ -14,7 +14,7 @@ Navigator::Navigator(void)
     logging::verr("import failed");
     PyErr_Print();
   }
-  define_verbose(logging::verbose);
+  //this->define_verbose(logging::verbose);
 }
 
 Navigator::~Navigator(void)
