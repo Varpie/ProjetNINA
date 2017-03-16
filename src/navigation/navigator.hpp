@@ -72,6 +72,13 @@ class Navigator
      * \brief Equivalent of call_python_function but don't pass argument
      */
     std::string call_python_function_nargs(std::string function);
+    /** Function to call python function with no args
+     * \fn int call_python_function_nargs_i(std::string function)
+     * \param function String the name of the function
+     * \return int Result of python function
+     * \brief Equivalent of call_python_function_nargs, but returns int
+     */
+    int call_python_function_nargs_i(std::string function);
     /** Function to call python function with no args and no return
      * \fn void call_python_function_void_nargs(std::string function)
      * \param function String the name of the function
@@ -81,9 +88,17 @@ class Navigator
     /** Function to call python function with passed args and no return
      * \fn void call_python_function_void_args(std::string function, std::string arg)
      * \param function String the name of the function
+     * \param std::string arg the argument passed
      * \brief Equivalent of call_python_function but don't get return
      */
     void call_python_function_void_args(std::string function, std::string arg);
+    /** Function to call python function with passed args and no return
+     * \fn void call_python_function_void_args(std::string function, int arg)
+     * \param function String the name of the function
+     * \param int arg the argument passed
+     * \brief Equivalent of call_python_function but don't get return
+     */
+    void call_python_function_void_args(std::string function, int arg);
     /** Function to perform a keyword search on default search engine of the browser
      * \fn std::string write_search(std::string keyword)
      * \param keyword String the keyword to browse

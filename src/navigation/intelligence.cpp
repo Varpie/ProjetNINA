@@ -32,12 +32,18 @@ void Intelligence::roam()
 	bool search = false;
 	logging::vout(3,"Get current url");
 	this->current_url = this->navigator->navigate(this->current_url);
-	do {
+	/*do {
 		if(countdown::links) {
 			logging::vout(1,"Links countdown : " + std::to_string(countdown::number));
 		}
 		logging::vout(3,"Get page's html");
-		page_html = this->navigator->get_body_html();
+		do {
+			page_html = this->navigator->get_body_html();
+			if(page_html == "failed"){
+				this->current_url = this->search_keyword();
+			}
+		} while(page_html == "failed");
+
 		if(!search) {
 			logging::vout(3,"Get page's links");
 			this->navigator->select_hyperlinks_from_html(page_html, links);
@@ -57,8 +63,6 @@ void Intelligence::roam()
 			append_vector(this->auto_blacklist,this->current_url,AUTO_BL_MAX);
 			current_url = search_keyword();
 		}
-		/* we get out if we passed more than 10 links on the same domain
-		 	 or if python met an error */
 		if(navigate_res == "failed" || current_domain_occurences() > 10) {
 			logging::vout(3,"Search keyword in the adress bar");
 			current_url = search_keyword();
@@ -73,7 +77,7 @@ void Intelligence::roam()
 		logging::vout(3,"Add current url to the history");
 		append_vector(this->history,this->current_url,HISTORY_MAX);
 		std::this_thread::sleep_for(std::chrono::seconds(rand()%26+5));
-	} while(threading::running);
+	} while(threading::running);*/
 	logging::vout(2,"Leaving Intelligence::roam");
 }
 
