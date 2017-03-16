@@ -32,7 +32,7 @@ void Intelligence::roam()
 	bool search = false;
 	logging::vout(3,"Get current url");
 	this->current_url = this->navigator->navigate(this->current_url);
-	/*do {
+	do {
 		if(countdown::links) {
 			logging::vout(1,"Links countdown : " + std::to_string(countdown::number));
 		}
@@ -77,7 +77,7 @@ void Intelligence::roam()
 		logging::vout(3,"Add current url to the history");
 		append_vector(this->history,this->current_url,HISTORY_MAX);
 		std::this_thread::sleep_for(std::chrono::seconds(rand()%26+5));
-	} while(threading::running);*/
+	} while(threading::running);
 	logging::vout(2,"Leaving Intelligence::roam");
 }
 
