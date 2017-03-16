@@ -135,14 +135,13 @@ class Navigator
     int get_pid();
     /** Function to set python verbose levels
      * \fn void define_verbose(int level)
-     * \param level int level of verbose
      * \brief Calls call_python_function_void_args with get_pid as function parameter 
      *
-     * Shut all outputs at level below 1
-     * Allows errors at level above 1
-     * Allows prints at level above 2
+     * Shut all outputs if logging::verbose below 1
+     * Allows errors if above 1
+     * Allows prints if above 2
      */
-    void define_verbose(int level);
+    void define_verbose();
     /** Function to get HyperLinks from raw html
      * \fn select_hyperlinks_from_html(std::string html,std::vector<HyperLink> &links)
      * \param html std::string Raw html

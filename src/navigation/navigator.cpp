@@ -14,7 +14,7 @@ Navigator::Navigator(void)
     logging::verr("import failed");
     PyErr_Print();
   }
-  this->define_verbose(logging::verbose);
+  this->define_verbose();
 }
 
 Navigator::~Navigator(void)
@@ -167,9 +167,9 @@ void Navigator::call_python_function_void_args(std::string function, int arg)
   Py_DECREF(fonction);
 }
 
-void Navigator::define_verbose(int level)
+void Navigator::define_verbose()
 {
-  this->call_python_function_void_args("define_verbose",level);
+  this->call_python_function_void_args("define_verbose",logging::verbose);
 }
 
 std::string Navigator::get_body_html()
