@@ -1135,7 +1135,3 @@ int free_kbd(){
         ungrab_focus();
         return 0;
 }
-
-int main(){
-
-}
