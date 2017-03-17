@@ -14,7 +14,7 @@ Navigator::Navigator(void)
     logging::verr("import failed");
     PyErr_Print();
   }
-  //this->define_verbose(logging::verbose);
+  this->define_verbose();
 }
 
 Navigator::~Navigator(void)
@@ -52,7 +52,7 @@ std::string Navigator::call_python_function_nargs(std::string function)
   retour = PyEval_CallObject(fonction,NULL);
   Py_DECREF(fonction);
   if(retour == NULL) {
-    printf("It all went wrong\n");
+    logging::verr(1,"It all went wrong\n");
     PyErr_Print();
   }
   PyArg_Parse(retour, "s", &resultat);
@@ -61,6 +61,29 @@ std::string Navigator::call_python_function_nargs(std::string function)
   Py_DECREF(retour);
   logging::vout(2,"Leaving Navigator::call_python_function_nargs : "+function);
   return cpp_str;
+}
+
+int Navigator::call_python_function_nargs_i(std::string function)
+{
+  logging::vout(2,"Entering Navigator::call_python_function_nargs : "+function);
+  int result;
+  PyObject *fonction, *retour;
+  fonction = PyObject_GetAttrString(module, function.c_str());
+  if(fonction == NULL) {
+    std::string error = "could not find function\n";
+    logging::verr(error);
+  }
+  retour = PyEval_CallObject(fonction,NULL);
+  Py_DECREF(fonction);
+  if(retour == NULL) {
+    logging::verr(1,"It all went wrong\n");
+    PyErr_Print();
+  }
+  PyArg_Parse(retour, "i", &result);
+
+  Py_DECREF(retour);
+  logging::vout(2,"Leaving Navigator::call_python_function_nargs : "+function);
+  return result;
 }
 
 
@@ -90,7 +113,7 @@ std::string Navigator::call_python_function(std::string function,std::string arg
 
 
   if(retour == NULL) {
-    printf("It all went wrong\n");
+    logging::verr(1,"It all went wrong\n");
     PyErr_Print();
     return arg;
   }
@@ -123,9 +146,30 @@ void Navigator::call_python_function_void_args(std::string function, std::string
   Py_DECREF(fonction);
 }
 
-void Navigator::define_verbose(int level)
+void Navigator::call_python_function_void_args(std::string function, int arg)
 {
-  this->call_python_function_void_args("define_verbose",std::to_string(level));
+  logging::vout(2,"Entering Navigator::call_python_function_args : "+function);
+  PyObject *fonction, *arguments;
+
+  fonction = PyObject_GetAttrString(module, function.c_str());
+  if(fonction == NULL) {
+    std::string error = "could not find function\n";
+    logging::verr(error);
+  }
+
+  arguments = Py_BuildValue("(i)", arg);
+  if(arguments == NULL) {
+    std::string error = "arg parsing failed\n";
+    logging::verr(error);
+  }
+  PyEval_CallObject(fonction, arguments);
+  Py_DECREF(arguments);
+  Py_DECREF(fonction);
+}
+
+void Navigator::define_verbose()
+{
+  this->call_python_function_void_args("define_verbose",logging::verbose);
 }
 
 std::string Navigator::get_body_html()
@@ -150,8 +194,7 @@ std::string Navigator::write_search(std::string keyword)
 
 int Navigator::get_pid()
 {
-  std::string pid = this->call_python_function_nargs("get_pid");
-  return std::stoi(pid);
+  return this->call_python_function_nargs_i("get_pid");
 }
 
 void Navigator::select_hyperlinks_from_html(std::string html, std::vector<HyperLink> &links)
@@ -209,7 +252,8 @@ void Navigator::select_hyperlinks_from_html(std::string html, std::vector<HyperL
   logging::vout(2,"Leaving Navigator::select_hyperlinks_from_html rubbish");
 }
 
-bool Navigator::parse_tag_a(HyperLink &lk,std::string &tag_a) {
+bool Navigator::parse_tag_a(HyperLink &lk,std::string &tag_a) 
+{
   logging::vout(4,"Entering Navigator::parse_tag_a");
   try {
     size_t b_href = tag_a.find("href=\"");

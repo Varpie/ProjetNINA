@@ -19,7 +19,7 @@ nina_HEADERS = \
 	src/log.hpp
 
 ninaconfdir= \
-	$(sysconfdir)/nina
+	$(localstatedir)/nina
 
 ninaconf_DATA = \
 	config/dictionaries/auto_blacklist.txt \
@@ -51,6 +51,9 @@ EXTRA_DIST = \
 	config/dictionaries/rubbish_links.txt \
 	config/dictionaries/whitelist.txt
 
+CONFPATH=\"$(localstatedir)/nina/\"
+CPPFLAGS = -DCONFPATH=$(CONFPATH)
+
 AM_LDFLAGS=-lpython2.7 -lX11 -lpthread -lXi
 
 dist_man1_MANS = doc/nina.1
@@ -60,28 +63,28 @@ dist_doc_DATA = \
 	COPYING
 
 install-exec-local:
-	mkdir -p $(DESTDIR)$(sysconfdir); \
-	mkdir -p $(DESTDIR)$(sysconfdir)/nina ; \
+	mkdir -p $(DESTDIR)$(localstatedir); \
+	mkdir -p $(DESTDIR)$(localstatedir)/nina ; \
 	cd $(CURRENT_DIR)/src/ctrl_keyboard && \
 	$(PYTHON) setup.py install \
 		--root $(DESTDIR) \
-		--record $(DESTDIR)$(sysconfdir)/nina/nina_installed_files.txt \
+		--record $(DESTDIR)$(localstatedir)/nina/nina_installed_files.txt \
 		--verbose && \
 	cd -; \
-	echo $(DESTDIR)$(prefix)/bin/geckodriver >> $(DESTDIR)$(sysconfdir)/nina/nina_installed_files.txt; \
+	echo $(DESTDIR)$(prefix)/bin/geckodriver >> $(DESTDIR)$(localstatedir)/nina/nina_installed_files.txt; \
 	./scripts/python_dependencies.sh;
-
 
 install-data-hook:
 	chmod +x $(DESTDIR)$(prefix)/bin/geckodriver;
 
 uninstall-local:
-	cat $(DESTDIR)$(sysconfdir)/nina/nina_installed_files.txt | xargs rm -rf; \
+	cat $(DESTDIR)$(localstatedir)/nina/nina_installed_files.txt | xargs rm -rf; \
 	rm $(DESTDIR)$(pythondir)/nina.*; \
-	rm -r $(DESTDIR)$(sysconfdir)/nina/;
+	rm -r $(DESTDIR)$(localstatedir)/nina/;
 
 #important, else it's called by dh_clean when .deb and packaging fails
 clean-comp:
+	make clean; \
 	rm -rf \
 		Makefile Makefile.in aclocal.m4 autom4te.cache/ compile config.log config.status \
 		configure debian/.debhelper/ debian/debhelper-build-stamp debian/files debian/nina./ \

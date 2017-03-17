@@ -85,15 +85,15 @@ class Intelligence
 		 */
 		std::string search_keyword();
 		// HyperLink select_otherlist(std::vector<HyperLink> &links,std::string url, tuple_list list);
+		/**
+		 * Navigator object, liaison between C++ and Python
+		 */
+		Navigator* navigator;
 	private:
 		/**
 		 * current url of the browser
 		 */
 		std::string current_url;
-		/**
-		 * Navigator object, liaison between C++ and Python
-		 */
-		Navigator* navigator;
 		/**
 		 * user blacklist, configurable
 		 */

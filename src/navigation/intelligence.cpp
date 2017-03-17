@@ -37,7 +37,13 @@ void Intelligence::roam()
 			logging::vout(1,"Links countdown : " + std::to_string(countdown::number));
 		}
 		logging::vout(3,"Get page's html");
-		page_html = this->navigator->get_body_html();
+		do {
+			page_html = this->navigator->get_body_html();
+			if(page_html == "failed"){
+				this->current_url = this->search_keyword();
+			}
+		} while(page_html == "failed");
+
 		if(!search) {
 			logging::vout(3,"Get page's links");
 			this->navigator->select_hyperlinks_from_html(page_html, links);
@@ -57,8 +63,6 @@ void Intelligence::roam()
 			append_vector(this->auto_blacklist,this->current_url,AUTO_BL_MAX);
 			current_url = search_keyword();
 		}
-		/* we get out if we passed more than 10 links on the same domain
-		 	 or if python met an error */
 		if(navigate_res == "failed" || current_domain_occurences() > 10) {
 			logging::vout(3,"Search keyword in the adress bar");
 			current_url = search_keyword();
@@ -258,9 +262,9 @@ void Intelligence::load_lists()
 	logging::vout(3,"Add current url to history");
 	this->history.push_back(this->current_url);
 	logging::vout(3,"Initialize keywords, rubbish list and automatic blacklist");
-	this->keywords = init_list("/etc/nina/keywords.txt");
-	this->rubbish_links = init_list("/etc/nina/rubbish_links.txt");
-	this->auto_blacklist = init_list("/etc/nina/auto_blacklist.txt");
+	this->keywords = init_list(CONFPATH "keywords.txt");
+	this->rubbish_links = init_list(CONFPATH "rubbish_links.txt");
+	this->auto_blacklist = init_list(CONFPATH "auto_blacklist.txt");
 	if(keywords.size() == 0) {
 		logging::vout(1,"Keywords load failed");
 	}
@@ -285,7 +289,7 @@ void Intelligence::load_lists()
 void Intelligence::dump_lists()
 {
 	logging::vout(2,"Entering Intelligence::dump_lists");
-	std::ofstream file("/etc/nina/auto_blacklist.txt");
+	std::ofstream file(CONFPATH "auto_blacklist.txt");
 	for(auto const& line: this->auto_blacklist){
 		file << line << "\n";
 	}

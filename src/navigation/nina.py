@@ -1,5 +1,7 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
+import sys
+import os
 from selenium import webdriver
 import uinput_wrapping_module
 import threading
@@ -7,11 +9,7 @@ import random
 import lxml.html.clean
 import time
 import signal
-import sys
-import os
 
-#sys.stdout = os.devnull
-#sys.stderr = os.devnull
 """!
 Selenium webdriver
 Marionette on Firefox browser
@@ -22,14 +20,20 @@ Command that creates file descriptor for a user space keyboad
 ref to Uinput kernel module
 """
 uinput_wrapping_module.setup_uinput_device_func()
-class TimeoutError(Exception): pass
+"""
+We redirect verbose to /dev/null by default
+Outputs will be redirected acordingly to verbose level
+in define_verbose function
+"""
+sys.stdout = os.devnull
+sys.stderr = os.devnull
 
 def get_pid():
     """!
     @return return driver's pid
     @rtype int
     """
-    return str(driver.service.process.pid)
+    return driver.service.process.pid
 
 def end_python():
     """!
@@ -38,9 +42,21 @@ def end_python():
     uinput_wrapping_module.destroy_uinput_device_func()
     driver.quit()
 
-def get_body_html():
-    """!drag
+def define_verbose(level):
+    """!
+    Define verbose level
+    Accepts logging::verbose c++ variable content
 
+    @type level: int
+    @param level: Actual level of verbose
+    """
+    if(level > 0):
+        sys.stderr = sys.__stderr__
+    if(level > 1):
+        sys.stdout = sys.__stdout__
+
+def get_body_html():
+    """!
     Get body html of a page, and strips it from its Styles and Scripts
     It does so, with webdriver.
     Cleaning it does with lxml.html.clean dependance
@@ -52,7 +68,11 @@ def get_body_html():
         #get 1st link of page to test if there is at least one
         link = driver.find_element_by_tag_name("a")
         if not link:
-            driver.back()
+            try:
+                driver.back()
+                return get_body_html()
+            except:
+                return "failed"
         else:
             html = driver.page_source
             cleaner = lxml.html.clean.Cleaner()
@@ -60,8 +80,11 @@ def get_body_html():
             cleaner.style = True
             return cleaner.clean_html(html).encode('utf-8')
     except:
-        driver.back()
-        return get_body_html()
+        try:
+            driver.back()
+            return get_body_html()
+        except:
+            return "failed"
 
 def write_search(keyword):
     """!
@@ -73,11 +96,6 @@ def write_search(keyword):
     @return returns current url
     @rtype string
     """
-    # f6 -> 64 | entrée -> 28
-    # driver.get("https://www.google.com")
-    # inputElement = driver.find_element_by_name("q")
-    # inputElement.click();
-    # TODO : Choose between google search or taburl search
     uinput_wrapping_module.send_key_func(64)
     uinput_wrapping_module.write_string_func(keyword)
     uinput_wrapping_module.send_key_func(28)
@@ -93,17 +111,13 @@ def handle_frames():
     """
     if(len(driver.window_handles) > 1):
         uinput_wrapping_module.send_key_with_ctrl_func(44);
-        #print "=py=== Tab closed ! ===py="
+        print "=py=== Tab closed ! ===py="
         return True
     else:
         return False
 
-def navigate(var_url):
-    try:
-        return nav(var_url)
-    except Exception, e:
-        print e
-        return "failed"
+# ============ tools =========== #
+class TimeoutError(Exception): pass
 
 def timelimit(timeout):
     def internal(function):
@@ -128,6 +142,23 @@ def timelimit(timeout):
             return c.result
         return internal2
     return internal
+# ============ end tools =========== #
+
+def navigate(var_url):
+    """!
+    Intercepts navigate() function call, to handle TimeoutException
+
+    @type var_url: string
+    @param var_url: url to pass to nav()
+
+    @return returns nav() result
+    OR returns failed if TimeoutException triggered
+    @rtype string
+    """
+    try: 
+        return nav(var_url)
+    except: 
+        return "failed" 
 
 @timelimit(20)
 def nav(var_url):
@@ -141,44 +172,30 @@ def nav(var_url):
     OR returns failed if url wasn't valid
     @rtype string
     """
-    # current url, and domain
     current = driver.current_url
-    # protocol relative url -> free to http or https
     if(var_url[:2] == "//"):
-        # we change it to absolute
         var_url = "http:" + var_url
-    #root relative url -> miss the domains
     elif(var_url[:1] == '/'):
-        # we add it => absolute url
         pos = current.find('/',9)
         domain = current[:pos+1]
         var_url = domain + var_url[1:]
-    # tag url or full url with tag at the end
     elif var_url.find('#'):
         try:
-            # Execute javascript, and avoir driver to wait for DOM readyState event
             driver.execute_script("document.body.querySelector('a[href=\""+var_url+"\"]').click()");
             return driver.current_url
         except Exception, e:
             pass
             # print e
-    # absolute url
     if(var_url[:4] == "http"):
         css_selector = "a[href*='"+var_url+"']"
         try:
-            # we try to find element with link
             element = driver.find_element_by_css_selector(css_selector)
             if(element.is_displayed()):
-            # if findable and displayed we click on it
                 element.click()
             else:
                 driver.get(var_url)
-        # if not we get it
         except:
             driver.get(var_url)
-    # invalid url
     else:
-        # we return failed to get another rand from C++
         return "failed"
-    #we return current url to keep navigate
     return driver.current_url
