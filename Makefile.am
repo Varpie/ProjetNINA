@@ -51,6 +51,9 @@ EXTRA_DIST = \
 	config/dictionaries/rubbish_links.txt \
 	config/dictionaries/whitelist.txt
 
+CONFPATH=\"$(localstatedir)/nina/\"
+CPPFLAGS = -DCONFPATH=$(CONFPATH)
+
 AM_LDFLAGS=-lpython2.7 -lX11 -lpthread -lXi
 
 dist_man1_MANS = doc/nina.1

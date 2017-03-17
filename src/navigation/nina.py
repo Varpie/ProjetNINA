@@ -14,7 +14,7 @@ import signal
 Selenium webdriver
 Marionette on Firefox browser
 """
-driver = webdriver.Chromium()
+driver = webdriver.Firefox()
 """!
 Command that creates file descriptor for a user space keyboad
 ref to Uinput kernel module
