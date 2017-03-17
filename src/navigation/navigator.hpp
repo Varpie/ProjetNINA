@@ -9,7 +9,7 @@
 #include <unistd.h>
 #include <time.h>
 #include <python2.7/Python.h>
-#include "../log.hpp"
+#include "../lib.hpp"
 
 /**
  * HyperLink Class, a class to gather text and url of a <a> tag

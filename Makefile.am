@@ -16,7 +16,7 @@ nina_HEADERS = \
 	src/navigation/intelligence.hpp \
 	src/ctrl_keyboard/timed_keystrokes.h \
 	src/ctrl_keyboard/write_keyboard.h \
-	src/log.hpp
+	src/lib.hpp
 
 ninaconfdir= \
 	$(localstatedir)/nina

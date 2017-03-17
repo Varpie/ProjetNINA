@@ -12,7 +12,7 @@
 #include <stdbool.h>
 #include <getopt.h>
 #include <unistd.h>
-#include "log.hpp"
+#include "lib.hpp"
 #include "navigation/intelligence.hpp"
 #include "ctrl_keyboard/timed_keystrokes.h"
 #include "ctrl_keyboard/write_keyboard.h"
