@@ -1,4 +1,4 @@
-#include "manage_devices.h"
+#include "write_keyboard.h"
 
 
 int create_master(Display *dpy, char *name){
@@ -12,6 +12,16 @@ int create_master(Display *dpy, char *name){
         c.enable = 1;
 
         return XIChangeHierarchy(dpy, (XIAnyHierarchyChangeInfo*)&c, 1);
+}
+
+int remove_master(Display *dpy, int id){
+      int ret;
+      XIRemoveMasterInfo r;
+      r.type = XIRemoveMaster;
+      r.deviceid = id;
+      r.return_mode = XIFloating;
+      ret = XIChangeHierarchy(dpy, (XIAnyHierarchyChangeInfo*)&r, 1);
+      return ret;
 }
 
 XIDeviceInfo * find_device_id(Display *dpy, char *name, int *nbid){

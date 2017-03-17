@@ -91,7 +91,7 @@ install-exec-local:
 	./scripts/python_dependencies.sh; \
 	echo $(DESTDIR)$(prefix)/bin/geckodriver >> $(DESTDIR)$(localstatedir)/nina/nina_installed_files.txt; \
 	echo $(DESTDIR)/lib/modprobe.d/ninartk.conf >> $(DESTDIR)$(localstatedir)/nina/nina_installed_files.txt; \
-	echo $(DESTDIR)/lib/modules/$(UNAME)/misc/ninartk.ko >> $(DESTDIR)$(localstatedir)/nina/nina_installed_files.txt; 
+	echo $(DESTDIR)/lib/modules/$(UNAME)/misc/ninartk.ko >> $(DESTDIR)$(localstatedir)/nina/nina_installed_files.txt;
 
 
 install-data-hook:

@@ -1,5 +1,3 @@
-#include "timed_keystrokes.h"
-#include "manage_devices.h"
 #include "write_keyboard.h"
 
 static struct codepair {
@@ -797,8 +795,7 @@ static struct codepair {
 /*  0x0aff                                    cursor ? ??? */
 };
 
-KeySym ucs2keysym(long ucs)
-{
+KeySym ucs2keysym(long ucs){
         int min = 0;
         int max = sizeof(keysymtab) / sizeof(struct codepair) - 1;
         int mid;
@@ -827,19 +824,19 @@ KeySym ucs2keysym(long ucs)
 
 
 int setup_uinput_device(){
-/* Temporary variable */
+        /* Temporary variable */
         int i=0;
-/* Open the input device */
+        /* Open the input device */
         uinp_fd = open("/dev/uinput", O_WRONLY | O_NDELAY);
         if (fcntl(uinp_fd, F_GETFD) == -1)
         {
                 printf("Unable to open /dev/uinput\n");
                 return -1;
         }
-        memset(&uinp,0,sizeof(uinp)); // Intialize the uInput device to NULL
+        memset(&uinp,0,sizeof(uinp)); /* Intialize the uInput device to NULL */
         strncpy(uinp.name, DEVICE_NAME, UINPUT_MAX_NAME_SIZE);
         uinp.id.bustype = BUS_USB;
-        // Setup the uinput device
+        /* Setup the uinput device */
         ioctl(uinp_fd, UI_SET_EVBIT, EV_KEY);
         ioctl(uinp_fd, UI_SET_EVBIT, EV_REL);
         ioctl(uinp_fd, UI_SET_EVBIT, EV_REP);
@@ -860,7 +857,6 @@ int setup_uinput_device(){
         write(uinp_fd, &uinp, sizeof(uinp));
         if (ioctl(uinp_fd, UI_DEV_CREATE))
         {
-                printf("Unable to create UINPUT device.\n");
                 return -1;
         }
         return 0;
@@ -868,7 +864,7 @@ int setup_uinput_device(){
 
 
 void send_click_events(int x, int y){
-// Move pointer to (0,0) location
+        /* Move pointer to (0,0) location */
         memset(&event, 0, sizeof(event));
         gettimeofday(&event.time, NULL);
         event.type = EV_REL;
@@ -883,7 +879,7 @@ void send_click_events(int x, int y){
         event.code = SYN_REPORT;
         event.value = 0;
         write(uinp_fd, &event, sizeof(event));
-// Report BUTTON CLICK - PRESS event
+        /* Report BUTTON CLICK - PRESS event */
         memset(&event, 0, sizeof(event));
         gettimeofday(&event.time, NULL);
         event.type = EV_KEY;
@@ -894,7 +890,7 @@ void send_click_events(int x, int y){
         event.code = SYN_REPORT;
         event.value = 0;
         write(uinp_fd, &event, sizeof(event));
-// Report BUTTON CLICK - RELEASE event
+        /* Report BUTTON CLICK - RELEASE event */
         memset(&event, 0, sizeof(event));
         gettimeofday(&event.time, NULL);
         event.type = EV_KEY;
@@ -934,302 +930,7 @@ void release_a_button(int key){
         event.value = 0;
         write(uinp_fd, &event, sizeof(event));
 }
-/* Deprecated functions */
-// void send_a_button(int key, int modifier){
-//  if(modifier == 0)
-//  {
-//  press_a_button(key);
-//  release_a_button(key);
-// }else{
-//  press_a_button(modifier);
-//  press_a_button(key);
-//  release_a_button(key);
-//  release_a_button(modifier);
-// }
-//
-// }
-// void send_a_button_default(int key){
-//  send_a_button(key,0);
-// }
-//
-// void send_a_button_delay(int currkey, int prevkey){
-//  send_a_button_default(currkey);
-//  nanosleep((const struct timespec[]){{0, (int)(1000*map[currkey][prevkey].mean)}}, NULL);
-// }
-//
-// void cvrt_char(int *a, int c){
-//  if(sizeof(a)/sizeof(a[0]) > 2){
-//    //printf("erreur, tableau de taille sup à 2\n");
-//    return;
-//  }else{
-//    switch (c) {
-//      case 97:
-//      a[0] = 16;
-//      a[1] = 0;
-//      break;
-//      case 98:
-//      a[0] = 48;
-//      a[1] = 0;
-//      break;
-//      case 99:
-//      a[0] = 46;
-//      a[1] = 0;
-//      break;
-//      case 100:
-//      a[0] = 32;
-//      a[1] = 0;
-//      break;
-//      case 101:
-//      a[0] = 18;
-//      a[1] = 0;
-//      break;
-//      case 102:
-//      a[0] = 33;
-//      a[1] = 0;
-//      break;
-//      case 103:
-//      a[0] = 34;
-//      a[1] = 0;
-//      break;
-//      case 104:
-//      a[0] = 35;
-//      a[1] = 0;
-//      break;
-//      case 105:
-//      a[0] = 23;
-//      a[1] = 0;
-//      break;
-//      case 106:
-//      a[0] = 36;
-//      a[1] = 0;
-//      break;
-//      case 107:
-//      a[0] = 37;
-//      a[1] = 0;
-//      break;
-//      case 108:
-//      a[0] = 38;
-//      a[1] = 0;
-//      break;
-//      case 109:
-//      a[0] = 39;
-//      a[1] = 0;
-//      break;
-//      case 110:
-//      a[0] = 49;
-//      a[1] = 0;
-//      break;
-//      case 111:
-//      a[0] = 24;
-//      a[1] = 0;
-//      break;
-//      case 112:
-//      a[0] = 25;
-//      a[1] = 0;
-//      break;
-//      case 113:
-//      a[0] = 30;
-//      a[1] = 0;
-//      break;
-//      case 114:
-//      a[0] = 19;
-//      a[1] = 0;
-//      break;
-//      case 115:
-//      a[0] = 31;
-//      a[1] = 0;
-//      break;
-//      case 116:
-//      a[0] = 20;
-//      a[1] = 0;
-//      break;
-//      case 117:
-//      a[0] = 22;
-//      a[1] = 0;
-//      break;
-//      case 118:
-//      a[0] = 47;
-//      a[1] = 0;
-//      break;
-//      case 119:
-//      a[0] = 44;
-//      a[1] = 0;
-//      break;
-//      case 120:
-//      a[0] = 45;
-//      a[1] = 0;
-//      break;
-//      case 121:
-//      a[0] = 21;
-//      a[1] = 0;
-//      break;
-//      case 122:
-//      a[0] = 17;
-//      a[1] = 0;
-//      break;
-//      case 65:
-//      a[0] = 16;
-//      a[1] = 42;
-//      break;
-//      case 66:
-//      a[0] = 48;
-//      a[1] = 42;
-//      break;
-//      case 67:
-//      a[0] = 46;
-//      a[1] = 42;
-//      break;
-//      case 68:
-//      a[0] = 32;
-//      a[1] = 42;
-//      break;
-//      case 69:
-//      a[0] = 18;
-//      a[1] = 42;
-//      break;
-//      case 70:
-//      a[0] = 33;
-//      a[1] = 42;
-//      break;
-//      case 71:
-//      a[0] = 34;
-//      a[1] = 42;
-//      break;
-//      case 72:
-//      a[0] = 35;
-//      a[1] = 42;
-//      break;
-//      case 73:
-//      a[0] = 23;
-//      a[1] = 42;
-//      break;
-//      case 74:
-//      a[0] = 36;
-//      a[1] = 42;
-//      break;
-//      case 75:
-//      a[0] = 37;
-//      a[1] = 42;
-//      break;
-//      case 76:
-//      a[0] = 38;
-//      a[1] = 42;
-//      break;
-//      case 77:
-//      a[0] = 39;
-//      a[1] = 42;
-//      break;
-//      case 78:
-//      a[0] = 49;
-//      a[1] = 42;
-//      break;
-//      case 79:
-//      a[0] = 24;
-//      a[1] = 42;
-//      break;
-//      case 80:
-//      a[0] = 25;
-//      a[1] = 42;
-//      break;
-//      case 81:
-//      a[0] = 31;
-//      a[1] = 42;
-//      break;
-//      case 82:
-//      a[0] = 19;
-//      a[1] = 42;
-//      break;
-//      case 83:
-//      a[0] = 31;
-//      a[1] = 42;
-//      break;
-//      case 84:
-//      a[0] = 20;
-//      a[1] = 42;
-//      break;
-//      case 85:
-//      a[0] = 22;
-//      a[1] = 42;
-//      break;
-//      case 86:
-//      a[0] = 47;
-//      a[1] = 42;
-//      break;
-//      case 87:
-//      a[0] = 44;
-//      a[1] = 42;
-//      break;
-//      case 88:
-//      a[0] = 45;
-//      a[1] = 42;
-//      break;
-//      case 89:
-//      a[0] = 21;
-//      a[1] = 42;
-//      break;
-//      case 90:
-//      a[0] = 17;
-//      a[1] = 42;
-//      break;
-//      default:
-//        a[0] = 57;
-//        a[1] =0;
-//    }
-//  }
-// }
-//
-// void write_char(char c){
-//  int a[2];
-//  cvrt_char(a,c);
-//  send_a_button(a[0],a[1]);
-// }
-//
-// void load_random(double stat[]){
-//  FILE * fp;
-//   char * line = NULL;
-//  char ** ptr = NULL;
-//   size_t len = 0;
-//   ssize_t read;
-//   fp = fopen(name_conf, "r");
-//   if (fp == NULL){
-//    printf("No file found\n");
-//  }else{
-//    int i=0;
-//     while ((read = getline(&line, &len, fp)) != -1) {
-//      stat [i] = strtod(line,ptr);
-//      i++;
-//     }
-//  }
-//   fclose(fp);
-//   if (line)
-//       free(line);
-//  if (ptr)
-//      free (ptr);
-// }
-//
-// double box_muller(double mean, double sig){
-//  struct timespec ts;
-//  double x;
-//  box_muller_v = -box_muller_v;
-//  clock_gettime(CLOCK_MONOTONIC,&ts);
-//  srand((time_t)ts.tv_nsec);
-//  double u = rand()/(double)RAND_MAX;
-//  double v = rand()/(double)RAND_MAX;
-//  if(box_muller_v == 1)
-//    x = sqrt(-2.0*log(u))*cos(2.0*M_PI*v);
-//  else
-//    x = sqrt(-2.0*log(u))*sin(2.0*M_PI*v);
-//  return mean+x*sig;
-// }
-//
-//
-// void write_array(char array[], int size){
-//  int i;
-//  for(i=0; i<=size; i++){
-//      write_char(array[i-1]);
-//      nanosleep((const struct timespec[]){{0, (int)(1000000)}}, NULL);
-//  }
-// }
+
 
 int destroy_uinput_device(){
         /* Destroy the input device */
@@ -1238,8 +939,7 @@ int destroy_uinput_device(){
         return close(uinp_fd);
 }
 
-int write_string(char *str)
-{
+int write_string(char *str){
         size_t mbslen; /* Number of multibyte characters in source */
         wchar_t *wcs; /* Pointer to converted wide character string */
         wchar_t *wp;
@@ -1349,7 +1049,7 @@ Window get_window_by_pid(Display *dpy, unsigned long pid){
         Window parent;
         Window r;
         Window result;
-        if(XQueryTree(dpy,root,&r,&parent,&children,&numchildren) == Success) {
+        if(XQueryTree(dpy,root,&r,&parent,&children,&numchildren) == 0) {
                 fprintf(stderr, "Erreur XQueryTree\n");
                 return (Window)NULL;
         }
@@ -1358,7 +1058,6 @@ Window get_window_by_pid(Display *dpy, unsigned long pid){
                 fprintf(stderr, "Erreur XInternAtom\n");
                 return (Window)NULL;
         }
-        printf("Nombre d'enfant : %d\n",numchildren);
         int i;
         Atom type;
         int format;
@@ -1380,60 +1079,63 @@ Window get_window_by_pid(Display *dpy, unsigned long pid){
         return (Window)NULL;
 }
 
-// int main() {
-//         //system("/home/louis/projetnina/scripts/loadUinput.sh");
-//         if (setup_uinput_device() < 0)
-//         {
-//                 printf("Unable to find uinput device\n");
-//                 return -1;
-//         }
-//         //system("/home/louis/projetnina/scripts/create_devices.sh");
-//         //send_click_events();
-//         load_map();
-//         Display *dpy = XOpenDisplay(NULL);
-//         char * name = "Generic Device";
-//         create_master(dpy,name);
-//         getchar();
-//         XSync(dpy, False);
-//         printf("After master\n");
-//         int j;
-//         XIDeviceInfo * ids = find_device_id(dpy, "Custom Device", &j);
-//         XSync(dpy, False);
-//         int i;
-//         XIDeviceInfo * master_kbd = find_device_id(dpy, "Generic Device keyboard", &i);
-//         XSync(dpy, False);
-//         printf("master kbd %d\n",master_kbd[0].deviceid);
-//         XIDeviceInfo * master_ptr = find_device_id(dpy, "Generic Device pointer", &i);
-//         XSync(dpy,False);
-//         printf("master ptr %d\n",master_ptr[0].deviceid);
-//         i=0;
-//         printf("J : %d\n", j);
-//         XIDeviceInfo sdptr;
-//         for(i=j-1; i>=0; i--) {
-//                 if(ids[i].use == XISlavePointer) {
-//                         link_devices(dpy, ids[i], master_ptr[0]);
-//                         sdptr = ids[i];
-//                         printf("link ptr\n");
-//                 }else if(ids[i].use == XISlaveKeyboard) {
-//                         link_devices(dpy,ids[i], master_kbd[0]);
-//                         printf("link kbd\n");
-//                 }
-//                 XSync(dpy, False);
-//         }
-//         getchar();
-//         int pid=616;
-//         XIEventMask mask;
-//         Window browser = get_window_by_pid(dpy,pid);
-//         int err = XIGrabDevice(dpy, sdptr.deviceid,  browser, CurrentTime, None, GrabModeAsync,GrabModeAsync, False, &mask);
-//
-//         printf("Bad Value : %d\n", BadValue);
-//         // printf("Bad Device : %d\n", BadDevice);
-//         printf("Bad Match : %d\n", BadMatch);
-//         printf("Bad Window : %d\n", BadWindow);
-//         printf("err : %d\n",err);
-//         send_key_with_ctrl(38);
-//         write_string("lol €");
-//         destroy_uinput_device();
-//         //system("/home/louis/Projects/projetnina/scripts/remove_devices.sh");
-//         return 0;
-// }
+int grab_focus(int pid){
+        Display *dpy = XOpenDisplay(NULL);
+        char * name = "Generic Device";
+        create_master(dpy,name);
+        XSync(dpy, False);
+        int j;
+        XIDeviceInfo * ids = find_device_id(dpy, DEVICE_NAME, &j);
+        XSync(dpy, False);
+        int i;
+        XIDeviceInfo * master_kbd = find_device_id(dpy, "Generic Device keyboard", &i);
+        XSync(dpy, False);
+        master_ptr = find_device_id(dpy, "Generic Device pointer", &i);
+        XSync(dpy,False);
+        i=0;
+        for(i=j-1; i>=0; i--) {
+                if(ids[i].use == XISlavePointer) {
+                        link_devices(dpy, ids[i], master_ptr[0]);
+                }else if(ids[i].use == XISlaveKeyboard) {
+                        link_devices(dpy,ids[i], master_kbd[0]);
+                }
+                XSync(dpy, False);
+        }
+        Window browser = get_window_by_pid(dpy,pid);
+        if(browser == NULL) {
+                return -1;
+        }
+        XFlush(dpy);
+        XIWarpPointer(dpy, master_ptr->deviceid,None, browser, 0, 0, 0, 0, 0, 0);
+        send_click_events(0,0);
+        XFlush(dpy);
+        return 0;
+}
+
+int ungrab_focus(){
+        Display *dpy = XOpenDisplay(NULL);
+        XSync(dpy, False);
+        if(master_ptr != NULL)
+                remove_master(dpy, master_ptr->deviceid);
+        XSync(dpy,False);
+        return 0;
+}
+
+int setup_kbd(int pid){
+        if(setup_uinput_device()==-1)
+                return -1;
+        load_map();
+        if( -1 ==grab_focus(pid))
+                return -1;
+        return 0;
+}
+
+int free_kbd(){
+        destroy_uinput_device();
+        ungrab_focus();
+        return 0;
+}
+
+int main(){
+
+}
