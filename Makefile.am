@@ -83,7 +83,7 @@ install-exec-local:
 	mkdir -p $(DESTDIR)$(localstatedir)/nina && \
 	cd $(CURRENT_DIR)/src/ctrl_keyboard && \
 	mkdir -p $(DESTDIR)$(localstatedir)/nina/; \
-	CFLAGS=-DCONFPATH="$(localstatedir)/nina/" $(PYTHON) setup.py install \
+	$(PYTHON) setup.py install \
 		--root $(DESTDIR) \
 		--record $(DESTDIR)$(localstatedir)/nina/nina_installed_files.txt \
 		--verbose; \

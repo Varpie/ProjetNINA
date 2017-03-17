@@ -32,7 +32,6 @@ extern "C" {
 #define CTRL_KEY 29
 #define SIZE_MAP 256
 
-
 /* Globals */
 static int uinp_fd = -1;
 static const char *DEVICE_NAME  = "Custom Device";
@@ -44,8 +43,7 @@ static const double time_limit = 2000000.0;
 static const double base_time = 100000.0;
 static const int base_n = 1;
 static const char *delimiter = ";";
-#define STRFY(A) #A
-static const char name_conf[] = (STRFY(CONFPATH) "timed_keys");
+static const char name_conf[] = "/var/nina/timed_keys";
 
 typedef struct act_mean{
   double mean;
