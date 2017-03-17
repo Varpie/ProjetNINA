@@ -23,12 +23,8 @@ void Intelligence::roam()
 	logging::vout(1,"Program began");
 	std::string page_html;
 	std::vector<HyperLink> links;
-	time_t begin,end;
 	HyperLink link;
 	std::string navigate_res = "";
-	long x = 0;
-	bool timer = false;
-	bool overflow = false;
 	bool search = false;
 	logging::vout(3,"Get current url");
 	this->current_url = this->navigator->navigate(this->current_url);
@@ -37,7 +33,13 @@ void Intelligence::roam()
 			logging::vout(1,"Links countdown : " + std::to_string(countdown::number));
 		}
 		logging::vout(3,"Get page's html");
-		page_html = this->navigator->get_body_html();
+		do {
+			page_html = this->navigator->get_body_html();
+			if(page_html == "failed"){
+				this->current_url = this->search_keyword();
+			}
+		} while(page_html == "failed");
+
 		if(!search) {
 			logging::vout(3,"Get page's links");
 			this->navigator->select_hyperlinks_from_html(page_html, links);
@@ -57,8 +59,6 @@ void Intelligence::roam()
 			append_vector(this->auto_blacklist,this->current_url,AUTO_BL_MAX);
 			current_url = search_keyword();
 		}
-		/* we get out if we passed more than 10 links on the same domain
-		 	 or if python met an error */
 		if(navigate_res == "failed" || current_domain_occurences() > 10) {
 			logging::vout(3,"Search keyword in the adress bar");
 			current_url = search_keyword();
@@ -72,7 +72,7 @@ void Intelligence::roam()
 		}
 		logging::vout(3,"Add current url to the history");
 		append_vector(this->history,this->current_url,HISTORY_MAX);
-		std::this_thread::sleep_for(std::chrono::seconds(rand()%26+5));
+		//std::this_thread::sleep_for(std::chrono::seconds(rand()%26+5));
 	} while(threading::running);
 	logging::vout(2,"Leaving Intelligence::roam");
 }
@@ -155,7 +155,7 @@ HyperLink Intelligence::select_link(std::vector<HyperLink> &links,std::string ur
 	bool res;
 	bool whitelisted;
 	bool found = true;
-	if(dict::other) {
+	if(dict::otherlist) {
 	  found = false;
 		std::vector<std::tuple<int,HyperLink>> found_list;
 		for(auto const& lk: links){
@@ -211,7 +211,7 @@ HyperLink Intelligence::select_link(std::vector<HyperLink> &links,std::string ur
 				logging::vout(1,"No link found");
 		}
 	}
-	if( (!dict::other && !dict::whitelist) || !found ){
+	if( (!dict::otherlist && !dict::whitelist) || !found ){
 		int cpt=0;
 	  do {
 	    link = select_random_in_vector(links);
@@ -258,9 +258,9 @@ void Intelligence::load_lists()
 	logging::vout(3,"Add current url to history");
 	this->history.push_back(this->current_url);
 	logging::vout(3,"Initialize keywords, rubbish list and automatic blacklist");
-	this->keywords = init_list("/var/nina/keywords.txt");
-	this->rubbish_links = init_list("/var/nina/rubbish_links.txt");
-	this->auto_blacklist = init_list("/var/nina/auto_blacklist.txt");
+	this->keywords = init_list(CONFPATH "keywords.txt");
+	this->rubbish_links = init_list(CONFPATH "rubbish_links.txt");
+	this->auto_blacklist = init_list(CONFPATH "auto_blacklist.txt");
 	if(keywords.size() == 0) {
 		logging::vout(1,"Keywords load failed");
 	}
@@ -270,14 +270,23 @@ void Intelligence::load_lists()
 	if(dict::whitelist){
 		logging::vout(1,"Loading whitelist");
 		this->whitelist = init_list(dict::whitefile);
+		if(this->whitelist.empty()) {
+			dict::whitelist = false;
+		}
 	}
 	if(dict::blacklist){
 		logging::vout(1,"Loading blacklist");
 		this->blacklist = init_list(dict::blackfile);
+		if(this->blacklist.empty()) {
+			dict::blacklist = false;
+		}
 	}
-	if(dict::other){
+	if(dict::otherlist){
 		logging::vout(1,"Loading other list");
 		this->otherlist = init_otherlist(dict::otherfile);
+		if(this->otherlist.empty()) {
+			dict::otherlist = false;
+		}
 	}
 	logging::vout(2,"Leaving Intelligence::load_lists");
 }
@@ -285,7 +294,7 @@ void Intelligence::load_lists()
 void Intelligence::dump_lists()
 {
 	logging::vout(2,"Entering Intelligence::dump_lists");
-	std::ofstream file("/var/nina/auto_blacklist.txt");
+	std::ofstream file(CONFPATH "auto_blacklist.txt");
 	for(auto const& line: this->auto_blacklist){
 		file << line << "\n";
 	}

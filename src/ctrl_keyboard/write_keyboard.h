@@ -67,7 +67,7 @@ struct input_event event;
  *Setup the uinput device
  * -1 if error, 0 if OK.
  */
-int setup_uinput_device();
+int setup_uinput_device(void);
 
 /* Implementation for mouse event */
 void send_click_events(int x, int y);
@@ -88,7 +88,7 @@ KeySym ucs2keysym(long ucs);
  * Destroy uinput device
  * Return -1 if error, 0 if ok
  */
-int destroy_uinput_device();
+int destroy_uinput_device(void);
 /**
  * Convert a char* to a wchar_t* to hanle multibytes encoded character (like €)
  * Then call the write_widechar method for each character

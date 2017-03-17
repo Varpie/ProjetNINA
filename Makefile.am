@@ -3,6 +3,10 @@ bin_PROGRAMS = nina
 ninadir = .
 SUBDIR = src doc scripts debian
 
+#target to create kernel object
+src/module_kernel/ninartk.ko:
+	cd $(CURRENT_DIR)/src/module_kernel/ && $(MAKE)
+
 nina_SOURCES = \
 	src/main.cpp \
 	src/navigation/navigator.cpp \
@@ -16,7 +20,7 @@ nina_HEADERS = \
 	src/navigation/intelligence.hpp \
 	src/ctrl_keyboard/timed_keystrokes.h \
 	src/ctrl_keyboard/write_keyboard.h \
-	src/log.hpp
+	src/lib.hpp
 
 ninaconfdir= \
 	$(localstatedir)/nina
@@ -40,6 +44,18 @@ bindepts_DATA = \
 bindeptsdir = \
 	$(prefix)/bin
 
+ninartkconfdir = \
+	/lib/modprobe.d/
+
+ninartkconf_DATA = \
+	config/ninartk.conf
+
+ninartkdir = \
+	/lib/modules/$(UNAME)/misc/
+
+ninartk_DATA = \
+	src/module_kernel/ninartk.ko
+
 EXTRA_DIST = \
 	scripts/get_geckodriver.sh \
 	src/navigation/nina.py \
@@ -50,6 +66,9 @@ EXTRA_DIST = \
 	config/dictionaries/keywords.txt \
 	config/dictionaries/rubbish_links.txt \
 	config/dictionaries/whitelist.txt
+
+CONFPATH=\"$(localstatedir)/nina/\"
+CPPFLAGS = -DCONFPATH=$(CONFPATH)
 
 AM_LDFLAGS=-lpython2.7 -lX11 -lpthread -lXi
 
@@ -68,8 +87,11 @@ install-exec-local:
 		--record $(DESTDIR)$(localstatedir)/nina/nina_installed_files.txt \
 		--verbose && \
 	cd -; \
+	./scripts/python_dependencies.sh; \
 	echo $(DESTDIR)$(prefix)/bin/geckodriver >> $(DESTDIR)$(localstatedir)/nina/nina_installed_files.txt; \
-	./scripts/python_dependencies.sh;
+	echo $(DESTDIR)/lib/modprobe.d/ninartk.conf >> $(DESTDIR)$(localstatedir)/nina/nina_installed_files.txt; \
+	echo $(DESTDIR)/lib/modules/$(UNAME)/misc/ninartk.ko >> $(DESTDIR)$(localstatedir)/nina/nina_installed_files.txt; 
+
 
 install-data-hook:
 	chmod +x $(DESTDIR)$(prefix)/bin/geckodriver;

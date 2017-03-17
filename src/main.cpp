@@ -220,17 +220,17 @@ bool parse_arguments(int argc, char **argv)
 						flag = false;
 				  }
 				} else if(long_options[option_index].name == "whitelist"){
-					logging::vout(1,"Using whitelist");
+					logging::vout(1,"Usingwhitelist");
 					dict::whitelist = true;
-					dict::whitefile = "/var/nina/whitelist.txt";
+					dict::whitefile = CONFPATH "whitelist.txt";
 				} else if(long_options[option_index].name == "blacklist"){
 					logging::vout(1,"Using blacklist");
 					dict::blacklist = true;
-					dict::blackfile = "/var/nina/blacklist.txt";
+					dict::blackfile = CONFPATH "blacklist.txt";
 				} else if(long_options[option_index].name == "otherlist"){
 					logging::vout(1,"Using otherlist");
-					dict::other = true;
-					dict::otherfile = "/var/nina/otherlist.txt";
+					dict::otherlist = true;
+					dict::otherfile = CONFPATH "otherlist.txt";
 				} else if(long_options[option_index].name == "timeout"){
 					try
 				  {
