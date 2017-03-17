@@ -325,6 +325,7 @@ int main(int argc, char **argv)
 	}
 	signal(SIGQUIT, handle_sigquit);
 	Intelligence intel(url);
+	setup_kbd(intel.navigator->get_pid());
 	// Creating thread to detect mouse and stop program
 	std::thread mouse_thread(stopping_detection);
 	mouse_thread.detach();
@@ -338,6 +339,7 @@ int main(int argc, char **argv)
 	}
 
 	main_thread.join();
+	free_kbd();
 	logging::vout(1,"Program finished");
 	return 0;
 }
