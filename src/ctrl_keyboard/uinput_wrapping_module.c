@@ -1,6 +1,5 @@
 #include <Python.h>
 #include "write_keyboard.h"
-#include "timed_keystrokes.h"
 
 static PyObject* write_string_func(PyObject* self, PyObject* args)
 {

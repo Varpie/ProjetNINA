@@ -79,23 +79,22 @@ dist_doc_DATA = \
 	COPYING
 
 install-exec-local:
-	mkdir -p $(DESTDIR)$(localstatedir); \
-	mkdir -p $(DESTDIR)$(localstatedir)/nina ; \
+	mkdir -p $(DESTDIR)$(localstatedir) && \
+	mkdir -p $(DESTDIR)$(localstatedir)/nina && \
 	cd $(CURRENT_DIR)/src/ctrl_keyboard && \
-	mkdir -p $(DESTDIR)$(localstatedir)/nina/ && \
-	CFLAGS=-DCONFPATH $(localstatedir)/nina/ $(PYTHON) setup.py install \
+	mkdir -p $(DESTDIR)$(localstatedir)/nina/; \
+	CFLAGS=-DCONFPATH="$(localstatedir)/nina/" $(PYTHON) setup.py install \
 		--root $(DESTDIR) \
 		--record $(DESTDIR)$(localstatedir)/nina/nina_installed_files.txt \
-		--verbose &&\
+		--verbose; \
 	cd -; \
-	./scripts/python_dependencies.sh; \
+	./scripts/python_dependencies.sh;
+
+install-data-hook:
+	chmod +x $(DESTDIR)$(prefix)/bin/geckodriver; \
 	echo $(DESTDIR)$(prefix)/bin/geckodriver >> $(DESTDIR)$(localstatedir)/nina/nina_installed_files.txt; \
 	echo $(DESTDIR)/lib/modprobe.d/ninartk.conf >> $(DESTDIR)$(localstatedir)/nina/nina_installed_files.txt; \
 	echo $(DESTDIR)/lib/modules/$(UNAME)/misc/ninartk.ko >> $(DESTDIR)$(localstatedir)/nina/nina_installed_files.txt;
-
-
-install-data-hook:
-	chmod +x $(DESTDIR)$(prefix)/bin/geckodriver;
 
 uninstall-local:
 	cat $(DESTDIR)$(localstatedir)/nina/nina_installed_files.txt | xargs rm -rf; \

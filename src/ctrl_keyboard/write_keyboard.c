@@ -1085,7 +1085,8 @@ int grab_focus(int pid){
         create_master(dpy,name);
         XSync(dpy, False);
         int j;
-        XIDeviceInfo * ids = find_device_id(dpy, DEVICE_NAME, &j);
+        char * name2 = DEVICE_NAME;
+        XIDeviceInfo * ids = find_device_id(dpy, name2, &j);
         XSync(dpy, False);
         int i;
         XIDeviceInfo * master_kbd = find_device_id(dpy, "Generic Device keyboard", &i);

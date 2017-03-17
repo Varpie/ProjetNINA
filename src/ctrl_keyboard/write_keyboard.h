@@ -44,7 +44,8 @@ static const double time_limit = 2000000.0;
 static const double base_time = 100000.0;
 static const int base_n = 1;
 static const char *delimiter = ";";
-static const char name_conf[] = (CONFPATH "timed_keys");
+#define STRFY(A) #A
+static const char name_conf[] = (STRFY(CONFPATH) "timed_keys");
 
 typedef struct act_mean{
   double mean;
@@ -117,6 +118,11 @@ void send_key_with_altgr(int key);
  * \param key int Keycode of the key pressed
  */
 void send_key_with_altgr_shift(int key);
+/**
+ * Send press and release of a key with CTRL modifier
+ * \param key int Keycode of the key pressed
+ */
+void send_key_with_ctrl(int key);
 /**
  * Send press and release of a key
  * \param key int Keycode of the key pressed
