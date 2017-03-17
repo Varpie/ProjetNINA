@@ -22,7 +22,7 @@ static const double time_limit = 2000000.0;
 static const double base_time = 100000.0;
 static const int base_n = 1;
 static const char *delimiter = ";";
-static const char name_conf[] = "/var/nina/timed_keys";
+static const char name_conf[] = (CONFPATH "timed_keys");
 #define SIZE_MAP 256
 
 typedef struct act_mean{
