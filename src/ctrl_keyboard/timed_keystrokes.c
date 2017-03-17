@@ -1,4 +1,4 @@
-#include "timed_keystrokes.h"
+#include "write_keyboard.h"
 
 act_mean map[SIZE_MAP][SIZE_MAP];
 

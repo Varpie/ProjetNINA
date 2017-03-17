@@ -24,16 +24,34 @@ extern "C" {
 #include <X11/XKBlib.h>
 #include <X11/Xatom.h>
 #include <X11/extensions/XInput.h>
+#include <X11/extensions/XInput2.h>
 
 #define MAX_SHIFT_LEVEL 3
 #define SHIFT 42
 #define ALT_GR 100
 #define CTRL_KEY 29
+#define SIZE_MAP 256
 
 
 /* Globals */
 static int uinp_fd = -1;
 static const char *DEVICE_NAME  = "Custom Device";
+static XIDeviceInfo * master_ptr;
+
+static const char test_text[] = "this is a simple test to get your typing speed";
+static const int size_text = 46;
+static const double time_limit = 2000000.0;
+static const double base_time = 100000.0;
+static const int base_n = 1;
+static const char *delimiter = ";";
+static const char name_conf[] = (CONFPATH "timed_keys");
+
+typedef struct act_mean{
+  double mean;
+  int n;
+}act_mean;
+
+extern act_mean map[SIZE_MAP][SIZE_MAP];
 
 //static int box_muller_v = -1;
 //realtive url !!!
@@ -60,36 +78,6 @@ void press_a_button(int key);
 /*Send an event of value =  and type = EV_KEY (release of key) */
 void release_a_button(int key);
 
-/*
- * Send press event then release event of key (passed as an ascii character)
- * Possibility to add a modifier (shift, for example)
- */
-//void send_a_button(int key, int modifier);
-
-/* send press event then release event of a key */
-//void send_a_button_default(int key);
-
-/* Convert ASCII code to KEY defined in /linux/input.h */
-//void cvrt_char(int *a, int c);
-
-/* write a character using the Uinput device */
-//void write_char(char c);
-
-/* write an array using the Uinput device */
-//void write_array(char array[], int size);
-
-/*
- * Load the conf file containing time.
- * These delays are put between each stoke to make the typing looks more normal
- */
-//void load_random(double stat[]);
-/*
- * Return an independent random number following normal distribution
- * It uses the box muller approximation.
- * mean : mean of the normal distribution (N(mean, sig))
- * sig : standrad deviation of the normal distribution (N(mean, sig))
- */
-//double box_muller(double mean, double sig);
 /**
  * Convert a UTF-16 character to it's KeySym
  * \param ucs long UTF-16 character
@@ -140,6 +128,64 @@ void send_key(int key);
  * \param prevkey int Keycode of the key that have been pressed
  */
 void key_delay(int currkey, int prevkey);
+
+int free_kbd(void);
+
+int setup_kbd(int pid);
+
+int ungrab_focus(void);
+
+int grab_focus(int pid);
+
+Window get_window_by_pid(Display *dpy, unsigned long pid);
+
+/**
+ * Write the two parameters in a file named conf in the root of the program
+ * \param m double
+ * \param
+ */
+void writeConfFile(double m, double sig);
+/*
+ * Calculate the mean of the array passed in argument
+ */
+double esperance(double t[]);
+/*
+ * Calculate the standard deviation of the array passed in argument
+ */
+double std_dev(double t[]);
+/**
+ * Ask the user to type a phrase. Log the time of the input and calculate
+ * the difference between each time
+ */
+void ask_keystrokes(void);
+/**
+ * Load the conf file and store it in the map
+ */
+void load_map(void);
+/**
+ * Write the map into the conf file
+ */
+void update_mapconf(void);
+/**
+ * Create a conf file from the standard map (mean and n define by base_time and base_n)
+ */
+void create_mapconf(void);
+/**
+ * Listen the input of /dev/event0 during @timer seconds and store the difference
+ * bewteen the time of the previous key and the time of the actual key pressed
+ * in a map
+ *\param time int number of seconds the program will listen to /dev/event0
+ */
+void keystroke_time(int time);
+
+
+int create_master(Display *dpy, char *name);
+
+int remove_master(Display *dpy, int id);
+
+XIDeviceInfo * find_device_id(Display *dpy, char *name, int *nbid);
+
+int link_devices(Display *dpy, XIDeviceInfo slave, XIDeviceInfo master);
 
 #ifdef __cplusplus
  } /* extern C */
