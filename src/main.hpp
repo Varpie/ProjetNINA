@@ -12,7 +12,7 @@
 #include <stdbool.h>
 #include <getopt.h>
 #include <unistd.h>
-#include "log.hpp"
+#include "lib.hpp"
 #include "navigation/intelligence.hpp"
 #include "ctrl_keyboard/timed_keystrokes.h"
 #include "ctrl_keyboard/write_keyboard.h"
@@ -51,7 +51,7 @@ std::string dict::blackfile;
 /**
  * Initialize otherlist utilisation to false
  */
-bool dict::other = false;
+bool dict::otherlist = false;
 /**
  * Otherlist file path
  */

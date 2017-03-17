@@ -23,12 +23,8 @@ void Intelligence::roam()
 	logging::vout(1,"Program began");
 	std::string page_html;
 	std::vector<HyperLink> links;
-	time_t begin,end;
 	HyperLink link;
 	std::string navigate_res = "";
-	long x = 0;
-	bool timer = false;
-	bool overflow = false;
 	bool search = false;
 	logging::vout(3,"Get current url");
 	this->current_url = this->navigator->navigate(this->current_url);
@@ -76,7 +72,7 @@ void Intelligence::roam()
 		}
 		logging::vout(3,"Add current url to the history");
 		append_vector(this->history,this->current_url,HISTORY_MAX);
-		std::this_thread::sleep_for(std::chrono::seconds(rand()%26+5));
+		//std::this_thread::sleep_for(std::chrono::seconds(rand()%26+5));
 	} while(threading::running);
 	logging::vout(2,"Leaving Intelligence::roam");
 }
@@ -159,7 +155,7 @@ HyperLink Intelligence::select_link(std::vector<HyperLink> &links,std::string ur
 	bool res;
 	bool whitelisted;
 	bool found = true;
-	if(dict::other) {
+	if(dict::otherlist) {
 	  found = false;
 		std::vector<std::tuple<int,HyperLink>> found_list;
 		for(auto const& lk: links){
@@ -215,7 +211,7 @@ HyperLink Intelligence::select_link(std::vector<HyperLink> &links,std::string ur
 				logging::vout(1,"No link found");
 		}
 	}
-	if( (!dict::other && !dict::whitelist) || !found ){
+	if( (!dict::otherlist && !dict::whitelist) || !found ){
 		int cpt=0;
 	  do {
 	    link = select_random_in_vector(links);
@@ -274,14 +270,23 @@ void Intelligence::load_lists()
 	if(dict::whitelist){
 		logging::vout(1,"Loading whitelist");
 		this->whitelist = init_list(dict::whitefile);
+		if(this->whitelist.empty()) {
+			dict::whitelist = false;
+		}
 	}
 	if(dict::blacklist){
 		logging::vout(1,"Loading blacklist");
 		this->blacklist = init_list(dict::blackfile);
+		if(this->blacklist.empty()) {
+			dict::blacklist = false;
+		}
 	}
-	if(dict::other){
+	if(dict::otherlist){
 		logging::vout(1,"Loading other list");
 		this->otherlist = init_otherlist(dict::otherfile);
+		if(this->otherlist.empty()) {
+			dict::otherlist = false;
+		}
 	}
 	logging::vout(2,"Leaving Intelligence::load_lists");
 }

@@ -54,19 +54,19 @@ double std_dev(double t[]);
  * Ask the user to type a phrase. Log the time of the input and calculate
  * the difference between each time
  */
-void ask_keystrokes();
+void ask_keystrokes(void);
 /**
  * Load the conf file and store it in the map
  */
-void load_map();
+void load_map(void);
 /**
  * Write the map into the conf file
  */
-void update_mapconf();
+void update_mapconf(void);
 /**
  * Create a conf file from the standard map (mean and n define by base_time and base_n)
  */
-void create_mapconf();
+void create_mapconf(void);
 /**
  * Listen the input of /dev/event0 during @timer seconds and store the difference
  * bewteen the time of the previous key and the time of the actual key pressed

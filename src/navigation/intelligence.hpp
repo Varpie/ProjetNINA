@@ -13,7 +13,7 @@
 #include <algorithm>
 #include <thread>
 #include "navigator.hpp"
-#include "../log.hpp"
+#include "../lib.hpp"
 
 typedef std::vector<std::tuple<int,std::string>> tuple_list;
 

@@ -229,7 +229,7 @@ bool parse_arguments(int argc, char **argv)
 					dict::blackfile = CONFPATH "blacklist.txt";
 				} else if(long_options[option_index].name == "otherlist"){
 					logging::vout(1,"Using otherlist");
-					dict::other = true;
+					dict::otherlist = true;
 					dict::otherfile = CONFPATH "otherlist.txt";
 				} else if(long_options[option_index].name == "timeout"){
 					try
