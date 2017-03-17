@@ -51,7 +51,7 @@ std::string dict::blackfile;
 /**
  * Initialize otherlist utilisation to false
  */
-bool dict::other = false;
+bool dict::otherlist = false;
 /**
  * Otherlist file path
  */
