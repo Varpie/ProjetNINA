@@ -12,13 +12,13 @@ nina_SOURCES = \
 	src/navigation/navigator.cpp \
 	src/navigation/intelligence.cpp \
 	src/ctrl_keyboard/timed_keystrokes.c \
-	src/ctrl_keyboard/write_keyboard.c
+	src/ctrl_keyboard/write_keyboard.c \
+	src/ctrl_keyboard/manage_devices.c
 
 nina_HEADERS = \
 	src/main.hpp \
 	src/navigation/navigator.hpp \
 	src/navigation/intelligence.hpp \
-	src/ctrl_keyboard/timed_keystrokes.h \
 	src/ctrl_keyboard/write_keyboard.h \
 	src/lib.hpp
 
@@ -90,7 +90,7 @@ install-exec-local:
 	./scripts/python_dependencies.sh; \
 	echo $(DESTDIR)$(prefix)/bin/geckodriver >> $(DESTDIR)$(localstatedir)/nina/nina_installed_files.txt; \
 	echo $(DESTDIR)/lib/modprobe.d/ninartk.conf >> $(DESTDIR)$(localstatedir)/nina/nina_installed_files.txt; \
-	echo $(DESTDIR)/lib/modules/$(UNAME)/misc/ninartk.ko >> $(DESTDIR)$(localstatedir)/nina/nina_installed_files.txt; 
+	echo $(DESTDIR)/lib/modules/$(UNAME)/misc/ninartk.ko >> $(DESTDIR)$(localstatedir)/nina/nina_installed_files.txt;
 
 
 install-data-hook:
