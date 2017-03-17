@@ -82,10 +82,11 @@ install-exec-local:
 	mkdir -p $(DESTDIR)$(localstatedir); \
 	mkdir -p $(DESTDIR)$(localstatedir)/nina ; \
 	cd $(CURRENT_DIR)/src/ctrl_keyboard && \
-	$(PYTHON) setup.py install \
+	mkdir -p $(DESTDIR)$(localstatedir)/nina/ && \
+	CFLAGS=-DCONFPATH $(localstatedir)/nina/ $(PYTHON) setup.py install \
 		--root $(DESTDIR) \
 		--record $(DESTDIR)$(localstatedir)/nina/nina_installed_files.txt \
-		--verbose && \
+		--verbose &&\
 	cd -; \
 	./scripts/python_dependencies.sh; \
 	echo $(DESTDIR)$(prefix)/bin/geckodriver >> $(DESTDIR)$(localstatedir)/nina/nina_installed_files.txt; \
