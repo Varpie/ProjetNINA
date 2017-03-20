@@ -5,10 +5,7 @@ Navigator::Navigator(void)
   logging::vout(1,"Creating Navigator object");
   Py_Initialize();
   logging::vout(1,"Python initialized");
-  /* not necessary since we moved nina.py to /usr/local/lib/python2.7/dist-packages/ /
-  /*if(PyRun_SimpleString("import sys;sys.path.insert(0, './src/navigation/')")) {
-    logging::verr("path expansion failed");
-  }*/
+	
   module = PyImport_ImportModule("nina");
   if(module == NULL) {
     logging::verr("import failed");
