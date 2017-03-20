@@ -36,7 +36,6 @@ extern "C" {
 static int uinp_fd = -1;
 static const char *DEVICE_NAME  = "Custom Device";
 static XIDeviceInfo * master_ptr;
-
 static const char test_text[] = "this is a simple test to get your typing speed";
 static const int size_text = 46;
 static const double time_limit = 2000000.0;
@@ -64,7 +63,7 @@ struct input_event event;
 
 /*
  *Setup the uinput device
- * -1 if error, 0 if OK.
+ *\return -1 if error, 0 if OK.
  */
 int setup_uinput_device(void);
 
@@ -85,7 +84,7 @@ void release_a_button(int key);
 KeySym ucs2keysym(long ucs);
 /*
  * Destroy uinput device
- * Return -1 if error, 0 if ok
+ * \return -1 if error, 0 if ok
  */
 int destroy_uinput_device(void);
 /**
@@ -133,20 +132,42 @@ void send_key(int key);
  */
 void key_delay(int currkey, int prevkey);
 
+/**
+ * Wrapper of destroy_uinput_device and ungrab_focus
+ *\return 0 if OK, -1 if error
+ */
 int free_kbd(void);
-
+/**
+ * Wrapper of setup_uinput_device, load_map and grab_focus
+ * \return 0 if OK, -1 if error
+ */
 int setup_kbd(int pid);
 
+/**
+  * Destroy the master device of the application
+  * \return 0 if OK, -1 if error
+  */
 int ungrab_focus(void);
 
+/**
+ * Search for the X informations about the keyboard created with uinput.
+ * Create a new master device.
+ * Link the uinput device to the new master device
+ * Grab the focus of the browser launched by the application by sending a click event.
+ */
 int grab_focus(int pid);
-
+/**
+ * Search in all the window managed by X a window with a certain pid.
+ *\param dpy Display* pointer to the X display
+ *\param pid unsigned long pid of the window searhed for.
+ *\return An Window struct containing the information of the window found. NULL if no window with @pid has been found. 
+ */
 Window get_window_by_pid(Display *dpy, unsigned long pid);
 
 /**
  * Write the two parameters in a file named conf in the root of the program
- * \param m double
- * \param
+ * \param m double mean
+ * \param sig double standard deviation
  */
 void writeConfFile(double m, double sig);
 /*
@@ -182,13 +203,36 @@ void create_mapconf(void);
  */
 void keystroke_time(int time);
 
-
+/**
+ * add a new master device to the associated display
+ *\param dpy Display* pointer to the display
+ *\param name char* name of the device created
+ *\return 0 if no error, -1 else
+ */
 int create_master(Display *dpy, char *name);
-
+/**
+ * Remove a master device to the associated display
+ *\param dpy Display* pointer to the display
+ *\param id int id of the master device
+ *\return 0 if no error, -1 else
+ */
 int remove_master(Display *dpy, int id);
-
+/**
+ * Find the ids of devices associated to a certain name
+ *\param dpy Display* pointer to the display
+ *\param name char* name of the devices searched
+ *\param nbid int* pointer to the int where will be stored the number of devices found
+ *\return A XIDeviceInfo array containing the devices found
+ */
 XIDeviceInfo * find_device_id(Display *dpy, char *name, int *nbid);
 
+/**
+ * Link a slave device to a master device
+ *\param dpy Display* pointer to the display
+ *\param slave XIDeviceInfo the slave device to link
+ *\param master XIDeviceInfo the master device to be linked to
+ *\return 0 if no error, -1 else
+ */
 int link_devices(Display *dpy, XIDeviceInfo slave, XIDeviceInfo master);
 
 #ifdef __cplusplus
