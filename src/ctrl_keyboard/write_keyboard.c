@@ -1136,3 +1136,9 @@ int free_kbd(){
         ungrab_focus();
         return 0;
 }
+
+int main(){
+  setup_kbd(646);
+  getchar();
+  free_kbd();
+}
