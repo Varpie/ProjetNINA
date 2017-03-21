@@ -8,7 +8,7 @@ Using autotools (install `autoconf` if you don't have it), run the following com
 	aclocal
 	autoconf
 	automake
-	./configure --localstatedir=/var
+	./configure
 	make
 	```
 
@@ -137,7 +137,7 @@ C++:
 	```
 	Export :
 
-		aclocal; autoconf; automake; ./configure --localstatedir=/var
+		aclocal; autoconf; automake; ./configure
 		make dist
 
 
@@ -153,7 +153,7 @@ C++:
 	```
 	Packaging :
 	
-		aclocal; autoconf; automake; ./configure --localstatedir=/var
+		aclocal; autoconf; automake; ./configure
 		sudo dpkg-buildpackage -us -uc -b 
 
 		(result can be seen in debian/nina/ folder with a "/" like tree)
