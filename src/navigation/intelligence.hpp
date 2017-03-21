@@ -55,13 +55,13 @@ class Intelligence
 		void load_lists();
 		/** Counts the number of times AI passed by the current domain
 		 * \fn int current_domain_occurences()
+		 * \return int number of occurences
 		 * Seek in history list and counts. Allows us to change domain if
 		 * we passed too many times
 		 */
 		int current_domain_occurences();
 		/** Function that dump autolists in text files
 		 * \fn void dump_lists();
-		 * \return int number of occurences
 		 * Called in class destructor
 		 */
 		void dump_lists();
