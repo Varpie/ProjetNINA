@@ -9,7 +9,6 @@ bandwidth
 binary
 bit
 bitmap
-bite
 blog
 blogger
 bookmark
