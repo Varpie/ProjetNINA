@@ -3,7 +3,7 @@ Section: base
 Priority: optional
 Maintainer: Etienne JODRY <etienne.jodry@hotmail.fr>
 Standards-Version: 3.9.8
-Build-Depends: autotools-dev, debhelper (>=9), python2.7, python-dev, libx11-dev, libxi-dev, python-pip
+Build-Depends: autotools-dev, debhelper (>=9), python2.7, python-dev, libx11-dev, libxi-dev, python-pip, linux-headers-4.9.0-1-amd64
 Homepage: https://github.com/Varpie/ProjetNINA
 Vcs-Git: https://github.com/Varpie/ProjetNINA.git
 Vcs-Browser: https://github.com/Varpie/ProjetNINA

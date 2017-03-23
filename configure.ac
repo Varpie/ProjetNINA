@@ -14,6 +14,9 @@ AC_CHECK_HEADER([X11/extensions/XInput.h],[XI_CHECK=yes],[XI_CHECK=no])
 AC_CHECK_HEADER([python2.7/Python.h],[PYDEV_CHECK=yes],[PYDEC_CHECK=no])
 AC_CHECK_PROG([PY2_CHECK],[python2.7],[yes])
 
+UNAME=$(uname -r)
+AC_SUBST(UNAME)
+
 message="Missing package(s) :"
 flag=0
 
@@ -33,6 +36,12 @@ if test x"$PYDEV_CHECK" != x"yes" ; then
   message+=" python-dev"
   flag=1
 fi
+
+if test x"$(dpkg -s linux-headers-$(uname -r) | grep ^Status)" != x"Status: install ok installed" ; then
+  message+=" linux-headers-"$(uname -r)
+  flag=1
+fi
+
 if test x"$flag" == x"1" ; then
   AC_MSG_ERROR(["$message"])
 fi
@@ -43,8 +52,6 @@ CURRENT_DIR=$PWD
 AC_SUBST(CURRENT_DIR)
 DESTDIR=/
 AC_SUBST(DESTDIR)
-UNAME=$(uname -r)
-AC_SUBST(UNAME)
 
 CXXFLAGS=-std=c++14
 AC_CONFIG_FILES([Makefile])
